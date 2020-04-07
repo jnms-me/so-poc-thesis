@@ -1,0 +1,96 @@
+\documentclass[a4paper]{report}
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+\usepackage[dutch]{babel}
+\usepackage{graphicx}
+\graphicspath{{./img/}}
+\usepackage[hidelinks]{hyperref}
+\usepackage{pdfpages}
+
+\usepackage{blindtext}
+
+\usepackage{tocbibind}
+
+\usepackage[backend=biber,style=apa]{biblatex}
+\addbibresource{references.bib}
+
+\title{Thesis}
+\author{Jonas Meeuws}
+
+\begin{document}
+
+% Bedrukte kaft
+Kaft
+
+% Schutblad
+\newpage
+\thispagestyle{empty}
+\mbox{}
+
+% Titelblad
+\maketitle
+%\includepdf[pages=-]{./include/titelblad.pdf}
+
+% Mededeling
+\chapter*{Mededeling}
+\addcontentsline{toc}{chapter}{Mededeling}
+\blindtext
+
+% Woord vooraf (niet verplicht)
+\chapter*{Woord vooraf}
+\addcontentsline{toc}{chapter}{Woord vooraf}
+\blindtext
+
+% Samenvatting
+\chapter*{Samenvatting}
+\addcontentsline{toc}{chapter}{Samenvatting}
+\blindtext
+
+% Inhoudsopgave
+\tableofcontents
+\newpage
+
+% Lijst van figuren (niet verplicht)
+\listoffigures
+
+% Inleiding
+\chapter*{Inleiding}
+\addcontentsline{toc}{chapter}{Inleiding}
+
+% Inhoud
+\chapter{Template}
+\section{Template}
+\subsection{Template}
+\subsubsection{Template}
+\blindtext
+\autocite{example}
+
+\chapter{Template}
+\section{Template}
+\subsection{Template}
+\subsubsection{Template}
+\blindtext
+
+% Besluit
+\chapter*{Besluit}
+\addcontentsline{toc}{chapter}{Besluit}
+\blindtext
+
+% Bijlagen (niet verplicht)
+\chapter*{Bijlagen}
+\addcontentsline{toc}{chapter}{Bijlagen}
+\blindtext
+
+% Literatuurlijst
+\printbibliography
+\addcontentsline{toc}{chapter}{Bibliografie}
+
+% Schutblad
+\newpage
+\thispagestyle{empty}
+\mbox{}
+
+% Kaft
+\newpage
+Kaft
+
+\end{document}
