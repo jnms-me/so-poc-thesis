@@ -88,8 +88,11 @@ onderwerp (methode, doelstelling, enz.).
 % Korte geschiedenis van de distro
 % Huidige staat van het volledige pakket
 % Doelstellingen van SO, een tool voor analysts, gericht op enterprise netwerken
+% Elk stack (log sources -> logstash -> elasticsearch -> kibana & elastalert)
+% Nids stack (suricata -> sguild -> squert)
 
 \chapter{Ontwikkelen van een aangepast systeem}
+% Proberen schema hier te verwerken
 \section{Gebruikte technologie\"en}
 \subsection{Debian}
 % Simpelweg een host os nodig
@@ -109,6 +112,7 @@ onderwerp (methode, doelstelling, enz.).
 \subsection{Intern netwerk}
 % SO en so-poc zitten in een apart /24 subnet
 % 1 wordt beheerd door docker, het andere door libvirt
+\subsection{Proxy}
 % Web proxy wordt ingezet om ze te verbinden
 % Https eerst downgraden, binnen docker http, in https-portal weer upgraden
 
@@ -118,6 +122,7 @@ onderwerp (methode, doelstelling, enz.).
 % States beheren enz, uitleg overnemen van docs
 % Material ui library
 % dir tree, uitleggen hoe project functioneert
+% Homepage en query page
 \subsection{Vibe.d}
 % Korte omschrijving dlang als general purpose compiled lang
 % vibe-d als web framework die toe laat om rest servers en clients te maken
