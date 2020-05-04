@@ -1,4 +1,4 @@
-\documentclass[a4paper, 12pt]{report}
+\documentclass[a4paper,12pt]{report}
 \usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
 \usepackage[dutch]{babel}
 \usepackage{graphicx}
@@ -9,6 +9,22 @@
 \usepackage{blindtext}
 
 \usepackage{tocbibind}
+
+\usepackage{listings}
+\lstdefinestyle{code}{
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=code}
 
 \usepackage[backend=biber,style=apa]{biblatex}
 \addbibresource{references.bib}
@@ -62,19 +78,57 @@ onderwerp (methode, doelstelling, enz.).
 \blindtext
 
 % Inhoud
-\chapter{Template}
-\section{Template}
-\subsection{Template}
-\subsubsection{Template}
-\blindtext
-\autocite{example}
-
 \chapter{Intrusion detection}
+Intrusion detection is het monitoren van systemen op verdachte activiteit.
+Dit omvat pogingen tot hacken, verspreiding van virussen of malware, aanwezigheid van rogue devices\dots
+\\
+Intrusion detection gebeurt typisch volledig passief.
+De logs die een IDS (Intrusion detection system) produceert kunnen worden verstuurd naar een administrator als een alert.
+In grotere systemen worden deze logs centraal verzameld om deze anomali\"en effectief te kunnen analyseren.
+\autocite{wikipedia:ids}
+\\
+Intrusion detection systemen worden opgedeeld in 2 soorten: network (NIDS) en host (HIDS) intrusion detection.
+
 \section{NIDS}
-% Snort, suricata
-% Rules, rule syntax
+Een network intrusion detection systeem (NIDS) monitort een netwerkverbinding.
+\\
+De 2 grote NIDS software projecten zijn Snort en Suricata.
+Voor een groot deel werken de 2 systemen identiek voor een eindgebruiker.
+Zo is de NIDS rule syntax van Snort en Suricata bijna gelijk.
+Het verschil ligt in specifieke features (zie \url{https://suricata.readthedocs.io/en/suricata-5.0.3/rules/differences-from-snort.html} voor een gedetailleerde lijst van verschillen).
+
+\subsection{Regels}
+Een NIDS monitort gecapteerd netwerkverkeer aan de hand van een lijst van regels.
+Deze regels volgen een bepaalde syntax.
+\\
+Een voorbeeld van een nids rule is als volgt (figuur \ref{fig:nids-rule}).
+\begin{figure}[h]
+  \begin{lstlisting}
+alert tcp $EXTERNAL_NET any -> $INTERNAL_NET 3306 (msg:"Inbound SQL connection"; sid:1000000;)
+  \end{lstlisting}
+  \caption{Een nids rule.}
+  \label{fig:nids-rule}
+\end{figure}
+Deze rule zorgt ervoor dat er een alert wordt gegenereerd wanneer de NIDS engine een tcp verbinding ziet van het extern netwerk naar het intern netwerk op poort 3306.
+Het extern netwerk is meestal het internet of een WAN, het intern netwerk is meestal een LAN.
+Volgens het tcp client-server model is de client een externe host en de server een interne host.
+\\
+Poort 3306 is gereserveerd voor MySQL database verbindingen \autocite{iana:ports}.
+Deze verbindingen kunnen perfect normaal zijn als de client een vertrouwde host is.
+In dit geval is de client echter een externe host die acties probeert uit te voeren op een interne MySQL database.
+Dit is verdachte activiteit, vandaar het type alert.
+
+\subsection{Variabelen}
+Om regels zo effectief mogelijk te maken, worden er variabelen ge\"introduceerd.
+De 2 meest gebruikte variabelen zijn het \verb!INTERNAL_NET! en het \verb!EXTERNAL_NET!.
+Bijna alle regels gebruiken minstens 1 van deze variabelen, daarom is het van groot belang om deze in te stellen.
+Als een variabele niet ingesteld is, worden regels die deze variabele gebruiken genegeerd.
+\\
+Variabelen kunnen ook de waarde \verb!any! gebruiken.
+Dit kan zorgen voor veel false alerts, maar is wel nuttig in gesloten netwerken waar incidenten zich enkel intern afspelen.
+
 % Subscription models
-% Configuratie: HOME_NET, EXTERNAL_NET
+% strategisch plaatsen
 \subsection{Port mirror}
 % Kort principe van een port mirror
 % Limitatie linksnelheid (of andere term)
