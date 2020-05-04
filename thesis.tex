@@ -1,4 +1,4 @@
-\documentclass[a4paper]{report}
+\documentclass[a4paper, 12pt]{report}
 \usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
 \usepackage[dutch]{babel}
 \usepackage{graphicx}
@@ -13,13 +13,14 @@
 \usepackage[backend=biber,style=apa]{biblatex}
 \addbibresource{references.bib}
 
-\title{Thesis}
+\title{Implementatie van een NIDS binnen een ISP omgeving}
 \author{Jonas Meeuws}
 
 \begin{document}
 
-% Bedrukte kaft
-Kaft
+% Bedrukte kaft (=titelblad)
+\maketitle
+%\includepdf[pages=-]{./include/titelblad.pdf}
 
 % Schutblad
 \newpage
@@ -33,14 +34,17 @@ Kaft
 % Mededeling
 \chapter*{Mededeling}
 \addcontentsline{toc}{chapter}{Mededeling}
-\blindtext
+Deze eindverhandeling was een examen.
+De tijdens de verdediging geformuleerde opmerkingen werden niet opgenomen.
 
 % Woord vooraf (niet verplicht)
 \chapter*{Woord vooraf}
 \addcontentsline{toc}{chapter}{Woord vooraf}
-\blindtext
+Hier heb je de mogelijkheid om je waardering uit te drukken en dank te betuigen. Je neemt in
+het woord vooraf geen gegevens op die essentieel verband houden met het behandelde
+onderwerp (methode, doelstelling, enz.).
 
-% Samenvatting
+% Samenvatting of abstract
 \chapter*{Samenvatting}
 \addcontentsline{toc}{chapter}{Samenvatting}
 \blindtext
@@ -55,6 +59,7 @@ Kaft
 % Inleiding
 \chapter*{Inleiding}
 \addcontentsline{toc}{chapter}{Inleiding}
+\blindtext
 
 % Inhoud
 \chapter{Template}
@@ -64,11 +69,78 @@ Kaft
 \blindtext
 \autocite{example}
 
-\chapter{Template}
-\section{Template}
-\subsection{Template}
-\subsubsection{Template}
-\blindtext
+\chapter{Intrusion detection}
+\section{NIDS}
+% Snort, suricata
+% Rules, rule syntax
+% Subscription models
+% Configuratie: HOME_NET, EXTERNAL_NET
+\subsection{Port mirror}
+% Kort principe van een port mirror
+% Limitatie linksnelheid (of andere term)
+% Schets hoe het netwerk eruit ziet tov de mirror op laag 2 en op laag 3 voor of na de NAT
+% Altijd verbindingen tussen 2 verschillende netwerken tussen 2 routers bvb
+\section{HIDS}
+% Omschrijving principe: agents op clients loggen naar een master server
+% Niet uitgebreid
+
+\chapter{Security Onion}
+% Korte geschiedenis van de distro
+% Huidige staat van het volledige pakket
+% Doelstellingen van SO, een tool voor analysts, gericht op enterprise netwerken
+
+\chapter{Ontwikkelen van een aangepast systeem}
+\section{Gebruikte technologie\"en}
+\subsection{Debian}
+% Simpelweg een host os nodig
+% Korte uitleg fysieke server geconfgureerd en in serverruimte geplaatst
+\subsection{Docker}
+% Docker presenteren als tool om linux containers of namespaces (een kernel feature) te beheren
+% Docker kan een stuk meer zoals met windows containers, maar dit is alles wat we gebruiken
+\subsubsection{Docker compose}
+% Github repo presenteren
+% Indien het overzichtelijk gebruikt wordt, tool om het volledige systeem mee te ontwerpen
+\subsection{Libvirt}
+% Open source hypervisor
+% Werkt samen met qemu en KVM
+% Uitleggen wat een hypervisor is en bekende alternatieven zoals hyper-v (windows) en virtualbox aanhalen
+
+\section{Security Onion}
+\subsection{Intern netwerk}
+% SO en so-poc zitten in een apart /24 subnet
+% 1 wordt beheerd door docker, het andere door libvirt
+% Web proxy wordt ingezet om ze te verbinden
+% Https eerst downgraden, binnen docker http, in https-portal weer upgraden
+
+\section{Web app}
+\subsection{React}
+% Javascript framework
+% States beheren enz, uitleg overnemen van docs
+% Material ui library
+% dir tree, uitleggen hoe project functioneert
+\subsection{Vibe.d}
+% Korte omschrijving dlang als general purpose compiled lang
+% vibe-d als web framework die toe laat om rest servers en clients te maken
+% Werking backend
+
+\section{TheHive}
+\subsection{Cortex}
+\section{MISP}
+\section{Ntop}
+\section{Netdata}
+
+\section{Passive os fingerprinting}
+\subsection{TCP/IP stack}
+\subsection{DHCP}
+
+\section{Visualisatie netwerk layout}
+% Uitleggen dat dit passief zeer moeilijk is, geen producten beschikbaar
+% Enkel onderscheid maken int->ext of ext->int, distance mogelijk bepalen met time to live
+% Traceroute is actief, tools als nmap hiervoor gemaakt
+
+\chapter{De workflow van een analyst}
+
+% Latex ergens vermelden, github actions
 
 % Besluit
 \chapter*{Besluit}
