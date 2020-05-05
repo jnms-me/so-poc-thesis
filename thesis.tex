@@ -173,8 +173,6 @@ It includes Elasticsearch, Logstash, Kibana, Snort, Suricata, Zeek, Wazuh, Sguil
 \autocite{so:docs}
 
 \section{Geschiedenis}
-% Korte geschiedenis van de distro
-% Huidige staat van het volledige pakket
 In 2008 begon Doug Burks met het ontwikkelen van Security Onion.
 Een eerste versie van het project werd gepubliceerd in 2009.
 Omdat de linux distributie meer populariteit kreeg, werd het in 2012 volledig herschreven met het doel om performantie en schaalbaarheid te verbeteren.
@@ -197,7 +195,6 @@ Deze is ideaal om de distributie te verkennen zonder het volledig te installeren
 Een tweede mogelijkheid die beter geschikt is voor permanente opstellingen is de \emph{Standalone Production Mode}.
 Hierbij werkt het volledige systeem vanaf 1 server: zowel de sensor, log management, opslag als de web interface vinden plaats op dezelfde \emph{Master node}.
 Zie figuur \ref{fig:so-architecture-standalone} voor een schema.
-\\
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.5\textwidth]{so-architecture-production-standalone}
@@ -207,8 +204,34 @@ Zie figuur \ref{fig:so-architecture-standalone} voor een schema.
 
 \subsection{Distributed Production Mode}
 Het laatste mogelijke scenario bestaat uit meerdere nodes met elk een unieke rol.
-Zie figuur \ref{fig:so-architecture-distributed} voor een voorbeeld.
+Zie figuur \ref{fig:so-architecture-distributed} voor een schema.
 \\
+Elke node heeft standaard een OSSEC daemon actief.
+Deze dient om aan Host-based intrusion detection te doen op het Security Onion systeem zelf.
+
+\subsubsection{Forward node}
+Een \emph{Forward node} bezit alle functies van een sensor.
+Op elke forward node worden er 1 of meerdere port mirrors geïnstalleerd.
+De gecapteerde pakketten worden door enkele services verwerkt: Netsniff-NG voor full packet capture, Zeek protocol decoding en Snort of Suricata als NIDS engine.
+Alle logs die Zeek en Suricata of Snort genereren worden meteen doorgestuurd naar de Logstash instantie op de master server.
+De full packet capture van netsniff-ng, blijft echter op de forward node aanwezig.
+Deze pcap files kunnen opgehaald worden wanneer ze nodig zijn en worden automatisch verwijderd wanneer er te weinig vrije plaats is op de disk.
+\\
+Door meerdere forward nodes strategisch te plaatsen in een netwerk, kan er veel beter inzicht verkregen worden in het netwerk.
+
+\subsubsection{Master node}
+De master node is standaard verantwoordelijk voor alle andere taken die geen raw pcap data verwerken.
+Log management services zoals Elasticsearch, Logstash en Sguild zijn hier actief en frontend applicaties voor de analyst zoals Kibana en Squert worden hier gehost.
+
+\subsubsection{Storage node}
+Storage nodes kunnen gebruikt worden om de opslagcapaciteit uit te breiden en het verwerken van logs te verlichten voor de master node.
+
+\subsubsection{Heavy node}
+Heavy nodes zijn een combinatie van storage nodes en forward nodes.
+Deze worden afgeraden om te gebruiken, maar kunnen wel gebruikt worden wanneer forward en storage nodes niet gesplitst kunnen worden omwille van bijvoorbeeld beperkte hardware.
+
+\autocite{so:docs}
+
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.6\textwidth]{so-architecture-production-distributed}
