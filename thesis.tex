@@ -12,6 +12,8 @@
 
 \usepackage[T1]{fontenc}
 
+\usepackage{wrapfig}
+
 \usepackage{listings}
 \lstdefinestyle{code}{
     basicstyle=\ttfamily\footnotesize,
@@ -164,8 +166,58 @@ NIDS engines kunnen hiermee wel overweg, maar het zorgt natuurlijk voor verlies 
 % Zelf nooit gebruikt, nog opzoeken
 
 \chapter{Security Onion}
+\section{Wat is Security Onion?}
+De officiële site beschrijft Security Onion als:
+``Security Onion is a free and open source Linux distribution for intrusion detection, enterprise security monitoring, and log management.
+It includes Elasticsearch, Logstash, Kibana, Snort, Suricata, Zeek, Wazuh, Sguil, Squert, CyberChef, NetworkMiner, and many other security tools.''
+\autocite{so:docs}
+
+\section{Geschiedenis}
 % Korte geschiedenis van de distro
 % Huidige staat van het volledige pakket
+In 2008 begon Doug Burks met het ontwikkelen van Security Onion.
+Een eerste versie van het project werd gepubliceerd in 2009.
+Omdat de linux distributie meer populariteit kreeg, werd het in 2012 volledig herschreven met het doel om performantie en schaalbaarheid te verbeteren.
+In 2014 werd Security Onion Solutions LLC opgericht om professionele ondersteuning aan te bieden aan bedrijven.
+Met jaarlijkse conferenties bleef het project groeien.
+\autocite{so:sos}
+In 2018 begon de ontwikkeling van een nieuw project, Security Onion Hybrid Hunter.
+Hybrid Hunter is nog steeds in experimentele staat, en het wordt afgeraden dit systeem te gebruiken in een productieomgeving.
+
+\section{Deployment scenario's}
+Security Onion kan op verschillende manieren geïnstalleerd worden.
+Dankzij de architectuur van het gehele systeem kunnen bepaalde taken weggenomen worden van de ene server, zodat een andere server met meer geschikte hardware deze taken kan behandelen.
+Dit proces noemt men offloading.
+
+\subsection{Evaluation Mode}
+Een eerste mogelijkheid is \emph{Evaluation Mode}.
+Deze is ideaal om de distributie te verkennen zonder het volledig te installeren in een productieomgeving, maar ook om pcap bestanden offline te analyseren met de kracht van het volledige systeem.
+
+\subsection{Standalone Production Mode}
+Een tweede mogelijkheid die beter geschikt is voor permanente opstellingen is de \emph{Standalone Production Mode}.
+Hierbij werkt het volledige systeem vanaf 1 server: zowel de sensor, log management, opslag als de web interface vinden plaats op dezelfde \emph{Master node}.
+Zie figuur \ref{fig:so-architecture-standalone} voor een schema.
+\\
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.5\textwidth]{so-architecture-production-standalone}
+  \caption{Standalone Production deployment \autocite{so:docs}}
+  \label{fig:so-architecture-standalone}
+\end{figure}
+
+\subsection{Distributed Production Mode}
+Het laatste mogelijke scenario bestaat uit meerdere nodes met elk een unieke rol.
+Zie figuur \ref{fig:so-architecture-distributed} voor een voorbeeld.
+\\
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{so-architecture-production-distributed}
+  \caption{Distributed Production deployment \autocite{so:docs}}
+  \label{fig:so-architecture-distributed}
+\end{figure}
+
+
+
 % Doelstellingen van SO, een tool voor analysts, gericht op enterprise netwerken
 % Elk stack (log sources -> logstash -> elasticsearch -> kibana & elastalert)
 % Nids stack (suricata -> sguild -> squert)
