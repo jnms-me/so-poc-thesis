@@ -10,6 +10,8 @@
 
 \usepackage{tocbibind}
 
+\usepackage[T1]{fontenc}
+
 \usepackage{listings}
 \lstdefinestyle{code}{
     basicstyle=\ttfamily\footnotesize,
@@ -84,7 +86,7 @@ Dit omvat pogingen tot hacken, verspreiding van virussen of malware, aanwezighei
 \\
 Intrusion detection gebeurt typisch volledig passief.
 De logs die een IDS (Intrusion detection system) produceert kunnen worden verstuurd naar een administrator als een alert.
-In grotere systemen worden deze logs centraal verzameld om deze anomali\"en effectief te kunnen analyseren.
+In grotere systemen worden deze logs centraal verzameld om deze anomalieën effectief te kunnen analyseren.
 \autocite{wikipedia:ids}
 \\
 Intrusion detection systemen worden opgedeeld in 2 soorten: network (NIDS) en host (HIDS) intrusion detection.
@@ -119,7 +121,7 @@ In dit geval is de client echter een externe host die acties probeert uit te voe
 Dit is verdachte activiteit, vandaar het type alert.
 
 \subsection{Variabelen}
-Om regels zo effectief mogelijk te maken, worden er variabelen ge\"introduceerd.
+Om regels zo effectief mogelijk te maken, worden er variabelen geïntroduceerd.
 De 2 meest gebruikte variabelen zijn het \verb!INTERNAL_NET! en het \verb!EXTERNAL_NET!.
 Bijna alle regels gebruiken minstens 1 van deze variabelen, daarom is het van groot belang om deze in te stellen.
 Als een variabele niet ingesteld is, worden regels die deze variabele gebruiken genegeerd.
@@ -130,10 +132,8 @@ Dit kan zorgen voor veel false alerts, maar is wel nuttig in gesloten netwerken 
 % Subscription models
 % strategisch plaatsen
 \subsection{Port mirror}
-% Kort principe van een port mirror
 % Limitatie linksnelheid (of andere term)
 % Schets hoe het netwerk eruit ziet tov de mirror op laag 2 en op laag 3 voor of na de NAT
-% Altijd verbindingen tussen 2 verschillende netwerken tussen 2 routers bvb
 Een NIDS engine zoals Snort of Suricata wordt normaal gebruikt om te capteren op 1 netwerkinterface.
 Deze interface ontvangt typisch een kopie van een punt in het netwerk.
 Dit noemt men een port mirror.
@@ -141,8 +141,22 @@ Dit noemt men een port mirror.
 Een voorbeeld van een technologie die port mirroring toelaat is SPAN.
 Deze is aanwezig in bijvoorbeeld een switch en kopieert alle pakketten van een source poort naar een destination poort.
 Daarnaast kan RSPAN gebruikt worden om gecapteerde pakketten over een laag 2 netwerk te transporteren.
-Ten slotte kan ERSPAN op de zelfde manier gebruikt een port mirror te transporteren over een laag 3 netwerk.
+Ten slotte kan ERSPAN op de zelfde manier gebruikt worden om een port mirror te transporteren over een laag 3 netwerk.
 \autocite{cisco:span}
+\\
+Het geheel van een NIDS engine die al het netwerkverkeer op 1 punt in een netwerk capteert, noemt men een sensor.
+Eén of meerdere sensoren kunnen in een netwerk geplaatst worden op strategische punten.
+Dit zijn vaak plaatsen waar een vertrouwd netwerk wordt verbonden met een extern netwerk.
+\\
+De meest interresante plaats om een sensor te plaatsen in een bedrijfsnetwerk is meestal de plaats waar NAT toegepast wordt.
+Dit is omdat alle communicatie met externe netwerken doorheen dit punt passeert.
+Als zo'n sensor aan de buitenkant van de NAT staat, zijn de interne ip-adressen niet zichtbaar.
+We zien enkel ip-communicatie tussen de NAT-pool en externe netwerken, zo gaat er veel informatie verloren.
+Daarom gaat de voorkeur naar het plaatsen van de sensor aan de binnenzijde van de NAT.
+\\
+Waar men ook voor moet uitkijken bij het plaatsen van een sensor is of de hardware de bitsnelheid wel aankan.
+Als de link tussen de port mirror en de sensor een lager maximum bits/s heeft dan bitsnelheid van de combinatie van de beide richtingen van de te capteren poort, kan er packet loss optreden.
+NIDS engines kunnen hiermee wel overweg, maar het zorgt natuurlijk voor verlies van informatie.
 
 \section{HIDS}
 % Omschrijving principe: agents op clients loggen naar een master server
