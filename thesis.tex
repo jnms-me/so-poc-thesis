@@ -85,17 +85,17 @@ onderwerp (methode, doelstelling, enz.).
 \chapter{Intrusion detection}
 Intrusion detection is het monitoren van systemen op verdachte activiteit.
 Dit omvat pogingen tot hacken, verspreiding van virussen of malware, aanwezigheid van rogue devices\dots
-\\
+
 Intrusion detection gebeurt typisch volledig passief.
 De logs die een IDS (Intrusion detection system) produceert kunnen worden verstuurd naar een administrator als een alert.
 In grotere systemen worden deze logs centraal verzameld om deze anomalieën effectief te kunnen analyseren.
 \autocite{wikipedia:ids}
-\\
+
 Intrusion detection systemen worden opgedeeld in 2 soorten: network (NIDS) en host (HIDS) intrusion detection.
 
 \section{NIDS}
 Een network intrusion detection systeem (NIDS) monitort een netwerkverbinding.
-\\
+
 De 2 grote NIDS software projecten zijn Snort en Suricata.
 Voor een groot deel werken de 2 systemen identiek voor een eindgebruiker.
 Zo is de NIDS rule syntax van Snort en Suricata bijna gelijk.
@@ -104,8 +104,9 @@ Het verschil ligt in specifieke features (zie \url{https://suricata.readthedocs.
 \subsection{Regels}
 Een NIDS monitort gecapteerd netwerkverkeer aan de hand van een lijst van regels.
 Deze regels volgen een bepaalde syntax.
-\\
+
 Een voorbeeld van een nids rule is als volgt (figuur \ref{fig:nids-rule}).
+
 \begin{figure}[h]
   \begin{lstlisting}
 alert tcp $EXTERNAL_NET any -> $INTERNAL_NET 3306 (msg:"Inbound SQL connection"; sid:1000000;)
@@ -113,10 +114,11 @@ alert tcp $EXTERNAL_NET any -> $INTERNAL_NET 3306 (msg:"Inbound SQL connection";
   \caption{Een nids rule.}
   \label{fig:nids-rule}
 \end{figure}
+
 Deze rule zorgt ervoor dat er een alert wordt gegenereerd wanneer de NIDS engine een tcp verbinding ziet van het extern netwerk naar het intern netwerk op poort 3306.
 Het extern netwerk is meestal het internet of een WAN, het intern netwerk is meestal een LAN.
 Volgens het tcp client-server model is de client een externe host en de server een interne host.
-\\
+
 Poort 3306 is gereserveerd voor MySQL database verbindingen \autocite{iana:ports}.
 Deze verbindingen kunnen perfect normaal zijn als de client een vertrouwde host is.
 In dit geval is de client echter een externe host die acties probeert uit te voeren op een interne MySQL database.
@@ -124,11 +126,12 @@ Dit is verdachte activiteit, vandaar het type alert.
 
 \subsection{Variabelen}
 Om regels zo effectief mogelijk te maken, worden er variabelen geïntroduceerd.
+
 De 2 meest gebruikte variabelen zijn het \verb!INTERNAL_NET! en het \verb!EXTERNAL_NET!.
 Bijna alle regels gebruiken minstens 1 van deze variabelen, daarom is het van groot belang om deze in te stellen.
 Als een variabele niet ingesteld is, worden regels die deze variabele gebruiken genegeerd.
-\\
-Variabelen kunnen ook de waarde \verb!any! gebruiken.
+
+Variabelen kunnen ook de waarde \verb!any! aannemen.
 Dit kan zorgen voor veel false alerts, maar is wel nuttig in gesloten netwerken waar incidenten zich enkel intern afspelen.
 
 % Subscription models
@@ -139,23 +142,23 @@ Dit kan zorgen voor veel false alerts, maar is wel nuttig in gesloten netwerken 
 Een NIDS engine zoals Snort of Suricata wordt normaal gebruikt om te capteren op 1 netwerkinterface.
 Deze interface ontvangt typisch een kopie van een punt in het netwerk.
 Dit noemt men een port mirror.
-\\
+
 Een voorbeeld van een technologie die port mirroring toelaat is SPAN.
 Deze is aanwezig in bijvoorbeeld een switch en kopieert alle pakketten van een source poort naar een destination poort.
 Daarnaast kan RSPAN gebruikt worden om gecapteerde pakketten over een laag 2 netwerk te transporteren.
 Ten slotte kan ERSPAN op de zelfde manier gebruikt worden om een port mirror te transporteren over een laag 3 netwerk.
 \autocite{cisco:span}
-\\
+
 Het geheel van een NIDS engine die al het netwerkverkeer op 1 punt in een netwerk capteert, noemt men een sensor.
 Eén of meerdere sensoren kunnen in een netwerk geplaatst worden op strategische punten.
 Dit zijn vaak plaatsen waar een vertrouwd netwerk wordt verbonden met een extern netwerk.
-\\
+
 De meest interresante plaats om een sensor te plaatsen in een bedrijfsnetwerk is meestal de plaats waar NAT toegepast wordt.
 Dit is omdat alle communicatie met externe netwerken doorheen dit punt passeert.
 Als zo'n sensor aan de buitenkant van de NAT staat, zijn de interne ip-adressen niet zichtbaar.
 We zien enkel ip-communicatie tussen de NAT-pool en externe netwerken, zo gaat er veel informatie verloren.
 Daarom gaat de voorkeur naar het plaatsen van de sensor aan de binnenzijde van de NAT.
-\\
+
 Waar men ook voor moet uitkijken bij het plaatsen van een sensor is of de hardware de bitsnelheid wel aankan.
 Als de link tussen de port mirror en de sensor een lager maximum bits/s heeft dan bitsnelheid van de combinatie van de beide richtingen van de te capteren poort, kan er packet loss optreden.
 NIDS engines kunnen hiermee wel overweg, maar het zorgt natuurlijk voor verlies van informatie.
@@ -182,6 +185,9 @@ Met jaarlijkse conferenties bleef het project groeien.
 In 2018 begon de ontwikkeling van een nieuw project, Security Onion Hybrid Hunter.
 Hybrid Hunter is nog steeds in experimentele staat, en het wordt afgeraden dit systeem te gebruiken in een productieomgeving.
 
+\section{Features}
+Security Onion heeft veel te bieden om een goed inzicht te krijgen grote hoeveelheden netwerkverkeer waar standalone tools als Suricata of Wireshark te onoverzichtelijk worden.
+
 \section{Deployment scenario's}
 Security Onion kan op verschillende manieren geïnstalleerd worden.
 Dankzij de architectuur van het gehele systeem kunnen bepaalde taken weggenomen worden van de ene server, zodat een andere server met meer geschikte hardware deze taken kan behandelen.
@@ -205,7 +211,7 @@ Zie figuur \ref{fig:so-architecture-standalone} voor een schema.
 \subsection{Distributed Production Mode}
 Het laatste mogelijke scenario bestaat uit meerdere nodes met elk een unieke rol.
 Zie figuur \ref{fig:so-architecture-distributed} voor een schema.
-\\
+
 Elke node heeft standaard een OSSEC daemon actief.
 Deze dient om aan Host-based intrusion detection te doen op het Security Onion systeem zelf.
 
@@ -216,7 +222,7 @@ De gecapteerde pakketten worden door enkele services verwerkt: Netsniff-NG voor 
 Alle logs die Zeek en Suricata of Snort genereren worden meteen doorgestuurd naar de Logstash instantie op de master server.
 De full packet capture van netsniff-ng, blijft echter op de forward node aanwezig.
 Deze pcap files kunnen opgehaald worden wanneer ze nodig zijn en worden automatisch verwijderd wanneer er te weinig vrije plaats is op de disk.
-\\
+
 Door meerdere forward nodes strategisch te plaatsen in een netwerk, kan er veel beter inzicht verkregen worden in het netwerk.
 
 \subsubsection{Master node}
