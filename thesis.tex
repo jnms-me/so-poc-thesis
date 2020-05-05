@@ -134,6 +134,16 @@ Dit kan zorgen voor veel false alerts, maar is wel nuttig in gesloten netwerken 
 % Limitatie linksnelheid (of andere term)
 % Schets hoe het netwerk eruit ziet tov de mirror op laag 2 en op laag 3 voor of na de NAT
 % Altijd verbindingen tussen 2 verschillende netwerken tussen 2 routers bvb
+Een NIDS engine zoals Snort of Suricata wordt normaal gebruikt om te capteren op 1 netwerkinterface.
+Deze interface ontvangt typisch een kopie van een punt in het netwerk.
+Dit noemt men een port mirror.
+\\
+Een voorbeeld van een technologie die port mirroring toelaat is SPAN.
+Deze is aanwezig in bijvoorbeeld een switch en kopieert alle pakketten van een source poort naar een destination poort.
+Daarnaast kan RSPAN gebruikt worden om gecapteerde pakketten over een laag 2 netwerk te transporteren.
+Ten slotte kan ERSPAN op de zelfde manier gebruikt een port mirror te transporteren over een laag 3 netwerk.
+\autocite{cisco:span}
+
 \section{HIDS}
 % Omschrijving principe: agents op clients loggen naar een master server
 % Niet uitgebreid
