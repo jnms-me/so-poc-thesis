@@ -188,6 +188,26 @@ Hybrid Hunter is nog steeds in experimentele staat, en het wordt afgeraden dit s
 \section{Features}
 Security Onion heeft veel te bieden om een goed inzicht te krijgen grote hoeveelheden netwerkverkeer waar standalone tools als Suricata of Wireshark te onoverzichtelijk worden.
 
+\subsection{NIDS}
+Als een deels afgesloten systeem is er NIDS.
+Dit bestaat uit een NIDS engine, ofwel Snort ofwel Suricata, die binnenkomende pakketten vergelijkt met een lijst van rules en al dan niet een alert van bepaalde prioriteit genereert.
+Die alerts worden verzonden naar beide Logstash en Sguild.
+
+In Logstash worden de alerts behandeld als logs.
+Deze logs zijn dan zichtbaar in Elasticsearch en Kibana.
+
+Sguild is een database voor IDS alerts.
+De frontend tools Sguil en Squert voeren queries uit op deze database om de alerts aan de analyst te presenteren.
+
+De HIDS info van OSSEC is ook zichtbaar in beide Elasticsearch en Sguild, maar dit is standaard beperkt tot de OSSEC daemons die op de Security Onion servers zelf opereren.
+
+Mijn voorkeur van NIDS engine gaat naar Suricata, vooral omdat het moderner is.
+Suricata heeft afgewerkte ondersteuning voor multithreading en naar mijn mening betere documentatie.
+
+Bij het analyseren van alerts heb ik vooral squert gebruikt.
+Opnieuw is dit een veel gebruiksvriendelijkere en moderne tool dan Sguil.
+Sguil heeft wel bepaalde mogelijkheden die ontbreken bij Squert zoals manueel SQL queries uitvoeren op de Sguild database.
+
 \section{Deployment scenario's}
 Security Onion kan op verschillende manieren geïnstalleerd worden.
 Dankzij de architectuur van het gehele systeem kunnen bepaalde taken weggenomen worden van de ene server, zodat een andere server met meer geschikte hardware deze taken kan behandelen.
@@ -244,8 +264,6 @@ Deze worden afgeraden om te gebruiken, maar kunnen wel gebruikt worden wanneer f
   \caption{Distributed Production deployment \autocite{so:docs}}
   \label{fig:so-architecture-distributed}
 \end{figure}
-
-
 
 % Doelstellingen van SO, een tool voor analysts, gericht op enterprise netwerken
 % Elk stack (log sources -> logstash -> elasticsearch -> kibana & elastalert)
