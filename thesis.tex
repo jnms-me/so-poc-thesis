@@ -241,6 +241,8 @@ Security Onion voorziet uitgebreide logs in elasticsearch die alle informatie va
 In Kibana zijn er een 40-tal dashboards aanwezig met in totaal zo'n 400 visualisaties.
 Dit is zeker de meest handige tool voor een analyst, Kibana stond aan de kern van elke analyse die ik uitvoerde.
 
+% elastalert
+
 \section{Deployment scenario's}
 Security Onion kan op verschillende manieren geïnstalleerd worden.
 Dankzij de architectuur van het gehele systeem kunnen bepaalde taken weggenomen worden van de ene server, zodat een andere server met meer geschikte hardware deze taken kan behandelen.
@@ -298,12 +300,13 @@ Deze worden afgeraden om te gebruiken, maar kunnen wel gebruikt worden wanneer f
   \label{fig:so-architecture-distributed}
 \end{figure}
 
-% Doelstellingen van SO, een tool voor analysts, gericht op enterprise netwerken
-% Elk stack (log sources -> logstash -> elasticsearch -> kibana & elastalert)
-% Nids stack (suricata -> sguild -> squert)
-
 \chapter{Ontwikkelen van een aangepast systeem}
 % Proberen schema hier te verwerken
+\section{Motivatie}
+Na het bekijken van de opnames van enkele presentaties van de Security Onion Conference 2019, bemerkte ik dat er veel mensen proberen externe tools te integreren met Security Onion.
+\autocite{so:conference-2019}
+Vaak is het doel dan om meer informatie te verzamelen aan de hand van bijvoorbeeld externe bronnen en om die informatie centraal beschikbaar te stellen.
+
 \section{Gebruikte technologie\"en}
 \subsection{Debian}
 % Simpelweg een host os nodig
