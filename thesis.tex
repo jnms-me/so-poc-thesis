@@ -115,6 +115,8 @@ Deze verbindingen kunnen perfect normaal zijn als de client een vertrouwde host 
 In dit geval is de client echter een externe host die acties probeert uit te voeren op een interne MySQL database.
 Dit is verdachte activiteit, vandaar het type alert.
 
+% Voorbeeld downloaded rules
+
 \subsection{Variabelen}
 Om regels zo effectief mogelijk te maken, worden er variabelen geïntroduceerd.
 
@@ -195,9 +197,49 @@ De HIDS info van OSSEC is ook zichtbaar in beide Elasticsearch en Sguild, maar d
 Mijn voorkeur van NIDS engine gaat naar Suricata, vooral omdat het moderner is.
 Suricata heeft afgewerkte ondersteuning voor multithreading en naar mijn mening betere documentatie.
 
-Bij het analyseren van alerts heb ik vooral squert gebruikt.
+Bij het analyseren van alerts heb ik vooral Squert gebruikt.
 Opnieuw is dit een veel gebruiksvriendelijkere en moderne tool dan Sguil.
-Sguil heeft wel bepaalde mogelijkheden die ontbreken bij Squert zoals manueel SQL queries uitvoeren op de Sguild database.
+Sguil heeft wel bepaalde mogelijkheden die ontbreken bij Squert zoals het manueel uitvoeren van SQL queries op de Sguild database.
+
+\subsection{Zeek}
+Security Onion definieert een sensor als een verzameling van services die actief zijn op 1 netwerkinterface.
+Alle configuratie voor 1 zo'n sensor bevindt zich in een map \lstinline|/etc/nsm/[hostname]-[interface]|.
+Naast Suricata of Snort (de NIDS engine) is er nog een andere service die de gecapteerde pakketten analyseert.
+Deze service is Zeek.
+
+Zeek (vroeger Bro) is een open-source analyser voor netwerkverkeer.
+Van de officiële documentatie:
+``Zeek is a passive, open-source network traffic analyzer.
+It is primarily a security monitor that inspects all traffic on a link in depth for signs of suspicious activity.
+More generally, however, Zeek supports a wide range of traffic analysis tasks even outside of the security domain, including performance measurements and helping with trouble-shooting.''
+\autocite{zeek:docs}
+
+Zeek heeft de mogelijkheid om gedetailleerde logs te genereren van veel verschillende soorten netwerkverkeer.
+Bij tcp verbindingen wordt er bijvoorbeeld bijgehouden wat de source en destination poort was, hoeveel data er uitgewisseld is geweest en hoe de verbinding beëindigd werd.
+Udp en icmp pakketten worden gelijkaardig behandeld.
+Bij applicatielaag protocollen worden er veel details gehaald uit de plain-text protocollen zoals HTTP, FTP, DNS, MySQL\dots
+Ook geëncrypteerde protocollen die SSL gebruiken worden geanalyseerd op \emph{self-signed} en verlopen certificaten.
+
+Enkele velden komen in bijna elke log voor, zoals het source en destination ip-adres.
+Hierdoor is het mogelijk om snel correlaties te vinden in verschillende logs met een tool als Kibana.
+
+Deze logs zijn beschikbaar in json-formaat in \lstinline|/nsm/bro/logs|.
+De logs worden geconsumeerd door syslog-ng.
+Daarna komen ze terrecht in de ELK stack, waar er meer informatie wordt toegevoegd en ze uiteindelijk zichtbaar zijn in Kibana.
+\autocite{so:docs}
+
+\subsection{ELK stack}
+ELK staat voor Elasticsearch, Logstash, and Kibana.
+De ELK stack is een open-source systeem voor het beheren en visualiseren van data (logs) van meerdere bronnen.
+
+Logstash neemt data binnen van verschillende bronnen zoals NIDS, HIDS en Zeek, verrijkt deze bronnen met bijvoorbeeld links naar de volledige pcap files en slaat deze logs op in elasticsearch.
+Elasticsearch heeft een uitgebreide api om allerlei soorten zoekopdrachten uit te voeren op deze logs.
+Een analyst kan dan de browser gebaseerde tool Kibana gebruiken om de logs in elasticsearch te visualiseren.
+\autocite{elastic:what-is-elk}
+
+Security Onion voorziet uitgebreide logs in elasticsearch die alle informatie van NIDS, HIDS en Zeek omvatten.
+In Kibana zijn er een 40-tal dashboards aanwezig met in totaal zo'n 400 visualisaties.
+Dit is zeker de meest handige tool voor een analyst, Kibana stond aan de kern van elke analyse die ik uitvoerde.
 
 \section{Deployment scenario's}
 Security Onion kan op verschillende manieren geïnstalleerd worden.
