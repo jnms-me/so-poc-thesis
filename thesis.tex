@@ -171,7 +171,7 @@ It includes Elasticsearch, Logstash, Kibana, Snort, Suricata, Zeek, Wazuh, Sguil
 \section{Geschiedenis}
 In 2008 begon Doug Burks met het ontwikkelen van Security Onion.
 Een eerste versie van het project werd gepubliceerd in 2009.
-Omdat de linux distributie meer populariteit kreeg, werd het in 2012 volledig herschreven met het doel om performantie en schaalbaarheid te verbeteren.
+Omdat de Linux distributie meer populariteit kreeg, werd het in 2012 volledig herschreven met het doel om performantie en schaalbaarheid te verbeteren.
 In 2014 werd Security Onion Solutions LLC opgericht om professionele ondersteuning aan te bieden aan bedrijven.
 Met jaarlijkse conferenties bleef het project groeien.
 \autocite{so:sos}
@@ -348,6 +348,25 @@ Omwille van deze redenen koos ik de huidige \emph{stable} branch van Debain: Deb
 \subsection{Docker}
 % Docker presenteren als tool om linux containers of namespaces (een kernel feature) te beheren
 % Docker kan een stuk meer zoals met windows containers, maar dit is alles wat we gebruiken
+Docker is een verzameling van tools voor het beheren van software containers.
+Deze containers zijn applicaties gebundeld met al hun dependencies en configuratie.
+Docker is beschikbaar voor enkele verschillende omgevingen, maar voor dit systeem wordt enkel de Linux versie gebruikt.
+
+Docker gebruikt enkele Linux kernel features, vooral Linux namespaces die toelaten om zaken zoals bestandssystemen en de netwerk stack te isoleren.
+Dit zorgt ervoor dat Docker containers een volledig andere installatie van Linux kunnen bevatten, het enige wat hetzelfde blijft is de achterliggende Linux kernel.
+
+Dit isolatie systeem zorgt er voor dat er enkele handige features aanwezig zijn in Docker.
+Zo kunnen bestanden, mappen en zelfs Unix sockets gelinkt worden tussen host en container.
+Ook kunnen tcp of udp poorten geforward worden naar interfaces van de host en kunnen er ip netwerken gemaakt worden tussen verschillende containers en de host.
+
+Docker kan door softwareontwikkelaars gebruikt worden om hun applicaties samen met alle nodige libraries en andere dependencies, als 1 pakket te publiceren.
+Deze applicataties kunnen dan gedownload worden als een Docker image.
+Docker kan ook gebruikt worden bij het ontwikkelen van systemen die bestaan uit meerdere applicaties.
+Een typisch voorbeeld hiervan is een webserver en een database.
+De http poort van de webserver container wordt dan geforward naar de host en de database container is bereikbaar via een intern netwerk waar beide containers mee verbonden zijn.
+
+\autocite{docker:containers}
+
 \subsubsection{Docker compose}
 % Github repo presenteren
 % Indien het overzichtelijk gebruikt wordt, tool om het volledige systeem mee te ontwerpen
