@@ -314,18 +314,37 @@ Deze worden afgeraden om te gebruiken, maar kunnen wel gebruikt worden wanneer f
 % Geen simulatie meer, maar een proof of concept
 
 \section{Server}
+\label{sec:server}
+Tijdens mijn stage bij Fluvius kreeg ik een rack-mounted server ter beschikking.
+Het was de bedoeling om deze in een serverruimte te plaatsen waar er 2 utp kabels voorzien werden.
+Deze 2 kabels werden aangesloten op 2 netwerkinterfaces van de server.
+De eerste diende als management interface, op deze interface moest een statisch publiek IPv4 adres geconfigureerd worden.
+De tweede interface kreeg een port mirror van een netwerk binnen Fluvius.
+
+Deze server configureerde ik eerst op een andere locatie, waar ik fysieke toegang had tot de server.
+Eerst zorgde ik dat het host OS geïnstalleerd was, de netwerkconfiguratie aangepast was en toegang op afstand beschikbaar was via ssh.
+Dan verwijderde ik de tijdelijke internetverbinding, stelde ik het statisch publiek ip adres in en testte of dit werkte.
+Ten slotte werd deze server geïnstalleerd in de serverruimte, waarna ik fysieke toegang verloor.
+De server moest altijd operationeel blijven en de toegang op afstand mocht nooit verloren gaan.
 
 \chapter{Ontwikkelen van een aangepast systeem}
 % Proberen schema hier te verwerken
 \section{Motivatie}
 Na het bekijken van de opnames van enkele presentaties van de Security Onion Conference 2019, bemerkte ik dat er veel mensen proberen externe tools te integreren met Security Onion.
 \autocite{so:conference-2019}
-Vaak is het doel dan om meer informatie te verzamelen aan de hand van bijvoorbeeld externe bronnen en om die informatie centraal beschikbaar te stellen.
+Vaak is het doel om in de eerste plaats meer informatie te verzamelen aan de hand van bijvoorbeeld het raadplegen van externe bronnen.
+Daarna moet die informatie centraal beschikbaar gesteld worden in een tool als Kibana.
 
 \section{Gebruikte technologie\"en}
 \subsection{Debian}
-% Simpelweg een host os nodig
-% Korte uitleg fysieke server geconfgureerd en in serverruimte geplaatst
+Heel dit systeem is aanwezig op de server eerder besproken in sectie \ref{sec:server}.
+In de eerste plaats was er een OS nodig om dit systeem op uit te voeren.
+
+In de keuze van besturingssysteem waren 2 zaken belangrijk.
+Het OS moest zeer stabiel zijn, het mocht nooit crashen tijdens het ontwikkelen of uitvoeren van dit systeem.
+Daarnaast moest ik altijd de toegang op afstand bewaren.
+Omwille van deze redenen koos ik de huidige \emph{stable} branch van Debain: Debian Buster.
+
 \subsection{Docker}
 % Docker presenteren als tool om linux containers of namespaces (een kernel feature) te beheren
 % Docker kan een stuk meer zoals met windows containers, maar dit is alles wat we gebruiken
