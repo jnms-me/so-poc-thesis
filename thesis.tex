@@ -362,9 +362,6 @@ Ook kunnen tcp of udp poorten geforward worden naar interfaces van de host en ku
 
 Docker kan door softwareontwikkelaars gebruikt worden om hun applicaties samen met alle nodige libraries en andere dependencies, als 1 pakket te publiceren.
 Deze applicaties kunnen dan gedownload worden als een Docker image.
-Docker kan ook gebruikt worden bij het ontwikkelen van systemen die bestaan uit meerdere applicaties.
-Een typisch voorbeeld hiervan is een webserver en een database.
-De http poort van de webserver container wordt dan geforward naar de host en de database container is bereikbaar via een intern netwerk waar beide containers mee verbonden zijn.
 
 % Docker logo
 
@@ -379,14 +376,87 @@ De http poort van de webserver container wordt dan geforward naar de host en de 
 % Indien het overzichtelijk gebruikt wordt, tool om het volledige systeem mee te ontwerpen
 % Compose files tonen
 
+Docker kan ook gebruikt worden bij het ontwikkelen van systemen die bestaan uit meerdere applicaties.
+Een typisch voorbeeld hiervan is een webserver en een database.
+De http poort van de webserver container wordt dan geforward naar de host en de database container is bereikbaar via een intern netwerk waar beide containers mee verbonden zijn.
+
+Zo'n soort configuraties worden vergemakkelijkt met Docker compose.
+Aan de hand van een \lstinline|docker-compose.yml| file en de command-line tool \lstinline|docker-compose| kunnen applicaties ontwikkelt worden die uit meerdere containers bestaan.
+\autocite{docker:compose}
+
+Figuur \ref{fig:compose-web-example} is de inhoud van een voorbeeld \lstinline|docker-compose.yml| file van een webserver en een database.
+De image voor de web container wordt gebouwd aan de hand van de \lstinline|Dockerfile| in de map \lstinline|web|.
+Tcp poort 80 op elke interface van de host wordt geforward naar poort 80 op de interface van de web container.
+De image van de MariaDB database wordt opgehaald van een repository zoals Docker Hub.
+Deze MariaDB image is zo gemaakt dat het enkel omgevingsvariabelen herkent om makkelijk een nieuwe database en gebruiker aan te maken.
+
+\begin{figure}[h]
+  \begin{lstlisting}
+version: '3.7'
+services:
+  web:
+    build: web
+    ports:
+      - 80:80
+    depends_on:
+      - db
+  db:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: randomized
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      MYSQL_DATABASE: web
+      MYSQL_USER=web
+      MYSQL_PASSWORD=web
+  \end{lstlisting}
+  \caption{Voorbeeld van een \lstinline|docker-compose.yml| file voor een webserver en database}
+  \label{fig:compose-web-example}
+\end{figure}
+
+Dit systeem bestaat bijna volledig uit Docker containers die beheerd worden met Docker compose.
+Er zijn meerdere YAML files aanwezig, 1 voor elke applicatie.
+Figuur \ref{fig:compose-so-poc-files} is een overzicht van al deze files.
+Het bestand \lstinline|compose| is een wrapper script voor \lstinline{docker-compose} die al deze bestanden correct combineert met meerdere \lstinline|-p| flags.
+
+\begin{figure}[h]
+  \begin{lstlisting}
+.
+|- compose
+|- docker-compose.misp.yml
+|- docker-compose.netdata.yml
+|- docker-compose.ntop.yml
+|- docker-compose.so-manager.yml
+|- docker-compose.so-vm.yml
+|- docker-compose.thehive.yml
+|- docker-compose.yml
+|- ...
+  \end{lstlisting}
+  \caption{Alle relevante Docker compose bestanden in het so-poc project}
+  \label{fig:compose-so-poc-files}
+\end{figure}
+
 \subsection{Libvirt}
-% Open source hypervisor
-% Werkt samen met qemu en KVM
+% logo
+De meeste applicaties worden uitgevoerd in docker containers, op 1 na: Security Onion.
+Security Onion is niet het meest stabiele systeem om altijd toegang te hebben op afstand, omwille van het regelmatig herstarten tijdens de configuratie en voorgeïnstalleerde firewall.
+Om deze toegang zeker niet te verliezen, besloot ik om Security Onion te virtualiseren.
+
+Libvirt is een open source toolkit voor het beheren van virtuele machines voor Linux, BSD en OSX.
+Libvirt zelf kan geen virtuele machines uitvoeren, maar kan samen werken met QEMU en KVM om een volledige hypervisor te vormen.
+QEMU is een command line applicatie voor het emuleren en virtualiseren van \emph{machines}.
+Eén van de features van QEMU is om de KVM (Kernel-based Virtual Machine) technologie van de Linux kernel te gebruiken om performante virtuele machines te creëren.
+
+Libvirt definieert virtuele machines in XML documenten die gevalideerd worden aan de hand van XML schema's.
+Het aanmaken en aanpassen van virtuele machines wordt echter meestal gedaan met een GUI tool zoals \lstinline|virt-manager|.
+Soms kan het wel nodig zijn om deze XML files handmatig te bewerken, omdat QEMU zodanig veel opties heeft.
+\autocite{libvirt:docs}
+
+Het GUI programma \lstinline|virt-manager| hoeft niet op de server zelf geïnstalleerd te zijn, maar kan ook op afstand werken over een ssh verbinding.
+% Screenshot virt-manager
+
 % Uitleggen wat een hypervisor is en bekende alternatieven zoals hyper-v (windows) en virtualbox aanhalen
 
 \section{Intern netwerk}
-% SO en so-poc zitten in een apart /24 subnet
-% 1 wordt beheerd door docker, het andere door libvirt
 Vanuit het perspectief van het host besturingssysteem Debian, zijn er 4 interfaces actief.
 Deze bestaan uit de management poort, de capture poort, een Libvirt virtueel netwerk en een Docker intern netwerk.
 
@@ -460,6 +530,7 @@ networks:
 \subsection{Proxy}
 % Web proxy wordt ingezet om ze te verbinden
 % Https eerst downgraden, binnen docker http, in https-portal weer upgraden
+De combinatie van de RAID controller en de harde schijven in de server gaf minstens 2 logische schijven.
 
 \section{Web app}
 \subsection{React}
