@@ -474,8 +474,8 @@ In Libvirt gebeurt dit via de interface passthrough feature.
 In Docker kunnen bepaalde containers toegang krijgen tot het `host net', waar ze toegang hebben aan de capture poort.
 
 \subsubsection{Libvirt virtueel netwerk}
-In Libvirt is er 1 virtueel netwerk aangemaakt: \lstinline|192.168.100.0/24|.
-In dit netwerk zijn 2 hosts aanwezig: het host besturingssysteem met ip \lstinline|192.168.100.1| en de Security Onion vm met ip \lstinline|192.168.100.2|.
+In Libvirt is er 1 virtueel netwerk aangemaakt: \lstinline|192.168.101.0/24|.
+In dit netwerk zijn 2 hosts aanwezig: het host besturingssysteem met ip \lstinline|192.168.101.1| en de Security Onion vm met ip \lstinline|192.168.101.2|.
 Op deze interface wordt er NAT toegepast, zodat de Security Onion vm externe netwerken zoals het internet kan bereiken via het publieke ip van de management interface.
 
 Dit netwerk werd aangemaakt met de tool \lstinline|virt-manager|.
@@ -526,11 +526,76 @@ networks:
   \label{fig:docker-compose-network}
 \end{figure}
 
+\section{Structuur project}
+Zoals eerder aangehaald is het systeem ontworpen aan de hand van Docker compose.
+Elke service heeft een eigen container en elke volledige applicatie (verzameling van services) heeft een eigen \lstinline|docker-compose.yml| file.
+Zo zijn er 6 applicaties: so-vm, so-manager, MISP, TheHive, Ntop en Netdata.
+
+\subsection{Structuur bestanden}
+De Docker compose configuratie voor elke configuratie staat in een bestand \lstinline|docker-compose.applicatie.yml| en alle 
+Alle bestanden die nodig zijn om een applicatie correct te laten werken zijn aanwezig in een map met de naam van de applicatie, met een submap per service of container.
+Een volledig overzicht van deze bestanden staat in figuur \ref{fig:so-poc-structuur-docker-compose-containers}.
+\\
+Elke submap bevat bestanden die nodig zijn voor het bouwen of configureren van een service.
+Meestal bestaat dit uit een Dockerfile en enkele configuratiefiles en/of de broncode van de service.
+
+\begin{figure}[h]
+  \begin{lstlisting}
+.
+|- docker-compose.misp.yml
+|- docker-compose.netdata.yml
+|- docker-compose.ntop.yml
+|- docker-compose.so-manager.yml
+|- docker-compose.so-vm.yml
+|- docker-compose.thehive.yml
+|- docker-compose.yml
+|- misp
+| |- misp-proxy
+| \- web
+|- netdata
+| |- netdata
+| \- netdata-proxy
+|- ntop
+| |- ntopng
+| \- ntop-proxy
+|- security-onion
+| \- rootfs
+|- so-manager
+| |- api
+| |- gotty
+| |- react
+| \- so-manager-proxy
+|- so-vm
+| \- so-vm-proxy
+|- thehive
+  |- thehive
+  |- thehive-proxy-cortex
+  \- thehive-proxy-thehive
+  \end{lstlisting}
+  \caption{Overzicht van de structuur van bestanden in het project}
+  \label{fig:so-poc-structuur-docker-compose-containers}
+\end{figure}
+
+\subsection{HTTP proxies}
+% Nginx logo
+% Let's Encrypt
+Merk op dat in figuur \ref{fig:so-poc-structuur-docker-compose-containers} elke applicatie een \emph{proxy} container heeft.
+
 \section{Security Onion}
+\subsection{Installatie}
+Security Onion werd dus geïnstalleerd in een Libvirt/Qemu/KVM virtuele machine.
+De vm is bereikbaar op het ip adres \lstinline|192.168.101.2|.
+Deze installatie van Security Onion is een Standalone Production Mode installatie, bestaande uit 1 master node.
+\\
+De vm heeft 2 netwerk interfaces, een management interface met ip \lstinline|192.168.101.2| en een capture interface waar de port mirror op toekomt.
+De port mirror van de host wordt door Libvirt doorgevoerd (passthrough) naar de vm.
+\\
+Aangezien de combinatie van de RAID controller en de harde schijven aanwezig in de server resulteerde in minstens 2 logische schijven, heb ik 1 schijf toegewezen aan de Debian host en de andere aan de Security Onion vm.
+Beide logische schijven zijn RAID-5 arrays.
+
 \subsection{Proxy}
 % Web proxy wordt ingezet om ze te verbinden
 % Https eerst downgraden, binnen docker http, in https-portal weer upgraden
-De combinatie van de RAID controller en de harde schijven in de server gaf minstens 2 logische schijven.
 
 \section{Web app}
 \subsection{React}
