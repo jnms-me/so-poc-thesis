@@ -535,7 +535,7 @@ Zo zijn er 6 applicaties: so-vm, so-manager, MISP, TheHive, Ntop en Netdata.
 De Docker compose configuratie voor elke configuratie staat in een bestand \lstinline|docker-compose.applicatie.yml| en alle 
 Alle bestanden die nodig zijn om een applicatie correct te laten werken zijn aanwezig in een map met de naam van de applicatie, met een submap per service of container.
 Een volledig overzicht van deze bestanden staat in figuur \ref{fig:so-poc-structuur-docker-compose-containers}.
-\\
+
 Elke submap bevat bestanden die nodig zijn voor het bouwen of configureren van een service.
 Meestal bestaat dit uit een Dockerfile en enkele configuratiefiles en/of de broncode van de service.
 
@@ -576,20 +576,106 @@ Meestal bestaat dit uit een Dockerfile en enkele configuratiefiles en/of de bron
   \label{fig:so-poc-structuur-docker-compose-containers}
 \end{figure}
 
-\subsection{HTTP proxies}
+\subsection{HTTP reverse-proxies}
+Merk op dat in figuur \ref{fig:so-poc-structuur-docker-compose-containers} elke applicatie een \emph{proxy} service of container heeft.
+Bijna elke applicatie heeft een http interface op 1 van de services binnen de applicatie, elk met een eigen poort.
+In plaats van al deze informatie bij te houden, besloot ik om elke applicatie een gelijke http interface te geven.
+In elke applicatie is er een service aanwezig met de naam \lstinline|applicatie-proxy| die http verbindingen op poort 80 doorgeeft aan de juiste service binnen de applicatie op de juiste poort.
+
+\subsubsection{Nginx}
 % Nginx logo
+De software die in elke reverse-proxy wordt gebruikt is Nginx, een open source webserver.
+Een van de features van Nginx is de mogelijkheid om als reverse-proxy te werken.
+Nginx heeft een officiële Docker image die ik gebruikt heb als basis.
+\autocite{nginx:about}
+
+\subsubsection{Voorbeeld}
+Als voorbeeld van een proxy service bespreek ik de service \lstinline|so-manager-proxy| in de applicatie \lstinline|so-manager|.
+
+In het bestand \lstinline|docker-compose.so-manager.yml| staat de service \lstinline|so-manager-proxy| gedefinieerd zoals in figuur \ref{fig:proxy-voorbeeld-compose}.
+Deze service wacht tot beide \lstinline|so-manager-react| en \lstinline|so-manager-api| opgestart zijn.
+De service is geconfigureerd om een nieuwe Docker image te bouwen volgens de inhoud van de map \lstinline|so-manager/so-manager-proxy|.
+
+Die `build' map bevat 2 bestanden: een \lstinline|Dockerfile| en \lstinline|server.conf|, een Nginx configuratiebestand.
+Zie figuur \ref{fig:proxy-voorbeeld-dockerfile} voor de inhoud van de \lstinline|Dockerfile| en figuur \ref{fig:proxy-voorbeeld-server-conf} voor de inhoud van \lstinline|server.conf|.
+
+Volgens de \lstinline|Dockerfile| is de image gebaseerd op de laatste versie van de officiële Nginx Docker image, maar wordt de default configuratie verwijderd en in de plaats ervan het bestand \lstinline|server.conf| gebruikt.
+
+% nginx configuratie, host header, 2 paden, proxy pass naar andere services http, geen access log of stub bespreken
+
+\begin{figure}[h]
+  \begin{lstlisting}
+services:
+  so-manager-proxy:
+    build: so-manager/so-manager-proxy
+    depends_on:
+      - so-manager-react
+      - so-manager-api
+  ...
+  \end{lstlisting}
+  \caption{Verkorte inhoud van het bestand \lstinline|docker-compose.so-manager.yml| in so-poc}
+  \label{fig:proxy-voorbeeld-compose}
+\end{figure}
+
+\begin{figure}[h]
+  \begin{lstlisting}
+FROM nginx
+RUN rm /etc/nginx/conf.d/default.conf
+COPY server.conf /etc/nginx/conf.d/
+  \end{lstlisting}
+  \caption{De inhoud van het bestand \lstinline|so-manager/so-manager-proxy/Dockerfile| in so-poc}
+  \label{fig:proxy-voorbeeld-dockerfile}
+\end{figure}
+
+\begin{figure}[h]
+  \begin{lstlisting}
+server {
+  listen 80;
+  server_name so-manager-proxy;
+
+  # React
+  location / {
+    proxy_pass http://so-manager-react;
+  }
+
+  location /api/ {
+    proxy_pass http://so-manager-api;
+  }
+
+  # Nginx status page
+  location /stub_status {
+    stub_status;
+    access_log off;
+  }
+}
+  \end{lstlisting}
+  \caption{Verkorte inhoud van het bestand \lstinline|./so-manager/so-manager-proxy/server.conf| in so-poc}
+  \label{fig:proxy-voorbeeld-server-conf}
+\end{figure}
+
+
+\subsubsection{Voordelen}
+Het feit dat er reverse-proxies gebruikt worden geeft niet alleen overal een gelijke http interface, maar vergemakkelijkt ook de configuratie van andere zaken.
+Elke reverse-proxy is ingesteld om \emph{access logs} bij te houden.
+Zo kan van elke applicatie de geschiedenis van http sessies opgevraagd worden, in hetzelfde formaat.
+Dit spaart veel tijd bij het toevoegen van een nieuwe applicatie.
+Daarnaast zijn de reverse-proxies geconfigureerd om enkele statistieken over recente http sessies te tonen op de \lstinline|/stub_status| pagina.
+Deze data wordt opgenomen door Netdata.
+Opnieuw is het veel gemakkelijker om nieuwe applicaties toe te voegen, aangezien de statistieken overal op dezelfde manier beschikbaar zijn.
+
+\subsection{Beveiliging}
 % Let's Encrypt
-Merk op dat in figuur \ref{fig:so-poc-structuur-docker-compose-containers} elke applicatie een \emph{proxy} container heeft.
+% https-portal
 
 \section{Security Onion}
 \subsection{Installatie}
 Security Onion werd dus geïnstalleerd in een Libvirt/Qemu/KVM virtuele machine.
 De vm is bereikbaar op het ip adres \lstinline|192.168.101.2|.
 Deze installatie van Security Onion is een Standalone Production Mode installatie, bestaande uit 1 master node.
-\\
+
 De vm heeft 2 netwerk interfaces, een management interface met ip \lstinline|192.168.101.2| en een capture interface waar de port mirror op toekomt.
 De port mirror van de host wordt door Libvirt doorgevoerd (passthrough) naar de vm.
-\\
+
 Aangezien de combinatie van de RAID controller en de harde schijven aanwezig in de server resulteerde in minstens 2 logische schijven, heb ik 1 schijf toegewezen aan de Debian host en de andere aan de Security Onion vm.
 Beide logische schijven zijn RAID-5 arrays.
 
