@@ -667,9 +667,64 @@ Daarnaast zijn de reverse-proxies geconfigureerd om enkele statistieken over rec
 Deze data wordt opgenomen door Netdata.
 Opnieuw is het veel gemakkelijker om nieuwe applicaties toe te voegen, aangezien de statistieken overal op dezelfde manier beschikbaar zijn.
 
-\subsection{Beveiliging}
+\subsubsection{Beveiliging}
+Al de http interfaces tot nu toe besproken, zijn enkel intern bereikbaar.
+Aangezien de server een publiek ip heeft, moeten alle verbindingen met de server beveiligd worden.
+Met ssh is dit al het geval, enkel de public keys van mijn eigen apparaten worden toegelaten.
+De publieke http interface moet dus ook geëncrypteerd worden en toegang moet beperkt zijn.
+
+Voor alle applicaties wordt er https voorzien door de service \lstinline|https-portal|.
+Deze service of container gebruikt de image https-portal van \url{https://hub.docker.com/r/steveltn/https-portal}.
+De service wordt geconfigureerd door enkele omgevingsvariabelen mee te geven.
+
+Alle configuratie van \lstinline|https-portal| is aanwezig in het bestand \lstinline|docker-compose.yml|.
+Merk op dat er geen applicatienaam in dit bestand voorkomt, dit is het hoofdbestand.
+In figuur \ref{fig:https-portal-compose} staat het onderdeel \emph{services} van dit bestand.
+
+De service \lstinline|https-portal| werkt als reverse-proxy.
+Afhankelijk van de \lstinline|Host| header worden http requests doorgegeven aan de reverse-proxy van 1 van de applicaties.
+Al deze routes zijn gedefinieerd in de omgevingsvariabele \lstinline|DOMAINS|.
+Communicatie met een externe client gebeurt altijd met https (geëncrypteerd) en communicatie met een interne applicatie gebeurt steeds met http (plain text).
+
+Om toegang tot de applicaties te beperken wordt er http(s) basic authentication gebruikt.
+Dit is een gebruikersnaam en wachtwoord die op voorhand ingesteld zijn in het \lstinline|.env| bestand.
+Bij sommige applicaties is dit echter niet van toepassing omdat ze zelf al authenticatie implementeren (Security Onion, TheHive en MISP).
+
 % Let's Encrypt
-% https-portal
+
+\begin{figure}[H]
+  \begin{lstlisting}
+services:
+  # Public service
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - so-vm-proxy
+      - so-manager-proxy
+      - thehive-proxy-thehive
+      - thehive-proxy-cortex
+      - ntop-proxy
+      - netdata-proxy
+      - misp-proxy
+    restart: always
+    environment:
+      WEBSOCKET: 'true'
+      DOMAINS: '
+        ${AUTH_USER}:${AUTH_PASS}@sopoc.duckdns.org -> http://so-manager-proxy,
+        so-sopoc.duckdns.org -> http://so-vm-proxy,
+        thehive-sopoc.duckdns.org -> http://thehive-proxy-thehive,
+        cortex-sopoc.duckdns.org -> http://thehive-proxy-cortex,
+        ${AUTH_USER}:${AUTH_PASS}@ntopng-sopoc.duckdns.org -> http://ntop-proxy,
+        ${AUTH_USER}:${AUTH_PASS}@netdata-sopoc.duckdns.org -> http://netdata-proxy,
+        misp-sopoc.duckdns.org -> http://misp-proxy
+      '
+  \end{lstlisting}
+  \caption{Definitie van de service https-portal in het bestand \lstinline|docker-compose.yml| in so-poc}
+  \label{fig:https-portal-compose}
+\end{figure}
 
 \section{Security Onion}
 \subsection{Installatie}
