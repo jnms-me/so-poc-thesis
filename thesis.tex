@@ -690,7 +690,8 @@ Om toegang tot de applicaties te beperken wordt er http(s) basic authentication 
 Dit is een gebruikersnaam en wachtwoord die op voorhand ingesteld zijn in het \lstinline|.env| bestand.
 Bij sommige applicaties is dit echter niet van toepassing omdat ze zelf al authenticatie implementeren (Security Onion, TheHive en MISP).
 
-% Let's Encrypt
+Het https certificaat wordt aangemaakt met de Certificate Authority (CA) \emph{Let's Encrypt}.
+Dit laat \lstinline|https-portal| toe om gratis en volledig automatisch nieuwe certificaten aan te vragen en ze te hernieuwen.
 
 \begin{figure}[H]
   \begin{lstlisting}
@@ -721,6 +722,7 @@ services:
         ${AUTH_USER}:${AUTH_PASS}@netdata-sopoc.duckdns.org -> http://netdata-proxy,
         misp-sopoc.duckdns.org -> http://misp-proxy
       '
+      STAGE: 'production'
   \end{lstlisting}
   \caption{Definitie van de service https-portal in het bestand \lstinline|docker-compose.yml| in so-poc}
   \label{fig:https-portal-compose}
