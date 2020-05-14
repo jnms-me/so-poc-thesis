@@ -2,6 +2,8 @@
 \usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry} % Custom margins
 \usepackage[dutch]{babel}
 \usepackage[T1]{fontenc} % Special chars
+\usepackage[section]{placeins}
+\usepackage{float}
 \usepackage{graphicx} % \includegraphics
 \graphicspath{{./img/}}
 \usepackage[hidelinks]{hyperref} % \url
@@ -99,11 +101,11 @@ Deze regels volgen een bepaalde syntax.
 
 Een voorbeeld van een nids rule is als volgt (figuur \ref{fig:nids-rule}).
 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{lstlisting}
 alert tcp $EXTERNAL_NET any -> $INTERNAL_NET 3306 (msg:"Inbound SQL connection"; sid:1000000;)
   \end{lstlisting}
-  \caption{Een nids rule.}
+  \caption{Een voorbeeld van een nids rule}
   \label{fig:nids-rule}
 \end{figure}
 
@@ -257,7 +259,7 @@ Deze is ideaal om de distributie te verkennen zonder het volledig te installeren
 Een tweede mogelijkheid die beter geschikt is voor permanente opstellingen is de \emph{Standalone Production Mode}.
 Hierbij werkt het volledige systeem vanaf 1 server: zowel de sensor, log management, opslag als de web interface vinden plaats op dezelfde \emph{Master node}.
 Zie figuur \ref{fig:so-architecture-standalone} voor een schema.
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.5\textwidth]{so-architecture-production-standalone}
   \caption{Standalone Production deployment \autocite{so:docs}}
@@ -294,7 +296,7 @@ Deze worden afgeraden om te gebruiken, maar kunnen wel gebruikt worden wanneer f
 
 \autocite{so:docs}
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{so-architecture-production-distributed}
   \caption{Distributed Production deployment \autocite{so:docs}}
@@ -390,7 +392,7 @@ Tcp poort 80 op elke interface van de host wordt geforward naar poort 80 op de i
 De image van de MariaDB database wordt opgehaald van een repository zoals Docker Hub.
 Deze MariaDB image is zo gemaakt dat het enkel omgevingsvariabelen herkent om makkelijk een nieuwe database en gebruiker aan te maken.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{lstlisting}
 version: '3.7'
 services:
@@ -418,7 +420,7 @@ Er zijn meerdere YAML files aanwezig, 1 voor elke applicatie.
 Figuur \ref{fig:compose-so-poc-files} is een overzicht van al deze files.
 Het bestand \lstinline|compose| is een wrapper script voor \lstinline{docker-compose} die al deze bestanden correct combineert met meerdere \lstinline|-p| flags.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{lstlisting}
 .
 |- compose
@@ -481,7 +483,7 @@ Op deze interface wordt er NAT toegepast, zodat de Security Onion vm externe net
 Dit netwerk werd aangemaakt met de tool \lstinline|virt-manager|.
 De XML definitie van dit netwerk is zichtbaar in figuur \ref{fig:libvirt-network-xml}.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{lstlisting}[language=XML]
 <network connections="1">
   <name>security-onion</name>
@@ -513,7 +515,7 @@ Docker voorziet alle containers in dit netwerk van een dynamisch ip.
 Dit is geen Implementatie van DHCP, maar simpelweg de Docker daemon die een ip adres toekent aan elke container die opstart.
 Docker zorgt er ook voor dat de containers elkaar kunnen vinden via DNS lookups van de naam van een Docker compose service. 
 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{lstlisting}
 networks:
   default:
@@ -539,7 +541,7 @@ Een volledig overzicht van deze bestanden staat in figuur \ref{fig:so-poc-struct
 Elke submap bevat bestanden die nodig zijn voor het bouwen of configureren van een service.
 Meestal bestaat dit uit een Dockerfile en enkele configuratiefiles en/of de broncode van de service.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{lstlisting}
 .
 |- docker-compose.misp.yml
@@ -572,7 +574,7 @@ Meestal bestaat dit uit een Dockerfile en enkele configuratiefiles en/of de bron
   |- thehive-proxy-cortex
   \- thehive-proxy-thehive
   \end{lstlisting}
-  \caption{Overzicht van de structuur van bestanden in het project}
+  \caption{Overzicht van de structuur van bestanden in het project so-poc}
   \label{fig:so-poc-structuur-docker-compose-containers}
 \end{figure}
 
@@ -600,10 +602,11 @@ Die `build' map bevat 2 bestanden: een \lstinline|Dockerfile| en \lstinline|serv
 Zie figuur \ref{fig:proxy-voorbeeld-dockerfile} voor de inhoud van de \lstinline|Dockerfile| en figuur \ref{fig:proxy-voorbeeld-server-conf} voor de inhoud van \lstinline|server.conf|.
 
 Volgens de \lstinline|Dockerfile| is de image gebaseerd op de laatste versie van de officiële Nginx Docker image, maar wordt de default configuratie verwijderd en in de plaats ervan het bestand \lstinline|server.conf| gebruikt.
+Het bestand \lstinline|server.conf| is de configuratie van de http server van Nginx.
+Volgens deze configuratie is de server actief op poort 80.
+Enkel wanneer de \lstinline|Host| header gelijk is aan \lstinline|so-manager-proxy|, wordt een http request doorgegeven aan \lstinline|http://so-manager-react| of \lstinline|http://so-manager-api|, afhankelijk van het pad in de url.
 
-% nginx configuratie, host header, 2 paden, proxy pass naar andere services http, geen access log of stub bespreken
-
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{lstlisting}
 services:
   so-manager-proxy:
@@ -617,7 +620,7 @@ services:
   \label{fig:proxy-voorbeeld-compose}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{lstlisting}
 FROM nginx
 RUN rm /etc/nginx/conf.d/default.conf
@@ -627,7 +630,7 @@ COPY server.conf /etc/nginx/conf.d/
   \label{fig:proxy-voorbeeld-dockerfile}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{lstlisting}
 server {
   listen 80;
@@ -638,6 +641,7 @@ server {
     proxy_pass http://so-manager-react;
   }
 
+  # Backend api
   location /api/ {
     proxy_pass http://so-manager-api;
   }
