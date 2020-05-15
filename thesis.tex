@@ -737,12 +737,23 @@ Deze installatie van Security Onion is een Standalone Production Mode installati
 De vm heeft 2 netwerk interfaces, een management interface met ip \lstinline|192.168.101.2| en een capture interface waar de port mirror op toekomt.
 De port mirror van de host wordt door Libvirt doorgevoerd (passthrough) naar de vm.
 
-Aangezien de combinatie van de RAID controller en de harde schijven aanwezig in de server resulteerde in minstens 2 logische schijven, heb ik 1 schijf toegewezen aan de Debian host en de andere aan de Security Onion vm.
+De combinatie van de RAID controller en de harde schijven aanwezig in de server resulteerde in minstens 2 logische schijven.
+Daarom heb ik 1 schijf toegewezen aan de Debian host en de andere aan de Security Onion vm.
 Beide logische schijven zijn RAID-5 arrays.
 
 \subsection{Proxy}
 % Web proxy wordt ingezet om ze te verbinden
 % Https eerst downgraden, binnen docker http, in https-portal weer upgraden
+De web interface van Security Onion omvat Squert, Kibana en CyberChef.
+De verbinding van een externe client met deze web interface verloopt via het Docker compose netwerk.
+
+Een web browser opent een https verbinding met de \lstinline|https-portal| service.
+\lstinline|https-portal| opent een http verbinding met de service \lstinline|so-vm-proxy|.
+Ten slotte opent \lstinline|so-vm-proxy| een https verbinding met de Security Onion vm.
+
+De Docker compose service of container \lstinline|so-vm-proxy| is dus een reverse http proxy naar het ip \lstinline|192.168.101.2|.
+Omdat Security Onion enkel https aanbied, wordt er een \emph{downgrade} uitgevoerd op deze https verbinding.
+De https verbinding wordt dus een http verbinding voor intern gebruik in de Docker compose omgeving.
 
 \section{Web app}
 \subsection{React}
