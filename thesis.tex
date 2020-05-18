@@ -445,7 +445,7 @@ Om deze toegang zeker niet te verliezen, besloot ik om Security Onion te virtual
 
 Libvirt is een open source toolkit voor het beheren van virtuele machines voor Linux, BSD en OSX.
 Libvirt zelf kan geen virtuele machines uitvoeren, maar kan samen werken met QEMU en KVM om een volledige hypervisor te vormen.
-QEMU is een command line applicatie voor het emuleren en virtualiseren van \emph{machines}.
+QEMU is een command-line applicatie voor het emuleren en virtualiseren van \emph{machines}.
 Eén van de features van QEMU is om de KVM (Kernel-based Virtual Machine) technologie van de Linux kernel te gebruiken om performante virtuele machines te creëren.
 
 Libvirt definieert virtuele machines in XML documenten die gevalideerd worden aan de hand van XML schema's.
@@ -774,7 +774,64 @@ De https verbinding wordt dus een http verbinding voor intern gebruik in de Dock
 \section{Netdata}
 
 \section{Passive os fingerprinting}
+% Voordien uitleggen enterprise netwerk met internet en afgesloten netwerk.
+Tijdens het uitbreiden van dit systeem heb ik geprobeerd om het besturingssysteem van hosts op een netwerk te bepalen door enkel het netwerkverkeer te analyseren.
+Deze uitbreiding was gefocust voor gebruik in een volledig afgesloten netwerk.
 \subsection{TCP/IP stack}
+In een TCP/IP stack zijn er enkele parameters die niet bepaald worden door de specificatie, maar door de implementatie mogen ingevuld worden.
+Voorbeelden van deze parameters zijn de initiële TTL (Time to live) van het IP protocol en de window size van het TCP protocol.
+\autocite{wikipedia:fingerprinting}
+
+Elke implementatie van een TCP/IP stack heeft zo een unieke \emph{fingerprint} bestaande uit deze variabele parameters.
+Omdat de TCP/IP stack deel is van het besturingssysteem, kunnen deze fingerprints gebruikt worden om het besturingssysteem te bepalen van hosts die communiceren met TCP.
+Bij embedded devices kan de fingerprint zelfs eigen zijn aan het apparaat zelf.
+
+\subsubsection{p0f}
+p0f is een command-line tool die gebruikt kan worden om het besturingssysteem te bepalen van hosts aan de hand van TCP/IP stack fingerprinting.
+De tool kan ofwel met live netwerkverkeer werken door op een interface te capteren, of het kan een pcap file analyseren.
+
+Bij het uitvoeren van analyses kon p0f gebruikt worden om een idee te krijgen welke soort devices geassocieerd zijn met bepaalde ip adressen.
+Dit kan bijvoorbeeld gedaan worden door een tcp sessie tussen 2 hosts te vinden in Kibana, de link naar CapMe openen en daar het pcap bestand te downloaden.
+Daarna kan p0f uitgevoerd worden op de pcap file met de \lstinline|-r| optie.
+Figuur \ref{fig:p0f-so-voorbeeld} is een voorbeeld hiervan.
+
+De resultaten van deze tool zijn soms niet accuraat.
+p0f bepaalt het besturingssystem van een host aan de hand van een database die besturingssystemen en hun bijhorende fingerprints bevat.
+Deze database is echter al wat verouderd.
+Het database bestand \lstinline|p0f.fp| werd het laatst bewerkt in 2016 en heeft bijvoorbeeld geen fingerprint voor Windows 10.
+De tool is zo veel minder betrouwbaar als de database niet up to date is.
+Omwille van deze reden besloot ik om deze tool niet te integreren in het systeem.
+
+\begin{figure}[H]
+  \begin{lstlisting}
+$ p0f -r dump.pcap                                           
+--- p0f 3.09b by Michal Zalewski <lcamtuf@coredump.cx> ---
+...
+.-[ 10.170.3.15/49780 -> 10.126.10.151/9877 (syn) ]-
+|
+| client   = 10.170.3.15/49780
+| os       = Windows 7 or 8
+| dist     = 1
+| params   = none
+| raw_sig  = 4:127+1:0:1460:8192,8:mss,nop,ws,nop,nop,sok:df,id+:0
+|
+`----
+...
+.-[ 10.170.3.15/49780 -> 10.126.10.151/9877 (syn+ack) ]-
+|
+| server   = 10.126.10.151/9877
+| os       = Windows 7 or 8
+| dist     = 6
+| params   = none
+| raw_sig  = 4:122+6:0:1460:8192,8:mss,nop,ws,nop,nop,sok:df,id+:0
+|
+`----
+...
+  \end{lstlisting}
+  \caption{}
+  \label{fig:p0f-so-voorbeeld}
+\end{figure}
+
 \subsection{DHCP}
 
 \section{Visualisatie netwerk layout}
