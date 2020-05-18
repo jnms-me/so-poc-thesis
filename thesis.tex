@@ -832,7 +832,37 @@ $ p0f -r dump.pcap
   \label{fig:p0f-so-voorbeeld}
 \end{figure}
 
-\subsection{DHCP}
+\subsection{Fingerbank}
+Naast TCP/IP stack fingerprinting bestaan er nog andere manieren om een besturingssysteem of apparaat te herkennen.
+
+In het DHCP protocol zijn er ook enkele parameters die door de implementatie ingevuld worden.
+De belangerijkste is de `Parameter request list', die voor bijna elk soort apparaat verschilt.
+
+Http clients geven meestal een \lstinline|User-Agent| header mee met elke http request.
+Deze header bevat de browser of andere software die verantwoordelijk is voor de request en soms ook de naam en versie van het besturingssysteem.
+De \lstinline|User-Agent| header kan dus geanalyseerd worden om mogelijk het besturingssysteem te achterhalen.
+
+De website \url{https://fingerbank.org/} houdt een lijst bij van apparaten met hun TCP/IP fingerprint, DHCP fingerprint en \lstinline|User-Agent| header.
+Fingerbank heeft een REST api waar een combinatie van deze fingerprints ingediend kunnen worden in json formaat, om hopelijk een specifiek soort apparaat en besturingssysteem als antwoord te krijgen.
+
+Toen ik het systeem met OS fingerprinting probeerde uit te breiden, was het doel om het systeem beter te laten werken in een statisch, afgesloten netwerk.
+In dit netwerk passeert er geen enkel DHCP pakket.
+Ofwel hebben alle apparaten een statisch ip, ofwel worden DHCP paketten niet gerouteerd langs de plaats van de port mirror.
+
+Daarnaast zijn er weinig hosts die http requests versturen en nog minder die een \lstinline|User-Agent| header toevoegen.
+Uiteindelijk zijn er enkel twee Windows 10 workstations en een Windows server die zo'n http requests sturen.
+Dit is makkelijker manueel te bepalen in Kibana en overbodig om Fingerbank telkens te raadplegen.
+
+Ten slotte is er ook nog de mogelijkheid om TCP/IP stack fingerprints in de dienen.
+Aangezien deze van bijna elke host in het netwerk te bepalen zijn, probeerde ik dit uit.
+Na wat te experimenteren met scapy en p0f om fingerprints in het juiste formaat in te dienen, bleken de TCP/IP stack fingerprints het minst accurate deel van de Fingerbank database.
+Bij de meeste hosts in het afgesloten netwerk kreeg ik als antwoord dat het apparaat en besturingssysteem niet konden bepaald worden.
+Mijn eigen desktop werd zelfs herkent als een smartwatch.
+Ik bestloot dus om ook Fingerbank niet te gebruiken in het systeem.
+
+Achteraf gezien kon p0f wel een nut gehad hebben in het systeem door de output te parsen en deze toe te voegen aan de logs in de ELK stack.
+Toch besloot ik om alternatieven te zoeken die hopelijk accuraater zijn, zonder veel succes.
+Ik kan me wel voorstellen dat Fingerbank heel nuttig kan zijn bij het monitoren van bijvoorbeeld een openbaar netwerk.
 
 \section{Visualisatie netwerk layout}
 % Uitleggen dat dit passief zeer moeilijk is, geen producten beschikbaar
@@ -842,6 +872,9 @@ $ p0f -r dump.pcap
 \chapter{De workflow van een analyst}
 
 % Latex ergens vermelden, github actions
+
+% Reflectie op plaatsen waar het wel nuttig is in een isp
+% fingerbank -> wifi netwerk
 
 % Besluit
 \chapter*{Besluit}
