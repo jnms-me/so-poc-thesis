@@ -802,6 +802,8 @@ Het database bestand \lstinline|p0f.fp| werd het laatst bewerkt in 2016 en heeft
 De tool is zo veel minder betrouwbaar als de database niet up to date is.
 Omwille van deze reden besloot ik om deze tool niet te integreren in het systeem.
 
+% Oude versie in capme, bron niet gevonden
+
 \begin{figure}[H]
   \begin{lstlisting}
 $ p0f -r dump.pcap                                           
@@ -828,7 +830,7 @@ $ p0f -r dump.pcap
 `----
 ...
   \end{lstlisting}
-  \caption{}
+  \caption{Verkorte output van p0f op de pcap dump van een tcp handshake}
   \label{fig:p0f-so-voorbeeld}
 \end{figure}
 
@@ -865,9 +867,37 @@ Toch besloot ik om alternatieven te zoeken die hopelijk accuraater zijn, zonder 
 Ik kan me wel voorstellen dat Fingerbank heel nuttig kan zijn bij het monitoren van bijvoorbeeld een openbaar netwerk.
 
 \section{Visualisatie netwerk layout}
-% Uitleggen dat dit passief zeer moeilijk is, geen producten beschikbaar
-% Enkel onderscheid maken int->ext of ext->int, distance mogelijk bepalen met time to live
-% Traceroute is actief, tools als nmap hiervoor gemaakt
+Ik had even geprobeerd om het netwerk die het systeem monitort uit te tekenen in een soort diagram.
+Moest ik hierin slagen zou ik het proberen te automatiseren.
+Ik ondervond snel enkele problemen die dit bijna onmogelijk maken.
+
+\subsection{Port mirror}
+Een port mirror is volledig passief.
+Het is dus niet mogelijk om zelf data op het netwerk te plaatsen.
+Tools zoals traceroute of nmap die gemaakt zijn om inzicht te krijgen in de layout van een netwerk, kunnen niet gebruikt worden.
+De enige mogelijkheid is om het netwerkverkeer te observeren en zo elke host te plaatsen op een diagram.
+
+\subsection{MAC adressen}
+Door ARP paketten te bekijken of door zelf destination ip adressen te associëren met destination MAC adressen, kan er een beeld gevormd worden van het laag 2 netwerk waar de port mirror aanwezig is.
+In Ntop kunnen alle voorkomende MAC adressen bekeken worden, samen met het aantal geassocieerde ip hosts.
+Figuur \ref{fig:visualisatie-netwerk-layout-ntop-mac} is een screenshot hiervan.
+De MAC adressen zelf staan niet in de figuur.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{visualisatie-netwerk-layout-ntop-mac}
+  \caption{Screenshot van de `MAC Addresses' pagina in Ntop}
+  \label{fig:visualisatie-netwerk-layout-ntop-mac}
+\end{figure}
+
+\subsection{IP adressen}
+Het is dus mogelijk om een diagram te maken waarop elk ip adres achter één van de mac adressen staat.
+Om verder te kunnen bepalen hoe het laag 3 netwerk eruit ziet, is veel moeilijker.
+
+Met een tool zoals traceroute kunnen we duidelijk zien hoe het netwerk eruit ziet, maar dit is een \emph{actieve scan} die we niet kunnen uitvoeren met enkel een port mirror.
+De enige optie die ik kan bedenken is om het TTL (Time to live) veld in ip pakketten de bestuderen, om een idee te krijgen van de afstand van een host.
+
+Omdat een simpele actieve scan veel meer informatie oplevert, vond ik het niet nuttig om een tool uit te werken die de weinige informatie beschikbaar door passieve methodes visualiseert.
 
 \chapter{De workflow van een analyst}
 
