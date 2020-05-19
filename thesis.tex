@@ -94,6 +94,7 @@ De 2 grote NIDS software projecten zijn Snort en Suricata.
 Voor een groot deel werken de 2 systemen identiek voor een eindgebruiker.
 Zo is de NIDS rule syntax van Snort en Suricata bijna gelijk.
 Het verschil ligt in specifieke features (zie \url{https://suricata.readthedocs.io/en/suricata-5.0.3/rules/differences-from-snort.html} voor een gedetailleerde lijst van verschillen).
+% De grootste verschillen... (geen link?)
 
 \subsection{Regels}
 Een NIDS monitort gecapteerd netwerkverkeer aan de hand van een lijst van regels.
@@ -131,10 +132,7 @@ Variabelen kunnen ook de waarde \lstinline|any| aannemen.
 Dit kan zorgen voor veel false alerts, maar is wel nuttig in gesloten netwerken waar incidenten zich enkel intern afspelen.
 
 % Subscription models
-% strategisch plaatsen
 \subsection{Port mirror}
-% Limitatie linksnelheid (of andere term)
-% Schets hoe het netwerk eruit ziet tov de mirror op laag 2 en op laag 3 voor of na de NAT
 Een NIDS engine zoals Snort of Suricata wordt normaal gebruikt om te capteren op 1 netwerkinterface.
 Deze interface ontvangt typisch een kopie van een punt in het netwerk.
 Dit noemt men een port mirror.
@@ -358,8 +356,6 @@ Daarnaast moest ik altijd de toegang op afstand bewaren.
 Omwille van deze redenen koos ik de huidige \emph{stable} branch van Debain: Debian Buster.
 
 \subsection{Docker}
-% Docker presenteren als tool om linux containers of namespaces (een kernel feature) te beheren
-% Docker kan een stuk meer zoals met windows containers, maar dit is alles wat we gebruiken
 Docker is een verzameling van tools voor het beheren van software containers.
 Deze containers zijn applicaties gebundeld met al hun dependencies en configuratie.
 Docker is beschikbaar voor enkele verschillende omgevingen, maar voor dit systeem wordt enkel de Linux versie gebruikt.
@@ -751,8 +747,6 @@ Daarom heb ik 1 schijf toegewezen aan de Debian host en de andere aan de Securit
 Beide logische schijven zijn RAID-5 arrays.
 
 \subsection{Proxy}
-% Web proxy wordt ingezet om ze te verbinden
-% Https eerst downgraden, binnen docker http, in https-portal weer upgraden
 De web interface van Security Onion omvat Squert, Kibana en CyberChef.
 De verbinding van een externe client met deze web interface verloopt via het Docker compose netwerk.
 
