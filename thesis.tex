@@ -160,9 +160,18 @@ Als de link tussen de port mirror en de sensor een lager maximum bits/s heeft da
 NIDS engines kunnen hiermee wel overweg, maar het zorgt natuurlijk voor verlies van informatie.
 
 \section{HIDS}
-% Omschrijving principe: agents op clients loggen naar een master server
-% Niet uitgebreid
-% Zelf nooit gebruikt, nog opzoeken
+Een host intrusion detection systeem (HIDS) montiort één machine op verdachte activiteit.
+Enerzijds wordt dit gedaan door alle data die door de netwerkinterfaces gaat te inspecteren.
+Daarnaast wordt het gedrag van processen op de machine bekeken.
+\autocite{wikipedia:hids}
+
+Een HIDS komt in de vorm van een \emph{agent} die geïnstalleerd wordt op elke machine, zowel servers als workstations.
+Deze agents kunnen verslag uitbrengen naar een centrale applicatie waar incidenten verder verwerkt worden.
+In sommige gevallen kunnen de agents ook zelf actie ondernemen, door bijvoorbeeld processen te beëindigen of netwerk poorten te blokkeren.
+Voorbeelden van HIDS agents zijn OSSEC, Wazuh, Elastic Beats en Sysmon.
+
+Tijdens deze stage en bachelorproef heb ik geen HIDS gebruikt.
+Veel HIDS agents zijn wel compatibel met dezelfde technologieën die NIDS beheren, zoals Security Onion.
 
 \chapter{Security Onion}
 \section{Wat is Security Onion?}
