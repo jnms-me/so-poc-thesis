@@ -131,7 +131,6 @@ Als een variabele niet ingesteld is, worden regels die deze variabele gebruiken 
 Variabelen kunnen ook de waarde \lstinline|any| aannemen.
 Dit kan zorgen voor veel false alerts, maar is wel nuttig in gesloten netwerken waar incidenten zich enkel intern afspelen.
 
-% Voorbeeld downloaded rules
 \subsection{Rulesets}
 NIDS rules worden gecompileerd in lijsten die makkelijk te gebruiken zijn met een NIDS engine.
 Deze lijsten worden onderhouden door bedrijven en online gemeenschappen.
@@ -287,7 +286,26 @@ Security Onion voorziet uitgebreide logs in elasticsearch die alle informatie va
 In Kibana zijn er een 40-tal dashboards aanwezig met in totaal zo'n 400 visualisaties.
 Dit is zeker de meest handige tool voor een analyst, Kibana stond aan de kern van elke analyse die ik uitvoerde.
 
-% elastalert
+\subsubsection{ElastAlert}
+In Security Onion is de service \emph{ElastAlert} voorgeïnstalleerd.
+ElastAlert is third-party software die samenwerkt met Elasticsearch.
+
+Met ElastAlert is het mogelijk om alerts te genereren wanneer er nieuwe data binnenkomt in Elasticsearch die overeenkomt een vooraf ingestelde filter.
+De combinatie van Elasticsearch indexes, een filter en een methode om alerts te genereren noemt men een \emph{ElastAlert rule}.
+Er kunnen zoveel rules aangemaakt worden als men wenst.
+
+Filters kunnen complexe pattronen zijn of elke match doorlaten.
+Deze `any' filter is nuttig om alle relevante data te sturen naar een extern systeem.
+Dit is de manier waarop TheHive en Security Onion verbonden kunnen worden.
+Bij complexe filters met pattronen die zelden voorkomen kan het handig zijn om dit te melden aan een administrator bijvoorbeeld via de Slack alerter.
+Figuur \ref{fig:elastalert-slack} is een screenshot van een Slack workspace die ik aanmaakte om enkele filters uit te testen.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{elastalert-slack}
+  \caption{Screenshot van de ElastAlert Slack alerter in een Slack channel}
+  \label{fig:elastalert-slack}
+\end{figure}
 
 \section{Deployment scenario's}
 Security Onion kan op verschillende manieren geïnstalleerd worden.
@@ -346,7 +364,7 @@ Deze worden afgeraden om te gebruiken, maar kunnen wel gebruikt worden wanneer f
   \label{fig:so-architecture-distributed}
 \end{figure}
 
-\chapter{Installatie}
+\chapter{Opstelling}
 \section{Simulaties met GNS3}
 % GNS3 uitleggen
 \subsection{Appliances}
