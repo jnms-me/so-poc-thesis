@@ -859,8 +859,6 @@ Het database bestand \lstinline|p0f.fp| werd het laatst bewerkt in 2016 en heeft
 De tool is zo veel minder betrouwbaar als de database niet up to date is.
 Omwille van deze reden besloot ik om deze tool niet te integreren in het systeem.
 
-% Oude versie in capme, bron niet gevonden
-
 \begin{figure}[H]
   \begin{lstlisting}
 $ p0f -r dump.pcap                                           
@@ -889,6 +887,30 @@ $ p0f -r dump.pcap
   \end{lstlisting}
   \caption{Verkorte output van p0f op de pcap dump van een tcp handshake}
   \label{fig:p0f-so-voorbeeld}
+\end{figure}
+
+\subsubsection{CapMe}
+% Oude versie in capme, bron niet gevonden
+Wat opviel tijden het uitvoeren van analyses was dat er in CapMe, een web applicatie in Security Onion die pcap files ophaalt en een transcript toont, ook een soort os detectie gebruikt wordt.
+In elke transcript wordt het OS van het source ip gegeven samen met een fingerprint in een formaat die lijkt op de fingerprints van p0f.
+Ik heb geprobeerd te achterhalen waar deze detectie vandaan komt.
+In de broncode van (de Security Onion fork van) CapMe vond ik echter niets terug over de `OS Fingerprint`, het wordt waarschijnlijk op een andere plaats toegevoegd.
+Ook in de documentatie van Security Onion of op andere plaaten vondt ik hier niets over terug.
+
+Als voorbeeld heb ik een HTTP sessie uitgekozen tussen een Windows workstation (source) en server (destination).
+De workstation is duidelijk een Windows 10 host, bijvoorbeeld te zien door de sting \lstinline|Windows NT 10.0; WOW64;| in de \lstinline|User-Agent| HTTP header.
+In figuur \ref{fig:capme-os-detection} detecteert CapMe het besturingssysteem echter als Windows XP/2000.
+Voor dezelfde pcap file detecteert p0f het besturingssysteem `Windows NT kernel 5.x'.
+Deze kernel werd gebruikt door Windows 2000 en Windows xp.
+Beide CapMe en p0f zijn hier dus foutief.
+
+CapMe gebruikt waarschijnlijk dus ook een verouderde database om besturingssystemen te bepalen.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{capme-fingerprint}
+  \caption{HTTP request van een Windows 10 workstation in CapMe}
+  \label{fig:capme-os-detection}
 \end{figure}
 
 \subsection{Fingerbank}
