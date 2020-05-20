@@ -121,8 +121,6 @@ Deze verbindingen kunnen perfect normaal zijn als de client een vertrouwde host 
 In dit geval is de client echter een externe host die acties probeert uit te voeren op een interne MySQL database.
 Dit is verdachte activiteit, vandaar het type alert.
 
-% Voorbeeld downloaded rules
-
 \subsection{Variabelen}
 Om regels zo effectief mogelijk te maken, worden er variabelen geïntroduceerd.
 
@@ -133,7 +131,43 @@ Als een variabele niet ingesteld is, worden regels die deze variabele gebruiken 
 Variabelen kunnen ook de waarde \lstinline|any| aannemen.
 Dit kan zorgen voor veel false alerts, maar is wel nuttig in gesloten netwerken waar incidenten zich enkel intern afspelen.
 
-% Subscription models
+% Voorbeeld downloaded rules
+\subsection{Rulesets}
+NIDS rules worden gecompileerd in lijsten die makkelijk te gebruiken zijn met een NIDS engine.
+Deze lijsten worden onderhouden door bedrijven en online gemeenschappen.
+
+Een voorbeeld van een ruleset is Emerging Threats (van \url{https://rules.emergingthreats.net/}).
+Deze wordt dagelijks geüpdatet met nieuwe en aangepaste rules.
+Een klein stuk van de ruleset staat in figuur \ref{fig:et-voorbeeld}.
+Het volledige bestand bevat momenteel bijna $30000$ lijnen.
+
+Sommige bedrijven hebben ook \emph{subscription-based} rulesets.
+De officiële Snort ruleset (\url{https://www.snort.org/}) volgt zo'n model.
+Updates aan de ruleset worden meteen beschikbaar gemaakt aan subscribers, 30 dagen later worden dezelfde veranderingen ook toegepast op een vrije versie van de ruleset.
+Niet-betalende gebruikers hebben dus steeds een versie die 30 dagen ouder is.
+
+\begin{figure}[H]
+  \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+...
+alert tcp $SQL_SERVERS 1433 -> $EXTERNAL_NET any (msg:"GPL SQL sa brute force failed login attempt"; flow:from_serv...
+alert tcp $SQL_SERVERS 1433 -> $EXTERNAL_NET any (msg:"GPL SQL sa brute force failed login unicode attempt"; flow:f...
+
+
+# ----- Begin ET-emerging-telnet Rules Category ----- #
+
+# -- Begin GID:1 Based Rules -- #
+
+alert tcp $HOME_NET 23 -> $EXTERNAL_NET any (msg:"ET TELNET External Telnet Attempt To Cisco Device With No Telnet ...
+#alert tcp $HOME_NET 23 -> $EXTERNAL_NET any (msg:"ET TELNET External Telnet Login Prompt from Cisco Device"; flow:...
+alert tcp $EXTERNAL_NET any -> $HOME_NET [23,2323,3323,4323] (msg:"ET TELNET SUSPICIOUS Path to BusyBox"; flow:to_s...
+#alert tcp $EXTERNAL_NET any -> $HOME_NET [23,2323,3323,4323] (msg:"ET TELNET SUSPICIOUS busybox shell"; flow:to_se...
+#alert tcp $EXTERNAL_NET any -> $HOME_NET [23,2323,3323,4323] (msg:"ET TELNET SUSPICIOUS busybox enable"; flow:to_s...
+...
+  \end{lstlisting}
+  \caption{Een klein stuk van de Emerging Threats ruleset}
+  \label{fig:et-voorbeeld}
+\end{figure}
+
 \subsection{Port mirror}
 Een NIDS engine zoals Snort of Suricata wordt normaal gebruikt om te capteren op 1 netwerkinterface.
 Deze interface ontvangt typisch een kopie van een punt in het netwerk.
