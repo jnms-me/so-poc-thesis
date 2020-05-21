@@ -371,6 +371,10 @@ GNS3 is een open source softwarepakket waarmee netwerken gesimuleerd kunnen word
 De reden dat GNS3 aantrekkelijk leek om tijdens de stage te gebruiken, was omdat het niet enkel routers en switches ondersteunt, maar ook virtuele machines.
 Op die manier kon ik simulaties maken van netwerken bestaande uit Securty Onion nodes en bijvoorbeeld Kali Linux en Ubuntu hosts.
 
+Ook is het troubleshooten en leren hoe Security Onion netwerk verkeer interpreteert veel makkelijker met GNS3.
+Op elke netwerkverbinding kan een \emph{capture sessie} gestart worden waarbij bijvoorbeeld Wireshark geopend wordt.
+Zo kan alle data op het netwerk live bekeken worden.
+
 Voor kleine simulaties kan GNS3 rechtsreeks op een laptop of desktop uitgevoerd worden.
 Dit vereist wel dat er andere software geïnstalleerd is voor het uitvoeren van alle verschillende gesimuleerde devices. 
 Om Docker containers te gebruiken in een netwerk moet Docker geïnstalleerd zijn, voor de meeste virtuele machines moet QEMU geïnstalleerd zijn\dots
@@ -386,27 +390,65 @@ In het begin van de stage kreeg ik toegang tot een virtuele machine met de GNS3 
 Zo kon ik verder bijleren over Security Onion en NIDS om later aan een eerste opdracht te beginnen.
 
 \subsection{Appliances}
-% Systeem van appliances
-% Custom appliance voor SO + screenshot en/of code
 Elk \emph{device} in een GNS3 project wordt aangemaakt aan de hand van een template.
-De uitzonderingen hierop zijn de built-in devices zoals de hub, switch, NAT en cloud.
+De uitzonderingen hierop zijn de \emph{built-in} devices zoals de hub, switch, NAT en cloud.
 Nieuwe devices kunnen manueel aangemaakt worden of kunnen gedownload worden van de \emph{online registry}.
 Er was al een Security Onion template of \emph{appliance} beschikbaar online, maar omdat deze wat out of date was en om zelf het proces te leren besloot ik om zelf een template te maken.
 
 Uiteindelijk bleek het aanmaken van een nieuwe device gelijkaardig te zijn als het configureren van een normale VM.
 Als soort device koos ik voor een QEMU VM, de rest van de configuratie waren standaard QEMU instellingen.
-Figuur ref is een overzicht van de gekozen opties.
+Figuur \ref{fig:gns3-so-appliance} is een overzicht van de gekozen opties.
 Instellingen zoals het aantal CPU's, RAM en de grootte van de disk image kunnen per instantie van de device nog aangepast worden.
 Zo alloceerde ik telkens wat meer resources aan de master node.
 
-gns3-so-appliance.png
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{gns3-so-appliance}
+  \caption{Overzicht van de Security Onion GNS3 template}
+  \label{fig:gns3-so-appliance}
+\end{figure}
 
 \subsection{Simulatie bedrijfsnetwerk}
 
-Elke switch is een instantie van Open vSwitch
-alternatief was hub, port mirror is 1 richting en beter beheerbaar.
+Een eerste simulatie die ik maakte stelt een typisch bedrijfsnetwerk voor.
+Figuur \ref{fig:gns3-simulatie-bedrijf} is een screenshot van dit GNS3 project.
 
-% Simulatie tonen van forward + master aan de NAT van een typisch bedrijfsnetwerk
+De simulatie bestaat uit een netwerk met 3 Ubuntu hosts (Docker containers) die in verbinding staan met het internet via NAT.
+Tussen de Ubuntu hosts en de NAT is er een switch geplaatst.
+Deze switch kopieërt alle data die uitgewisseld wordt tussen de Ubuntu hosts en het internet en plaatst deze op een port mirror.
+Die port mirror wordt dan gebruikt door Security Onion.
+
+Security Onion is geïnstalleerd als een distributed production deployment bestaande uit een master en forward node. 
+Beide nodes zijn met hub management interfaces verbonden aan een switch, die zelf in verbinding staat met een NAT device.
+De forward node heeft nog een tweede interface, waar de port mirror op aangeloten is.
+
+De switch die verantwoordelijk is om een port mirror af te leveren bij Security Onion gebruikt de software Open vSwitch.
+De built-in switch kan behalve het aantal poorten niet geconfigureerd worden, waardoor een port mirror niet mogelijk is.
+De built-in hub werkt wel, maar is geen accurate voorstelling van een port mirror.
+Een port mirror dropt alle data die ontvangen wordt.
+Een hub stuurt alle ontvangen data op alle andere poorten uit.
+
+Door simpelweg te dubbelklikken op één van de Security Onion nodes opent de volledige desktopomgeving van die machine.
+Bij de Ubuntu hosts en Open vSwitch is dit een command prompt en bij \emph{built-in} devices opent er een configuratiescherm van GNS3 zelf.
+Dit werkte echter niet meteen.
+Het netwerk tussen de GNS3 VM en mijn laptop liet niet toe om andere tcp poorten te gebruiken behalve 22, 80 en 443.
+GNS3 heeft een nieuwe poort nodig voor elke command prompt (Telnet) en grafische interface (SPICE) die geopend wordt.
+Dit werd opgelost door OpenVPN te installeren op de GNS3 VM en een vpn aan te maken tussen mijn laptop en de GNS3 VM.
+
+De web interface en command line van Security Onion zijn dus beschikbaar via deze desktopomgeving.
+Dit is niet ideaal omdat alle inputs en een soort `videostream' van de desktop over een netwerk moet gecommuniceerd worden.
+Daarom had ik graag de command line en web interface rechtsreeks beschikbaar op mijn laptop.
+Dit kon door ssh verbindingen te openen naar de 2 nodes en de https web interface op poort 443 te openen in een browser.
+Hiervoor moest de firewall van Security Onion wel ingesteld worden om het ip van mijn laptop (VPN) toe te laten op poort 22 en 443.
+
+% Evt in bijlage
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{gns3-simulatie-bedrijf}
+  \caption{Screenshot van het bedrijfsnetwerk GNS3 project}
+  \label{fig:gns3-simulatie-bedrijf}
+\end{figure}
+
 \subsection{Cloud}
 % GNS3 cloud component die toelaat fysieke interfaces te verbinden
 % Echte data aan de simulatieomgeving koppelen
