@@ -367,10 +367,45 @@ Deze worden afgeraden om te gebruiken, maar kunnen wel gebruikt worden wanneer f
 \chapter{Opstelling}
 \section{Simulaties met GNS3}
 % GNS3 uitleggen
+GNS3 is een open source softwarepakket waarmee netwerken gesimuleerd kunnen worden via een grafische interface.
+De reden dat GNS3 aantrekkelijk leek om tijdens de stage te gebruiken, was omdat het niet enkel routers en switches ondersteunt, maar ook virtuele machines.
+Op die manier kon ik simulaties maken van netwerken bestaande uit Securty Onion nodes en bijvoorbeeld Kali Linux en Ubuntu hosts.
+
+Voor kleine simulaties kan GNS3 rechtsreeks op een laptop of desktop uitgevoerd worden.
+Dit vereist wel dat er andere software geïnstalleerd is voor het uitvoeren van alle verschillende gesimuleerde devices. 
+Om Docker containers te gebruiken in een netwerk moet Docker geïnstalleerd zijn, voor de meeste virtuele machines moet QEMU geïnstalleerd zijn\dots
+\autocite{gns3:home}
+
+Voor grote opstellingen of om de installatie makkelijker te maken is er ook een officiële GNS3 VM image.
+Deze kan door een virtuele machine als besturingssysteem gebruikt worden en bevat de GNS3 server met alle vereiste software of \emph{dependencies}.
+Merk op dat geneste virtualisatie beschikbaar moet zijn om virtuele machines uit te voeren in de GNS3 virtuele machine.
+Een GNS3 client (de grafische applicatie) kan dan verbinden met de server in de GNS3 VM.
+
+Voor de stage begon had ik Security Onion al uitgeprobeerd aan de hand van GNS3 op mijn desktop.
+In het begin van de stage kreeg ik toegang tot een virtuele machine met de GNS3 VM image geïnstalleerd.
+Zo kon ik verder bijleren over Security Onion en NIDS om later aan een eerste opdracht te beginnen.
+
 \subsection{Appliances}
 % Systeem van appliances
 % Custom appliance voor SO + screenshot en/of code
+Elk \emph{device} in een GNS3 project wordt aangemaakt aan de hand van een template.
+De uitzonderingen hierop zijn de built-in devices zoals de hub, switch, NAT en cloud.
+Nieuwe devices kunnen manueel aangemaakt worden of kunnen gedownload worden van de \emph{online registry}.
+Er was al een Security Onion template of \emph{appliance} beschikbaar online, maar omdat deze wat out of date was en om zelf het proces te leren besloot ik om zelf een template te maken.
+
+Uiteindelijk bleek het aanmaken van een nieuwe device gelijkaardig te zijn als het configureren van een normale VM.
+Als soort device koos ik voor een QEMU VM, de rest van de configuratie waren standaard QEMU instellingen.
+Figuur ref is een overzicht van de gekozen opties.
+Instellingen zoals het aantal CPU's, RAM en de grootte van de disk image kunnen per instantie van de device nog aangepast worden.
+Zo alloceerde ik telkens wat meer resources aan de master node.
+
+gns3-so-appliance.png
+
 \subsection{Simulatie bedrijfsnetwerk}
+
+Elke switch is een instantie van Open vSwitch
+alternatief was hub, port mirror is 1 richting en beter beheerbaar.
+
 % Simulatie tonen van forward + master aan de NAT van een typisch bedrijfsnetwerk
 \subsection{Cloud}
 % GNS3 cloud component die toelaat fysieke interfaces te verbinden
@@ -890,7 +925,6 @@ $ p0f -r dump.pcap
 \end{figure}
 
 \subsubsection{CapMe}
-% Oude versie in capme, bron niet gevonden
 Wat opviel tijden het uitvoeren van analyses was dat er in CapMe, een web applicatie in Security Onion die pcap files ophaalt en een transcript toont, ook een soort os detectie gebruikt wordt.
 In elke transcript wordt het OS van het source ip gegeven samen met een fingerprint in een formaat die lijkt op de fingerprints van p0f.
 Ik heb geprobeerd te achterhalen waar deze detectie vandaan komt.
