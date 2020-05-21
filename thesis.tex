@@ -423,7 +423,7 @@ Beide nodes zijn met hub management interfaces verbonden aan een switch, die zel
 De forward node heeft nog een tweede interface, waar de port mirror op aangeloten is.
 
 De switch die verantwoordelijk is om een port mirror af te leveren bij Security Onion gebruikt de software Open vSwitch.
-De built-in switch kan behalve het aantal poorten niet geconfigureerd worden, waardoor een port mirror niet mogelijk is.
+De built-in switch kan (behalve het aantal poorten en vlans) niet geconfigureerd worden, waardoor een port mirror niet mogelijk is.
 De built-in hub werkt wel, maar is geen accurate voorstelling van een port mirror.
 Een port mirror dropt alle data die ontvangen wordt.
 Een hub stuurt alle ontvangen data op alle andere poorten uit.
@@ -450,9 +450,36 @@ Hiervoor moest de firewall van Security Onion wel ingesteld worden om het ip van
 \end{figure}
 
 \subsection{Cloud}
-% GNS3 cloud component die toelaat fysieke interfaces te verbinden
-% Echte data aan de simulatieomgeving koppelen
-% Geen simulatie meer, maar een proof of concept
+Deze simulatie kan ook snel aangepast worden aan een echte port mirror door middel van een GNS3 \emph{built-in} device: de cloud.
+De cloud is een device met een kopie van alle netwerk interfaces van de host.
+In dit geval is het dus mogelijk om devices in een GNS3 project rechtsreeks in verbinding te zetten met de interfaces van de GNS3 VM.
+
+De server had al één interface, \lstinline|eth0| bedoeld voor het beheren van de VM.
+Later werd er een tweede interface toegevoegd, \lstinline|eth1| waar een port mirror op toekwam.
+Om snel te testen of een port mirror werkte, werd er een cloud aangemaakt die insgesteld stond om de \lstinline|eth1| interface vrij te geven.
+Daarna kon er snel een Ubuntu Docker container mee verbonden worden zoals in figuur \ref{fig:gns3-port-mirror-ubuntu}.
+Om de port mirror te bekijken, werd het commando \lstinline|tcpdump -i eth0| op de Ubuntu container uitgevoerd.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.4\textwidth]{gns3-port-mirror-ubuntu}
+  \caption{De port mirror op de GNS3 VM wordt doorgegeven aan een Ubuntu Docker container}
+  \label{fig:gns3-port-mirror-ubuntu}
+\end{figure}
+
+Daarna kon hetzelfde systeem terug uitgebouwd worden zoals in de vorige simulatie.
+Figuur \ref{fig:gns3-port-mirror-so} is een screenshot van een GNS3 project met dezelfde cloud als in figuur \ref{fig:gns3-port-mirror-ubuntu}, maar met een Security Onion installatie in plaats van een Ubuntu host.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{gns3-port-mirror-so}
+  \caption{De port mirror op de GNS3 VM wordt doorgegeven aan een Security Onion installatie}
+  \label{fig:gns3-port-mirror-so}
+\end{figure}
+
+Met GNS3 clouds kan er echte data aan een simulatieomgeving gekoppeld worden.
+GNS3 blijft nog steeds enkel bedoeld voor opstellingen uit te testen, en niet als productieomgeving.
+Aspecten waar GNS3 tekort kan komen in vergelijking met een productiesysteem zijn bijvoorbeeld de performantie van netwerkverbindingen en betrouwbaarheid.
 
 \section{Server}
 \label{sec:server}
