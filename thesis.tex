@@ -182,7 +182,7 @@ Het geheel van een NIDS engine die al het netwerkverkeer op 1 punt in een netwer
 Eén of meerdere sensoren kunnen in een netwerk geplaatst worden op strategische punten.
 Dit zijn vaak plaatsen waar een vertrouwd netwerk wordt verbonden met een extern netwerk.
 
-De meest interresante plaats om een sensor te plaatsen in een bedrijfsnetwerk is meestal de plaats waar NAT toegepast wordt.
+De meest interesante plaats om een sensor te plaatsen in een bedrijfsnetwerk is meestal de plaats waar NAT toegepast wordt.
 Dit is omdat alle communicatie met externe netwerken doorheen dit punt passeert.
 Als zo'n sensor aan de buitenkant van de NAT staat, zijn de interne ip-adressen niet zichtbaar.
 We zien enkel ip-communicatie tussen de NAT-pool en externe netwerken, zo gaat er veel informatie verloren.
@@ -494,6 +494,55 @@ Eerst zorgde ik dat het host OS geïnstalleerd was, de netwerkconfiguratie aange
 Dan verwijderde ik de tijdelijke internetverbinding, stelde ik het statisch publiek ip adres in en testte of dit werkte.
 Ten slotte werd deze server geïnstalleerd in de serverruimte, waarna ik fysieke toegang verloor.
 De server moest altijd operationeel blijven en de toegang op afstand mocht nooit verloren gaan.
+
+\section{Netwerken}
+Tijdens de bachelorproef zijn er 3 verschillende netwerken aan bod gekomen.
+In elk netwerk werd er één poort gekozen waarvan er een kopie genomen werd.
+Die port mirror werd dan afgeleverd op een server die ik beheerde.
+
+\subsection{Free wifi}
+Fluvius beheert een aantal `Free wifi' netwerken in verschillende steden en gemeenten.
+Al deze netwerken komen samen op 1 punt.
+Het idee was om, afhankelijk van de beschikbare bandbreedte, 1 of meerdere van deze netwerken te combineren in een port mirror die afgeleverd werd op een server.
+Op dit moment had ik nog geen toegang tot een fysieke server, maar was de GNS3 VM wel nog operationeel.
+Er werd dus een virtuele interface toegevoegd aan de GNS3 VM.
+Een GNS3 project met Security Onion (zie figuur \ref{fig:gns3-port-mirror-so}) zou dan gebruikt worden om de port mirror de analyseren.
+
+\subsubsection{Verwachtingen}
+In dit netwerk kunnen we een aantal soorten verdacht netwerkverkeer verwachten.
+
+Er is geen kritische infrastructuur aanwezig in dit netwerk.
+Alle netwerkapparatuur heeft een eigen VRF voor management.
+Aanvallen op apparaten van Fluvius (bijvoorbeeld de gateways) kunnen we wel verwachten, maar zullen normaal nooit effect hebben.
+Afhankelijk van waar de port mirror precies genomen wordt, kunnen deze aanvallen mogelijk niet zichtbaar zijn.
+
+Een tweede scenario bestaat bijvoorbeeld uit 2 apparaten, beide verbonden met een Free Wifi netwerk, die met elkaar communiceren.
+Dit is verdacht, maar er zijn wel veel services die andere apparaten proberen te vinden op een netwerk, zoals ZeroConf of Universal Plug n Play.
+
+Ten slotte blijft er nog de communicatie over met het internet.
+Als we enkel kijken naar NIDS alerts kan dit soort netwerkverkeer opgesplitst worden in 2 categorieën.
+
+Een server op het internet die data stuurt naar een client in het Free Wifi netwerk is inbound verkeer.
+Als deze data een NIDS alert genereert, is de server een verdachte host.
+Dit zou minder moeten voorkomen, omdat het internet en alle clients in het Free Wifi gescheiden zijn door een NAT.
+Wat wel meer kan voorkomen, is een client die communiceert met een verdacht ip adres als gevolg van bijvoorbeeld phishing.
+
+Omgekeerd, een apparaat in het Free Wifi netwerk die (volgend het NIDS) verdachte data stuurt naar een server, is outbound verkeer.
+Deze apparaten zijn ofwel geïnfecteerd met een vorm van malware, virus of gelijkaardig, ofwel wordt het netwerk bewust gebruikt om aanvallen te plegen.
+
+Natuurlijk zullen er veel alerts gegenereerd door het NIDS foutief blijken.
+Dit is normaal voor een netwerk met veel verkeer, de NIDS regels moeten gewoon dagelijks aangepast worden om foutieve alerts weg te werken.
+
+Naast NIDS biedt Security Onion ook de mogelijkheid om veel andere aspecten van het netwerk in kaart te brengen.
+Met behulp van Zeek is er veel metadata beschikbaar om statistieken te krijgen over het gedrag van apparaten (en gebruikers) op een Free Wifi netwerk.
+
+Omdat het netwerk verbonden is met het internet kunnen ook andere bronnen geraadpleegd worden.
+Zo kan bijvoorbeeld de reputatie van een bepaald ip opgehaald worden (later implementeer ik dit in \ref{sec:cortex}).
+Ook kan het besturingssysteem en zelfs het model van het apparaat zelf bepaald worden als er DHCP verkeer zichtbaar is in de port mirror (zie \ref{sec:fingerbank}).
+
+\subsubsection{Reflectie}
+
+Jammergenoeg...
 
 \chapter{Ontwikkelen van een aangepast systeem}
 % Proberen schema hier te verwerken
@@ -930,6 +979,7 @@ De https verbinding wordt dus een http verbinding voor intern gebruik in de Dock
 
 \section{TheHive}
 \subsection{Cortex}
+\label{sec:cortex}
 \section{MISP}
 \section{Ntop}
 \section{Netdata}
@@ -1017,6 +1067,7 @@ CapMe gebruikt waarschijnlijk dus ook een verouderde database om besturingssyste
 \end{figure}
 
 \subsection{Fingerbank}
+\label{sec:fingerbank}
 Naast TCP/IP stack fingerprinting bestaan er nog andere manieren om een besturingssysteem of apparaat te herkennen.
 
 In het DHCP protocol zijn er ook enkele parameters die door de implementatie ingevuld worden.
