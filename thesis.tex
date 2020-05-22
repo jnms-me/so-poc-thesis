@@ -541,10 +541,47 @@ Zo kan bijvoorbeeld de reputatie van een bepaald ip opgehaald worden (later impl
 Ook kan het besturingssysteem en zelfs het model van het apparaat zelf bepaald worden als er DHCP verkeer zichtbaar is in de port mirror (zie \ref{sec:fingerbank}).
 
 \subsubsection{Reflectie}
+Jammergenoeg waren er problemen bij het aanmaken van de port mirror.
+Niet alle netwerkinfrastructuur ondersteunde de technologieën die nodig waren om een port mirror af te leveren op een server die ik beheerde.
+Uiteindelijk is er beslist geweest om deze opdracht achterwege te laten.
+Meteen daarna begon de voorbereiding voor het volgende netwerk.
 
-Jammergenoeg...
+\subsection{Bedrijfsnetwerk}
+Het tweede netwerk waar ik toegang tot zou krijgen was een typisch bedrijfsnetwerk.
+Toen de fysieke server (zie \ref{sec:server}) net geïnstalleerd was in een serverruimte, begon ik met het analyseren van dit netwerk.
+De port mirror kwam dus toe op 1 van de interfaces van deze server.
+
+Toen ik begon met het analyseren van dit netwerk had ik al een deel van het aangepast systeem afgewerkt.
+De tools die toen gebruikt werden waren enkel Security Onion, TheHive en Cortex.
+
+\subsubsection{Verwachtingen}
+Dit netwerk is een privaat netwerk, verbonden met het internet via een NAT pool.
+Op enkele ip adressen in deze NAT pool staan er ook poorten open met services zoals webservers.
+
+De port mirror werd genomen aan de buitenkant van de NAT pool.
+Er was dus geen zicht op de private ip adressen in dit netwerk.
+
+Wat er zeker kan verwacht worden zijn geautomatiseerde pogingen tot aanvallen en \emph{recon} (verkenning van het ip adres of netwerk) op de publieke services.
+Voorbeelden gaan van het testen of een poort open staat tot het proberen te misbruiken van een bug in specifieke (verouderde) server software.
+
+Verder kan er nog verdachte activiteit voorkomen vanuit het private netwerk.
+Het ergste wat hier kan voorkomen is bijvoorbeeld een workstation die een verdacht ip zoals een phishing website contacteert.
+
+% Analyses
+
+\subsubsection{Reflectie}
+
+Over het algemeen was dit netwerk een succes.
+
+Het enige probleem was dat de plaats van de port mirror niet optimaal was.
+Moest de port mirror aan de binnenzijde van de NAT pool genomen zijn, zouden ook de private ip adressen zichtbaar zijn.
+Daaruit kan er veel extra informatie afgeleidt worden en kunnen incidenten gekoppeld worden aan bepaalde hosts.
+
+Ook zou het intressant geweest zijn als er wat meer documentatie beschikbaar was over dit netwerk.
+Met de documentatie die beschikbaar was, kon er wel al veel gedaan worden.
 
 \chapter{Ontwikkelen van een aangepast systeem}
+\label{sec:aangepast-systeem}
 % Proberen schema hier te verwerken
 \section{Motivatie}
 Na het bekijken van de opnames van enkele presentaties van de Security Onion Conference 2019, bemerkte ik dat er veel mensen proberen externe tools te integreren met Security Onion.
