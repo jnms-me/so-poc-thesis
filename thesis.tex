@@ -572,13 +572,55 @@ Het ergste wat hier kan voorkomen is bijvoorbeeld een workstation die een verdac
 \subsubsection{Reflectie}
 
 Over het algemeen was dit netwerk een succes.
+Deze situatie is precies waarvoor software zoals Security Onion gemaakt is.
 
 Het enige probleem was dat de plaats van de port mirror niet optimaal was.
 Moest de port mirror aan de binnenzijde van de NAT pool genomen zijn, zouden ook de private ip adressen zichtbaar zijn.
-Daaruit kan er veel extra informatie afgeleidt worden en kunnen incidenten gekoppeld worden aan bepaalde hosts.
+Daarmee kan er veel extra informatie verkregen worden en kunnen incidenten gekoppeld worden aan bepaalde hosts.
 
 Ook zou het intressant geweest zijn als er wat meer documentatie beschikbaar was over dit netwerk.
 Met de documentatie die beschikbaar was, kon er wel al veel gedaan worden.
+
+\subsection{OT netwerk}
+Het laatste netwerk dat aanbod kwam tijdens de bachelorproef was het OT netwerk van Fluvius.
+Het OT netwerk verbindt hoogspanningsapparatuur met controlekamers.
+Met deze infrastructuur wordt het hoogspanningsnet op afstand gecontroleerd en bijgestuurd.
+
+De port mirror werd aangemaakt tussen een controlekamer en de rest van het netwerk.
+
+\subsection{Verwachtingen}
+In theorie is dit netwerk volledig afgesloten van de buitenwereld.
+Of dit in praktijk het geval is, komen we hopelijk te weten tijdens de analyse.
+
+Omdat dit netwerk gebruikt wordt om industriële apparatuur te beheren, zullen er waarschijnlijk specifieke protocollen gebruikt worden die niet terug te vinden zijn in een normaal netwerk.
+De kans dat een van de beschikbare tools dit protocol ondersteunt is klein.
+Als dit protocol niet geëncrypteerd is en de specificatie beschikbaar is, kan er eventueel zelfs geprobeerd worden om ondersteunding voor dit protocol toe te voegen aan bijvoorbeeld Zeek.
+Op die manier zou het toch mogelijk zijn om hier statistieken over te bepalen in Security Onion en anomalieën te detecteren (manueel of met ElastAlert).
+
+Omdat het netwerk afgesloten is van het internet, kunnen veel tools in dit systeem niet gebruikt worden.
+Alles wat openbaar beschikbare informatie gebruikt, zoals de analyzers van TheHive en Cortex, ip adressen met slechte reputatie in NIDS en andere zaken zoals GeoIP zullen niet aan bod komen.
+
+Aangezien er niet veel verkeer is op dit netwerk, is het best om beide variabelen \lstinline|INTERNAL_NET| en \lstinline|EXTERNAL_NET| op \lstinline|any| in te stellen.
+Er bestaat geen extern netwerk in deze situatie, dus wordt \lstinline|any| gebruikt voor beide om toch zo veel mogelijk uit het NIDS te halen.
+
+\emph{Intrusions} komen in theorie niet voor in dit netwerk.
+Het netwerk is simpelweg niet verbonden met een `gevaarlijk' extern netwerk zoals het internet.
+Wat wel gezien kan worden is de gevolgen van een intrusion via een andere methode.
+Een apparaat die geïnfecteerd werd door bijvoorbeeld een USB-stick kan zich plots abnormaal gedragen of zelfs andere apparaten proberen te infecteren.
+Daarom is het beter om in de eerste plaats HIDS te voorzien voordat NIDS toegepast wordt.
+
+\subsection{Reflectie}
+Zelf kon ik niet veel bepalen in dit netwerk.
+De meest gedetailleerde observaties waren het identificeren van enkele Windows workstations en server en verschillende statistieken bepalen over heel het netwerk.
+Dit kwam vooral doordat ik geen documentatie ter beschikking had over dit netwerk.
+
+Later werkte ik samen met Fluvius om dit nogmaals te proberen.
+Toen konden we samen veel vermoedingen bevestigen.
+Opnieuw was er niet veel documentatie beschikbaar, wat de analyse moeilijker maakte.
+en het proces om te achterhalen welk ip adres gekoppeld is aan welk apparaat duurde telkens vrij lang.
+
+De enkele port mirror gaf een beperkt zicht in het netwerk.
+Om een beter beeld te krijgen moeten er zeker meerde port mirrors aangemaakt worden op een aantal belangrijke plaatsen.
 
 \chapter{Ontwikkelen van een aangepast systeem}
 \label{sec:aangepast-systeem}
@@ -1108,7 +1150,7 @@ CapMe gebruikt waarschijnlijk dus ook een verouderde database om besturingssyste
 Naast TCP/IP stack fingerprinting bestaan er nog andere manieren om een besturingssysteem of apparaat te herkennen.
 
 In het DHCP protocol zijn er ook enkele parameters die door de implementatie ingevuld worden.
-De belangerijkste is de `Parameter request list', die voor bijna elk soort apparaat verschilt.
+De belangrijkste is de `Parameter request list', die voor bijna elk soort apparaat verschilt.
 
 Http clients geven meestal een \lstinline|User-Agent| header mee met elke http request.
 Deze header bevat de browser of andere software die verantwoordelijk is voor de request en soms ook de naam en versie van het besturingssysteem.
