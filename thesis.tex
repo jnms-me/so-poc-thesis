@@ -588,7 +588,7 @@ Met deze infrastructuur wordt het hoogspanningsnet op afstand gecontroleerd en b
 
 De port mirror werd aangemaakt tussen een controlekamer en de rest van het netwerk.
 
-\subsection{Verwachtingen}
+\subsubsection{Verwachtingen}
 In theorie is dit netwerk volledig afgesloten van de buitenwereld.
 Of dit in praktijk het geval is, komen we hopelijk te weten tijdens de analyse.
 
@@ -611,7 +611,7 @@ Daarom is het beter om in de eerste plaats HIDS te voorzien voordat NIDS toegepa
 
 % analyses of ref
 
-\subsection{Reflectie}
+\subsubsection{Reflectie}
 Zelf kon ik niet veel bepalen in dit netwerk.
 De meest gedetailleerde observaties waren het identificeren van enkele Windows workstations en server en verschillende statistieken bepalen over heel het netwerk.
 Dit kwam vooral doordat ik geen documentatie ter beschikking had over dit netwerk.
@@ -1058,10 +1058,37 @@ De https verbinding wordt dus een http verbinding voor intern gebruik in de Dock
 % vibe-d als web framework die toe laat om rest servers en clients te maken
 % Werking backend
 
-\section{TheHive}
-\subsection{Cortex}
+\section{Intelligence frameworks}
+
+% toekomstgericht
+% cases
+% correlatie
+
+% elk een unieke feature
+In dit systeem zijn er 2 applicaties aanwezig die als intel frameworks dienen: TheHive en MISP.
+Beide slaan ze incidenten op in cases en kunnen ze gebeurtenissen met elkaar correleren.
+Elk hebben ze een unieke feature die verder bekeken wordt.
+
+\subsection{TheHive}
+Volgens de officiële website is TheHive een ``Security Incident Response Platform''.
+In dit systeem wordt het echt geconfigureerd als response platform, wel om extra informatie
+\autocite{thehive:home}
+
+\subsubsection{Cortex}
 \label{sec:cortex}
-\section{MISP}
+
+\subsubsection{Analysers}
+% Responders worden op dezelfde manier geconfigureerd
+
+\subsection{MISP}
+\subsubsection{NIDS export}
+
+\subsection{Zeek}
+Zeek heeft ook mogelijkheid om intel data op te slaan.
+Hiervoor moet er op voorhand een file hash, domein, ip\dots ingesteld worden in het bestand \lstinline|intel.dat|.
+Daarna worden er logs gegenereerd wanneer deze data gezien wordt op het netwerk.
+Deze logs zijn zichtbaar in het Kibana dashboard `Zeek - Intel'.
+
 \section{Ntop}
 \section{Netdata}
 
