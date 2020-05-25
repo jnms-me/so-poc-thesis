@@ -1071,16 +1071,55 @@ Elk hebben ze een unieke feature die verder bekeken wordt.
 
 \subsection{TheHive}
 Volgens de officiële website is TheHive een ``Security Incident Response Platform''.
-In dit systeem wordt het echt geconfigureerd als response platform, wel om extra informatie
 \autocite{thehive:home}
+In dit systeem wordt TheHive niet geconfigureerd als response platform, maar wel om incidenten te loggen en om extra informatie op te halen van externe bronnen.
+
+\subsubsection{Alerts}
+Via een API kunnen externe systemen alerts aanmaken in thehive.
+Aan de hand van deze alerts kan een nieuwe case gemaakt worden of kan een bestaande case uitgebreid worden.
+
+In dit systeem is ElastAlert in Security Onion de externe bron.
+Wanneer een NIDS alert log in Elasticsearch binnenkomt, maakt ElastAlert een nieuwe alert aan in TheHive.
+
+% alerts moeten niet gebruikt worden
+% kunnen op read gezet worden
 
 \subsubsection{Cortex}
 \label{sec:cortex}
+Cortex is een onderdeel van het `TheHive Project'.
+TheHive is de interface die gebruikt wordt door gebruikers, Cortex is een applicatie die gebruikt wordt door TheHive om data te analyseren en te om reageren op incidenten (\emph{analysis and response}).
+Beide applicaties moeten apart geïnstalleerd en geconfigureerd worden, maar kunnen dezelfde Elasticsearch instantie gebruiken als `database'.
 
 \subsubsection{Analysers}
-% Responders worden op dezelfde manier geconfigureerd
+Het `TheHive project' slaat data zoals ip adressen, domeinen, bestanden\dots op als \emph{observables}.
+In Cortex zijn er standaard een 50-tal \emph{analysers} aanwezig.
+Al deze \emph{Analysers} kunnen 1 of meerdere soorten \emph{observables} indienen bij een externe service, waarvan een antwoord verwacht wordt.
+
+Elke \emph{analyser} moet eenmalig geconfigureerd worden voor deze actief is.
+Bij sommige bestaat deze configuratie enkel uit een aantal instellingen, andere vereisen dan een API key van de externe service.
+Zelf configureerde ik de 16 \emph{analysers} die geen registratie of API key nodig hebben.
+Voorbeelden zijn Cyberprotect ThreatScore, DShield lookup, GoogleDNS resolve, MaxMind GeoIP, Virusshare\dots
+
+\emph{Responders} kunnen op dezelfde manier geconfigureerd worden, maar komen niet aan bod in dit systeem.
+
+\subsubsection{Voorbeeld}
+In dit voorbeeld werd er een case aangemaakt met een domain observable `google.com'.
+Op deze observable werden alle compatibele \emph{analysers} uitgevoerd, ondere andere een DNS lookup.
+In het resultaat van deze lookup kwam het ip `173.194.69.139' voor.
+Deze werd dan ook toegevoegd aan de case als ip observable, waarop opnieuw alle compatibele analysers op uitgevoerd werd.
+Zo verzamelen we veel informatie over deze observables zoals locatie, reputatie en soms zelfs nieuwe observables.
+
+Figuur \ref{fig:thehive-example} is een overzicht van de gewonnen informatie.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{thehive-example}
+  \caption{Overzicht van de informatie gewonnen met verschillende \emph{analysers}}
+  \label{fig:thehive-example}
+\end{figure}
 
 \subsection{MISP}
+% Ook mogelijk om cortex analysers te gebruikten op attibutes, lijkt niet meer ondersteund, hier niet geraakt
 \subsubsection{NIDS export}
 
 \subsection{Zeek}
