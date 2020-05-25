@@ -1122,9 +1122,63 @@ Figuur \ref{fig:thehive-example} is een overzicht van de gewonnen informatie.
 
 \subsection{MISP}
 Het tweede intelligence framework die toegevoegd werd aan het systeem is MISP.
-% Ook mogelijk om cortex analysers te gebruikten op attibutes, lijkt niet meer ondersteund, hier niet geraakt
+MISP heeft net zoals TheHive de mogelijkheid om cases (hier events genoemd) aan te maken die gebeurtenissen documenteren.
+
+De \emph{observables} worden hier \emph{attributes} genoemd.
+Er zijn veel meer soorten attributes beschikbaar, waaronder ook veel data die niet met netwerk beveiliging te maken heeft.
+Overeenkomende attributes in events worden automatisch gecorreleerd aan elkaar.
+
+Verrijking van attributes met externe bronnen is niet zo simpel als bij TheHive.
+Er is wel een Cortex plugin aanwezig, maar deze lijk niet meer ondersteund te worden door Cortex.
+Ik heb deze dan ook niet volledig werkende gekregen.
+
 \subsubsection{NIDS export}
 % unieke feature is de mogelijkheid om attributes te flaggen
+MISP heeft wel een unieke feature die gebruikt wordt in dit systeem.
+Voor elke attribute is er een \lstinline|IDS| optie.
+
+In figuur \ref{fig:misp-export-flag} staat de IDS optie aangevinkt voor de attribute `10.126.10.151:8530' van het type `ip-dst:port'.
+Deze attibute is afkomstig van een event die eerder aangemaakt werd op een NIDS alert te verwerken.
+
+Elke dag, of telkens wanneer \lstinline|rule-update| uitgevoerd wordt, haalt Security Onion nieuwe rules op van providers zoals Emerging Threats.
+In dit systeem werd Security Onion ook geconfigureerd om nieuwe rules van MISP's `NIDS rules export' API op te halen.
+
+Omdat van het attribute `10.126.10.151:8530' de IDS optie aangevinkt staat, zal de NIDS engine van Security Onion (Suricata) een alert genereren wanneer deze combinatie van ip adres en tcp of udp poort gezien wordt.
+Dit werd bepaald door het antwoord van de `NIDS rules export' API in figuur \ref{fig:misp-export-txt}.
+
+Toen de gebeurtenis zich de volgende dag herhaalde, was het effect van deze NIDS rule te zien in Squert zoals in figuur ref.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{misp-export-flag}
+  \caption{De attributes van een event, met de \emph{IDS flag} van 1 attribute aangevinkt}
+  \label{fig:misp-export-flag}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{lstlisting}
+# MISP export of IDS rules - optimized for 
+#
+# These NIDS rules contain some variables that need to exist in your configuration.
+# Make sure you have set:
+#
+# $HOME_NET - Your internal network range
+# $EXTERNAL_NET - The network considered as outside
+# $SMTP_SERVERS - All your internal SMTP servers
+# $HTTP_PORTS   - The ports used to contain HTTP traffic (not required with suricata export)
+# 
+alert ip $HOME_NET any -> 10.126.10.151 8530 (msg: "MISP e1 [] Outgoing To IP: 10.126.10.151|8530";   classtype:trojan-activity; sid:4000051; rev:1; priority:1; reference:url,http://misp-sopoc.duckdns.org/events/view/1;)
+  \end{lstlisting}
+  \caption{Resultaat van de MISP NIDS rules export api}
+  \label{fig:misp-export-txt}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{misp-export-squert}
+  \caption{Het resulaat in Squert van de door MISP geëxporteerde NIDS rule}
+  \label{fig:misp-export-squert}
+\end{figure}
 
 \subsection{Zeek}
 Zeek heeft ook mogelijkheid om intel data op te slaan.
