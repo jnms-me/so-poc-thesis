@@ -1059,12 +1059,15 @@ De https verbinding wordt dus een http verbinding voor intern gebruik in de Dock
 % Werking backend
 
 \section{Intelligence frameworks}
+Intelligence frameworks dienen om alle beveiliging gerelateerde gebeurtenissen te documenteren.
+Dit gebeurt meestal in de vorm van cases, waarbij elke case de documentatie bevat van 1 of meer gebeurtenissen.
+Deze documentatie komt zowel in de vorm van handgeschreven beschrijvingen als in de vorm van data met herkenbare types zoals domein, ip, md5 file hash\dots
 
-% toekomstgericht
-% cases
-% correlatie
+Hoe meer cases, hoe meer data en hoe meer mogelijke connecties naar andere cases bij het maken van een nieuwe case.
+Dit noemt men correlatie van attributes of observables.
 
-% elk een unieke feature
+Met het correct gebruik van intelligence frameworks wordt er dus altijd gewerkt aan het verbeteren van de verwerking van gelijkaardige gebeurtenissen in de toekomst.
+
 In dit systeem zijn er 2 applicaties aanwezig die als intel frameworks dienen: TheHive en MISP.
 Beide slaan ze incidenten op in cases en kunnen ze gebeurtenissen met elkaar correleren.
 Elk hebben ze een unieke feature die verder bekeken wordt.
@@ -1081,8 +1084,7 @@ Aan de hand van deze alerts kan een nieuwe case gemaakt worden of kan een bestaa
 In dit systeem is ElastAlert in Security Onion de externe bron.
 Wanneer een NIDS alert log in Elasticsearch binnenkomt, maakt ElastAlert een nieuwe alert aan in TheHive.
 
-% alerts moeten niet gebruikt worden
-% kunnen op read gezet worden
+Deze alerts moeten niet altijd in een case opgenomen worden, maar worden best wel steeds verwerkt door ze op `gelezen' te zetten.
 
 \subsubsection{Cortex}
 \label{sec:cortex}
@@ -1119,8 +1121,10 @@ Figuur \ref{fig:thehive-example} is een overzicht van de gewonnen informatie.
 \end{figure}
 
 \subsection{MISP}
+Het tweede intelligence framework die toegevoegd werd aan het systeem is MISP.
 % Ook mogelijk om cortex analysers te gebruikten op attibutes, lijkt niet meer ondersteund, hier niet geraakt
 \subsubsection{NIDS export}
+% unieke feature is de mogelijkheid om attributes te flaggen
 
 \subsection{Zeek}
 Zeek heeft ook mogelijkheid om intel data op te slaan.
