@@ -840,7 +840,6 @@ networks:
 \end{figure}
 
 \section{Structuur project}
-% github
 Zoals eerder aangehaald is het systeem ontworpen aan de hand van Docker compose.
 Elke service heeft een eigen container en elke volledige applicatie (verzameling van services) heeft een eigen \lstinline|docker-compose.yml| file.
 Zo zijn er 6 applicaties: so-vm, so-manager, MISP, TheHive, Ntop en Netdata.
@@ -852,6 +851,10 @@ Een volledig overzicht van deze bestanden staat in figuur \ref{fig:so-poc-struct
 
 Elke submap bevat bestanden die nodig zijn voor het bouwen of configureren van een service.
 Meestal bestaat dit uit een Dockerfile en enkele configuratiefiles en/of de broncode van de service.
+
+\subsubsection{Github}
+Heel dit project is momenteel beschikbaar als een publieke Github repository: \url{https://github.com/Reavershark/so-poc}.
+Er is ook een bestand \lstinline|Setup.md| met instructies om het systeem te installeren.
 
 \begin{figure}[H]
   \begin{lstlisting}
@@ -897,7 +900,6 @@ In plaats van al deze informatie bij te houden, besloot ik om elke applicatie ee
 In elke applicatie is er een service aanwezig met de naam \lstinline|applicatie-proxy| die http verbindingen op poort 80 doorgeeft aan de juiste service binnen de applicatie op de juiste poort.
 
 \subsubsection{Nginx}
-% Nginx logo
 De software die in elke reverse-proxy wordt gebruikt is Nginx, een open source webserver.
 Een van de features van Nginx is de mogelijkheid om als reverse-proxy te werken.
 Nginx heeft een officiële Docker image die ik gebruikt heb als basis.
@@ -1152,7 +1154,6 @@ Er is wel een Cortex plugin aanwezig, maar deze lijk niet meer ondersteund te wo
 Ik heb deze dan ook niet volledig werkende gekregen.
 
 \subsubsection{NIDS export}
-% unieke feature is de mogelijkheid om attributes te flaggen
 MISP heeft wel een unieke feature die gebruikt wordt in dit systeem.
 Voor elke attribute is er een \lstinline|IDS| optie.
 
@@ -1209,7 +1210,6 @@ Deze logs zijn zichtbaar in het Kibana dashboard `Zeek - Intel'.
 \section{Netdata}
 
 \section{Passive os fingerprinting}
-% Voordien uitleggen enterprise netwerk met internet en afgesloten netwerk.
 Tijdens het uitbreiden van dit systeem heb ik geprobeerd om het besturingssysteem van hosts op een netwerk te bepalen door enkel het netwerkverkeer te analyseren.
 Deze uitbreiding was gefocust voor gebruik in een volledig afgesloten netwerk.
 \subsection{TCP/IP stack}
