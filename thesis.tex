@@ -626,7 +626,6 @@ Om een beter beeld te krijgen moeten er zeker meerde port mirrors aangemaakt wor
 
 \chapter{Ontwikkelen van een aangepast systeem}
 \label{sec:aangepast-systeem}
-% Proberen schema hier te verwerken
 \section{Motivatie}
 Na het bekijken van de opnames van enkele presentaties van de Security Onion Conference 2019, bemerkte ik dat er veel mensen proberen externe tools te integreren met Security Onion.
 \autocite{so:conference-2019}
@@ -658,8 +657,6 @@ Ook kunnen tcp of udp poorten geforward worden naar interfaces van de host en ku
 Docker kan door softwareontwikkelaars gebruikt worden om hun applicaties samen met alle nodige libraries en andere dependencies, als 1 pakket te publiceren.
 Deze applicaties kunnen dan gedownload worden als een Docker image.
 
-% Docker logo
-
 % Evt Dockerfiles tonen
 
 \subsubsection{Dockerfiles}
@@ -667,10 +664,6 @@ Deze applicaties kunnen dan gedownload worden als een Docker image.
 \autocite{docker:containers}
 
 \subsubsection{Docker compose}
-% Github repo presenteren
-% Indien het overzichtelijk gebruikt wordt, tool om het volledige systeem mee te ontwerpen
-% Compose files tonen
-
 Docker kan ook gebruikt worden bij het ontwikkelen van systemen die bestaan uit meerdere applicaties.
 Een typisch voorbeeld hiervan is een webserver en een database.
 De http poort van de webserver container wordt dan geforward naar de host en de database container is bereikbaar via een intern netwerk waar beide containers mee verbonden zijn.
@@ -751,6 +744,31 @@ Het GUI programma \lstinline|virt-manager| hoeft niet op de server zelf geïnsta
 
 % Uitleggen wat een hypervisor is en bekende alternatieven zoals hyper-v (windows) en virtualbox aanhalen
 
+\section{Schematische voorstelling}
+Als hulp om de opbouw van dit systeem te begrijpen, volgen hier enkele schematische voorstellingen van het systeem.
+Ook verwijs ik hier naar de bijlage op pagina \pageref{bijlage:aangepast-systeem-schema-docker} voor een gedetailleerd schema van het Docker compose project.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{aangepast-systeem-schema-server}
+  \caption{Voorstelling van de fysieke server met alle aanwezige software en de gateway}
+  \label{fig:aangepast-systeem-schema-server}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{aangepast-systeem-schema-http}
+  \caption{Vereenvoudigd schema van HTTP(S) verbindingen tussen verschillende applicaties}
+  \label{fig:aangepast-systeem-schema-http}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{aangepast-systeem-schema-pcap}
+  \caption{Schematische voorstelling van de methodes die gebruikt werden om de port mirror door te geven aan verschillende applicaties}
+  \label{fig:aangepast-systeem-schema-pcap}
+\end{figure}
+
 \section{Intern netwerk}
 Vanuit het perspectief van het host besturingssysteem Debian, zijn er 4 interfaces actief.
 Deze bestaan uit de management poort, de capture poort, een Libvirt virtueel netwerk en een Docker intern netwerk.
@@ -822,6 +840,7 @@ networks:
 \end{figure}
 
 \section{Structuur project}
+% github
 Zoals eerder aangehaald is het systeem ontworpen aan de hand van Docker compose.
 Elke service heeft een eigen container en elke volledige applicatie (verzameling van services) heeft een eigen \lstinline|docker-compose.yml| file.
 Zo zijn er 6 applicaties: so-vm, so-manager, MISP, TheHive, Ntop en Netdata.
@@ -1352,6 +1371,12 @@ Omdat een simpele actieve scan veel meer informatie oplevert, vond ik het niet n
 % Bijlagen (niet verplicht)
 \chapter*{Bijlagen}
 \addcontentsline{toc}{chapter}{Bijlagen}
+
+\section{Docker compose schema}
+Zie pagina \pageref{bijlage:aangepast-systeem-schema-docker} is een voorstelling van alle Docker compose services of containers, in de applicatie waar ze toe behoren.
+HTTP(S) verbindingen en port forwarding wordt aangeduid met pijlen.
+
+\includepdf[pagecommand=\label{bijlage:aangepast-systeem-schema-docker}]{aangepast-systeem-schema-docker}
 
 % Literatuurlijst
 \printbibliography
