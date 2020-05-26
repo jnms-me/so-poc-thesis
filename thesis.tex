@@ -1068,13 +1068,43 @@ Omdat Security Onion enkel https aanbied, wordt er een \emph{downgrade} uitgevoe
 De https verbinding wordt dus een http verbinding voor intern gebruik in de Docker compose omgeving.
 
 \section{Web app}
-\subsection{React}
-% Javascript framework
-% States beheren enz, uitleg overnemen van docs
-% Material ui library
-% dir tree, uitleggen hoe project functioneert
-% Homepage en query page
-\subsection{Vibe.d}
+Met hulp van \lstinline|https-portal| heeft elke applicatie een eigen subdomein.
+Eerst hield ik al deze URLs als bladwijzers bij, maar dit was niet zo praktisch.
+
+Daarnaast had ik ook het idee om bestaande functionaliteit in verschillende applicaties samen te brengen in 1 interface.
+Dit was mogelijk bij applicaties die een (REST) API bevatten.
+
+Initieel was de web app dus een pagina met links naar alle verschillende services.
+Daarna was het de bedoeling om features toe te voegen in de vorm van extra pagina's.
+
+\subsection{React frontend}
+De frontend werd gemaakt met React, een javascript library om \emph{User} interfaces te maken \autocite{react:home} en Material UI, een library voor React met material design componenten \autocite{material-ui:home}.
+De broncode bevind zich in de map \lstinline|so-manager/react|.
+De applicatie bestaat uit een toolbar, sidebar met navigatie en de inhoud van een pagina.
+Er zijn 2 relevante pagina's.
+
+De homepagina (figuur ref) toont een overzicht van alle applicaties.
+Elke knop is een link naar die applicatie.
+
+Op de `Query' pagina kan er meer informatie over een ip adres opgevraagd worden.
+Er worden links gemaakt naar het Kibana `Indicator' dashboard en de ntop host page voor dit specifiek ip adres.
+Ook worden via de backend enkele API's van Ntop en MISP aangeroepen, het resultaat is zichtbaar onder de links.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{so-manager-home}
+  \caption{Home pagina van de web applicatie}
+  \label{fig:so-manager-home}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{so-manager-query}
+  \caption{Query pagina van de web applicatie met het resulaat van een ip query}
+  \label{fig:so-manager-query}
+\end{figure}
+
+\subsection{Vibe.d backend}
 % Korte omschrijving dlang als general purpose compiled lang
 % vibe-d als web framework die toe laat om rest servers en clients te maken
 % Werking backend
