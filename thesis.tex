@@ -1105,9 +1105,64 @@ Ook worden via de backend enkele API's van Ntop en MISP aangeroepen, het resulta
 \end{figure}
 
 \subsection{Vibe.d backend}
-% Korte omschrijving dlang als general purpose compiled lang
-% vibe-d als web framework die toe laat om rest servers en clients te maken
-% Werking backend
+Sommige features van de web applicatie konden niet volledig in de frontend geïmplementeerd worden.
+De API's van MISP en Ntop, die in de `Query' pagina gebruikt worden, kunnen niet veilig aangeroepen worden vanuit de browser.
+Daarom werd er ook een backend gedeelte ontwikkeld die aanwezig is in de Docker compose omgeving, waar toegang tot de API's wel veilig kan verlopen.
+
+\subsubsection{Vibe.d}
+De backend werd geschreven in D met het web framework `Vibe.d'.
+De broncode wordt gecompileerd naar een native binary, die uitgevoerd wordt in een Docker container.
+Deze broncode is aanwezig in de map \lstinline|so-manager/api|.
+
+\subsubsection{Reverse proxy}
+Alle HTTP requests op het domein \lstinline|sopoc.duckdns.org| worden verwerkt door de Nginx proxy \lstinline|so-manager-proxy|.
+Deze proxy \emph{forward} alle requests waarvan het pad begint met \lstinline|/api| naar de backend service \lstinline|so-manager-api|.
+Alle andere requests komen terrecht bij de service \lstinline|so-manager-react|, die de statische frontend bestanden host.
+
+\subsubsection{REST API's}
+Wanneer de backend een HTTP GET request met het pad \lstinline|/api/host/{ip adres}| ontvangt, roept de backend verschillende API endpoints aan van de MISP en Ntopng applicaties.
+Als al deze data ontvangen is, wordt er een antwoord gestuurd naar de browser in de vorm van een JSON object.
+
+Met Vibe.d kunnen REST API's gedefinieerd worden als interfaces.
+De definitie van REST API van de backend zelf staat in figuur \ref{fig:vibe-rest-server}.
+Verder in de code is er een \emph{class} die deze \emph{interface} implementeerd.
+
+Interfaces kunnen niet alleen gebruikt worden op REST API's te hosten, maar ook om andere API's mee aan te roepen.
+Het aanroepen van de MISP api gebeurt met de volgende code: \lstinline|RestInterfaceClient!IMispAPI("http://misp-proxy/")|.
+Met de interface in figuur \ref{fig:vibe-rest-misp} en een url kunnen api requests gemaakt worden door simpelweg methodes aan te roepen.
+Deze interface is wat complexer omdat MISP een API key gebruikt.
+
+\begin{figure}[H]
+  \begin{lstlisting}
+@path("/api/")
+interface IRestAPI
+{
+  @path("/host/:ip")
+  Json getIP(string _ip);
+}
+  \end{lstlisting}
+  \caption{Definitie van de REST api van de backend}
+  \label{fig:vibe-rest-server}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{lstlisting}
+@path("/")
+interface IMispAPI
+{
+  @headerParam("auth", "Authorization")
+  {
+    // POST /attributes/restSearch
+    @path("attributes/restSearch")
+    @method(HTTPMethod.POST)
+    @bodyParam("value", "value")
+    Json searchAttributes(string auth, string value);
+  }
+}
+  \end{lstlisting}
+  \caption{Definitie van 1 endpoint van de MISP REST API}
+  \label{fig:vibe-rest-misp}
+\end{figure}
 
 \section{Intelligence frameworks}
 Intelligence frameworks dienen om alle beveiliging gerelateerde gebeurtenissen te documenteren.
