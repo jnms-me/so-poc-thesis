@@ -1100,15 +1100,16 @@ Initieel was de web app dus een pagina met links naar alle verschillende service
 Daarna was het de bedoeling om features toe te voegen in de vorm van extra pagina's.
 
 \subsection{React frontend}
-De frontend werd gemaakt met React, een javascript library om \emph{User} interfaces te maken \autocite{react:home} en Material UI, een library voor React met material design componenten \autocite{material-ui:home}.
+\label{sec:so-manager-frontend}
+De frontend werd gemaakt met React, een javascript library om user interfaces te maken \autocite{react:home} en Material UI, een library voor React met material design componenten \autocite{material-ui:home}.
 De broncode bevind zich in de map \lstinline|so-manager/react|.
 De applicatie bestaat uit een toolbar, sidebar met navigatie en de inhoud van een pagina.
 Er zijn 2 relevante pagina's.
 
-De homepagina (figuur ref) toont een overzicht van alle applicaties.
+De homepagina (figuur \ref{fig:so-manager-home}) toont een overzicht van alle applicaties.
 Elke knop is een link naar die applicatie.
 
-Op de `Query' pagina kan er meer informatie over een ip adres opgevraagd worden.
+Op de `Query' pagina (figuur \ref{fig:so-manager-query}) kan er meer informatie over een ip adres opgevraagd worden.
 Er worden links gemaakt naar het Kibana `Indicator' dashboard en de ntop host page voor dit specifiek ip adres.
 Ook worden via de backend enkele API's van Ntop en MISP aangeroepen, het resultaat is zichtbaar onder de links.
 
@@ -1142,7 +1143,7 @@ Deze proxy \emph{forward} alle requests waarvan het pad begint met \lstinline|/a
 Alle andere requests komen terrecht bij de service \lstinline|so-manager-react|, die de statische frontend bestanden host.
 
 \subsubsection{REST API's}
-Wanneer de backend een HTTP GET request met het pad \lstinline|/api/host/{ip adres}| ontvangt, roept de backend verschillende API endpoints aan van de MISP en Ntopng applicaties.
+Wanneer de backend een HTTP GET request met het pad \lstinline|/api/host/{ip adres}| ontvangt, roept de backend verschillende API endpoints aan van de MISP en ntopng applicaties.
 Als al deze data ontvangen is, wordt er een antwoord gestuurd naar de browser in de vorm van een JSON object.
 
 Met Vibe.d kunnen REST API's gedefinieerd worden als interfaces.
@@ -1314,9 +1315,24 @@ Daarna worden er logs gegenereerd wanneer deze data gezien wordt op het netwerk.
 Deze logs zijn zichtbaar in het Kibana dashboard `Zeek - Intel'.
 
 \section{Ntop}
-% Focus ligt niet op security, wel gedetailleerd een log bijhouden van netwerkactiviteit.
-% Duidelijk inzicht in volumes data
-% First seen en evt alerts kunnen als begin gebruikt worden van een onderzoek
+\emph{ntopng} is een service die gedetailleerde anaylse van netwerk verkeer presenteert met een web interface.
+De focus van deze tool ligt niet op beveiliging, maar op het verkennen van en inzicht krijgen in een netwerk.
+\emph{ntopng} is dan ook vooral gericht op netwerkbeheerders, omdat het een grote hulp kan zijn bij het troubleshooten.
+\autocite{ntop:ntopng}
+
+Toch heeft \emph{ntopng} een meerwaarde als uitbreiding op een NIDS.
+Aan de hand van het ip adres van een host, kan er extra informatie verzameld worden over die host.
+Voorbeelden van deze informatie zijn het tijdstip wanneer een ip adres voor het eerst gezien werd en een gedetailleerde geschiedenis van de gegenereerde en ontvangen volumes data.
+Daarnaast is er nog de mogelijkheid om ip adressen een alias te geven en om ze aan host pools toe te voegen voor snelle identificatie.
+
+Veel van deze informatie is niet altijd zichtbaar in Security Onion.
+Bij het opbouwen van een case kan het zeker nuttig zijn om attributes of observables zoals ip adressen of domeinnamen op te zoeken in ntopng.
+Voor ip adressen is dit trouwens mogelijk op de query pagina van de `so-manager' web app besproken in sectie \ref{sec:so-manager-frontend} op pagina \pageref{sec:so-manager-frontend}.
+
+Ten slotte kunnen de alerts gegenereerd door ntopng mogelijk gebruikt worden als het begin van een case.
+Een alert met de beschrijving `A new device has connected to the network' kan wijzen op een rogue device.
+Daarna moet er nagegaan worden of het ip adres niet tot een DHCP pool behoort en zo voort.
+
 \section{Netdata}
 % Troubleshooten Docker compose systeem en server
 % Alerts over RAM usage en vooral geschiedenis packet loss
