@@ -739,7 +739,6 @@ Het bestand \lstinline|compose| is een wrapper script voor \lstinline{docker-com
 \end{figure}
 
 \subsection{Libvirt}
-% logo
 De meeste applicaties worden uitgevoerd in docker containers, op 1 na: Security Onion.
 Security Onion is niet het meest stabiele systeem om altijd toegang te hebben op afstand, omwille van het regelmatig herstarten tijdens de configuratie en voorgeïnstalleerde firewall.
 Om deze toegang zeker niet te verliezen, besloot ik om Security Onion te virtualiseren.
@@ -749,15 +748,23 @@ Libvirt zelf kan geen virtuele machines uitvoeren, maar kan samen werken met QEM
 QEMU is een command-line applicatie voor het emuleren en virtualiseren van \emph{machines}.
 Eén van de features van QEMU is om de KVM (Kernel-based Virtual Machine) technologie van de Linux kernel te gebruiken om performante virtuele machines te creëren.
 
+De combinatie van een Linux kernel met KVM, QEMU en Libvirt is dus een volwaardige hypervisor.
+Andere voorbeelden van hypervisors zijn \emph{Hyper-V} (Windows) en Virtualbox (Cross-platform).
+
 Libvirt definieert virtuele machines in XML documenten die gevalideerd worden aan de hand van XML schema's.
 Het aanmaken en aanpassen van virtuele machines wordt echter meestal gedaan met een GUI tool zoals \lstinline|virt-manager|.
 Soms kan het wel nodig zijn om deze XML files handmatig te bewerken, omdat QEMU zodanig veel opties heeft.
 \autocite{libvirt:docs}
 
 Het GUI programma \lstinline|virt-manager| hoeft niet op de server zelf geïnstalleerd te zijn, maar kan ook op afstand werken over een ssh verbinding.
-% Screenshot virt-manager
+Figuur \ref{fig:virt-manager} is een screenshot van virt-manager in werking.
 
-% Uitleggen wat een hypervisor is en bekende alternatieven zoals hyper-v (windows) en virtualbox aanhalen
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{virt-manager}
+  \caption{Virt-manager kan Libvirt op afstand beheren via SSH, inclusief de grafische interface van VM's}
+  \label{fig:virt-manager}
+\end{figure}
 
 \section{Schematische voorstelling}
 Als hulp om de opbouw van dit systeem te begrijpen, volgen hier enkele schematische voorstellingen van het systeem.
