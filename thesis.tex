@@ -221,7 +221,7 @@ In 2014 werd Security Onion Solutions LLC opgericht om professionele ondersteuni
 Met jaarlijkse conferenties bleef het project groeien.
 \autocite{so:sos}
 In 2018 begon de ontwikkeling van een nieuw project, Security Onion Hybrid Hunter.
-Hybrid Hunter is nog steeds in experimentele staat, en het wordt afgeraden dit systeem te gebruiken in een productieomgeving.
+Hybrid Hunter is nog steeds in experimentele staat, het wordt afgeraden dit systeem te gebruiken in een productieomgeving.
 
 \section{Features}
 Security Onion heeft veel te bieden om een goed inzicht te krijgen grote hoeveelheden netwerkverkeer waar standalone tools als Suricata of Wireshark te onoverzichtelijk worden.
@@ -476,7 +476,7 @@ Figuur \ref{fig:gns3-port-mirror-so} is een screenshot van een GNS3 project met 
 \end{figure}
 
 Met GNS3 clouds kan er echte data aan een simulatieomgeving gekoppeld worden.
-GNS3 blijft nog steeds enkel bedoeld voor opstellingen uit te testen, en niet als productieomgeving.
+GNS3 blijft nog steeds enkel bedoeld voor opstellingen uit te testen, niet als productieomgeving.
 Aspecten waar GNS3 tekort kan komen in vergelijking met een productiesysteem zijn bijvoorbeeld de performantie van netwerkverbindingen en betrouwbaarheid.
 
 \section{Server}
@@ -1334,10 +1334,26 @@ Een alert met de beschrijving `A new device has connected to the network' kan wi
 Daarna moet er nagegaan worden of het ip adres niet tot een DHCP pool behoort en zo voort.
 
 \section{Netdata}
-% Troubleshooten Docker compose systeem en server
-% Alerts over RAM usage en vooral geschiedenis packet loss
-% Geconfigureerd om verschillende containers te monitoren.
-% Grafieken en alerts van Elasticsearch clusters (niet verbonden met so), sql, nginx...
+Netdata is een performance monitor voor Linux (en BSD) servers. \autocite{netdata:home}
+Het toevoegen van Netdata aan dit systeem was een grote hulp bij het troubleshooten van allerlei problemen die voorkwamen bij het ontwerpen van dit systeem.
+
+Het installatieproces (het toevoegen aan de Docker compose omgeving) hield niet veel in, de meeste configuratie wordt gedaan door \emph{auto-discovery}.
+Deze \emph{auto-discovery} resulteerde in grafieken en alerts van cpu, ram, disks, temperatuur, netwerk interfaces, systemd services, processen, de Docker daemon en alle Docker containers.
+Daarna konden via plugins nog alle Nginx reverse proxies, MISP's MySQL database en TheHive's Elasticsearch database toegevoegd worden.
+Van al deze informatiebronnen worden er telkens meerdere realtime grafieken gemaakt in de web interface, veel met advies over hoe de informatie geïnterpreteerd moet worden.
+Daarnaast worden er ook \emph{alarmen} geactiveerd in de vorm van notificaties over al deze bronnen.
+
+Deze alarmen blijven nuttig, zelfs in een bijna stabiel systeem.
+Twee voorbeelden van alerts zijn te hoge RAM usage en packet loss op een fysieke en/of virtuele netwerk interface zoals in figuur \ref{fig:netdata-packet-loss}.
+Packet loss is een veel voorkomend probleem bij port mirrors.
+Dit is een geweldige bron van informatie om packet loss mee te troubleshooten.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{netdata-packet-loss}
+  \caption{De laatste 10 alarms in Netdata hebben te maken met packet loss}
+  \label{fig:netdata-packet-loss}
+\end{figure}
 
 \section{Passive os fingerprinting}
 Tijdens het uitbreiden van dit systeem heb ik geprobeerd om het besturingssysteem van hosts op een netwerk te bepalen door enkel het netwerkverkeer te analyseren.
