@@ -366,7 +366,6 @@ Deze worden afgeraden om te gebruiken, maar kunnen wel gebruikt worden wanneer f
 
 \chapter{Opstelling}
 \section{Simulaties met GNS3}
-% GNS3 uitleggen
 GNS3 is een open source softwarepakket waarmee netwerken gesimuleerd kunnen worden via een grafische interface.
 De reden dat GNS3 aantrekkelijk leek om tijdens de stage te gebruiken, was omdat het niet enkel routers en switches ondersteunt, maar ook virtuele machines.
 Op die manier kon ik simulaties maken van netwerken bestaande uit Securty Onion nodes en bijvoorbeeld Kali Linux en Ubuntu hosts.
@@ -441,7 +440,6 @@ Daarom had ik graag de command line en web interface rechtsreeks beschikbaar op 
 Dit kon door ssh verbindingen te openen naar de 2 nodes en de https web interface op poort 443 te openen in een browser.
 Hiervoor moest de firewall van Security Onion wel ingesteld worden om het ip van mijn laptop (VPN) toe te laten op poort 22 en 443.
 
-% Evt in bijlage
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{gns3-simulatie-bedrijf}
@@ -656,12 +654,29 @@ Ook kunnen tcp of udp poorten geforward worden naar interfaces van de host en ku
 
 Docker kan door softwareontwikkelaars gebruikt worden om hun applicaties samen met alle nodige libraries en andere dependencies, als 1 pakket te publiceren.
 Deze applicaties kunnen dan gedownload worden als een Docker image.
-
-% Evt Dockerfiles tonen
+\autocite{docker:containers}
 
 \subsubsection{Dockerfiles}
+Een Dockerfile is een bestand met instructies voor het bouwen van een image.
+Alle Dockerfiles in dit project beginnen met een \lstinline|FROM image:tag| instructie.
+De instructies die volgen zijn onder andere het kopieëren van configuratiebestanden of het uitvoeren van commando's.
+\autocite{docker:dockerfile}
 
-\autocite{docker:containers}
+Figuur \ref{fig:dockerfile-example} is een voorbeeld van een Dockerfile.
+Het doel van de Dockerfile was om een image te maken die automatisch een Nginx server opstart met de configuratie in het bestand \lstinline|server.conf|.
+Op de Docker Hub is er een officiële image beschikbaar genaamd `nginx' (\url{https://hub.docker.com/_/nginx}).
+De beschrijving bevat onder andere de locatie van de configuratiebestanden.
+De Dockerfile begint vanaf de `latest' \lstinline|nginx| image, de \emph{default} configuratie wordt verwijderd en de aangepaste configuratie wordt in de plaats gekopieerd.
+
+\begin{figure}[H]
+  \begin{lstlisting}
+FROM nginx
+RUN rm /etc/nginx/conf.d/default.conf
+COPY server.conf /etc/nginx/conf.d/
+  \end{lstlisting}
+  \caption{Dockerfile voor het bouwen van een Nginx image met aangepaste configuratie}
+  \label{fig:dockerfile-example}
+\end{figure}
 
 \subsubsection{Docker compose}
 Docker kan ook gebruikt worden bij het ontwikkelen van systemen die bestaan uit meerdere applicaties.
