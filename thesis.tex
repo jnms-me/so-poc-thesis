@@ -1502,7 +1502,98 @@ De enige optie die ik kan bedenken is om het TTL (Time to live) veld in ip pakke
 
 Omdat een simpele actieve scan veel meer informatie oplevert, vond ik het niet nuttig om een tool uit te werken die de weinige informatie beschikbaar door passieve methodes visualiseert.
 
-\chapter{De workflow van een analyst}
+\chapter{Analyses}
+In dit hoofdstuk wordt er besproken hoe de voordien besproken tools correct gebruikt kunnen worden bij het bestuderen van anomalieën in een netwerk.
+
+\section{De workflow van een analyst}
+Het proces voor het opbouwen van één case is als volgt.
+Ik heb dit proces zo veel mogelijk toegepast, maar sommige stappen zoals het documenteren in intelligence frameworks werden niet uitgevoerd om tijd te besparen.
+
+Dit proces vereist dat er een goede documentatie van het netwerk beschikbaar is.
+Dit omvat documentatie van de netwerkinfrastructuur, maar ook vooral documentatie van endpoints in de vorm van dhcp pools en statische ip adressen.
+
+\subsection{Entrypoint}
+De eerste stap is het vinden van verdachte activiteit, een anomalie.
+Er zijn verschillende mogelijkheden om een entrypoint te vinden.
+
+\subsubsection{NIDS}
+De belangrijkste methode is door NIDS alerts te bekijken.
+Deze kunnen met Sguil, Squert of Kibana's NIDS dashboard bekeken worden.
+Een nieuwe alert van hoge prioriteit moet altijd verwerkt worden.
+
+Deze bron blijft zuivere entrypoints (zo weinig mogelijk \emph{false alerts}) opleveren door \emph{false alerts} te maskeren en door de bron van de alert aan te pakken in latere stappen.
+
+\subsubsection{Kibana}
+Een tweede methode om anomalieën te vinden is om manueel alle data te verkennen in Kibana.
+Met een goed beeld van het normale netwerkverkeer (een baseline), kunnen er zeker anomalieën gevonden worden door enkel de vele dashboards te bekijken.
+Meer subtiele verdachte activiteit kan bepaald worden door bijvoorbeeld het gedrag van gelijkaardige hosts zoals workstations te vergelijken met elkaar.
+Een ander voorbeeld is om het huidig gebruik van een protocol te vergelijken met een andere tijdsperiode.
+
+Met deze methode is het moeilijk om herhaling van cases tegen te gaan.
+Ofwel moet de bron van de verdachte activiteit aangepakt worden, ofwel moet de case goed gedocumenteerd zijn.
+Deze documentatie kan dan aangepast worden als er later nieuwe informatie ontdekt wordt.
+
+\subsubsection{Ntop}
+De tool ntopng genereert ook \emph{alarms}, maar deze hebben vaak niet met beveiliging te maken.
+Een soort alarm die wel interresant is, is de alert `The device {MAC adres} has connected to the network.'.
+Dit lijkt enkel te werken voor MAC adressen.
+Iets gelijkaardigs kan bereikt worden voor ip adressen door de `Hosts' pagina te sorteren op `Seen since'.
+Hosts met een statisch ip die op een vreemd tijdstip voor het eerst actief zijn op het netwerk kunnen \emph{rogue devices} zijn.
+
+\subsection{Informatie verzamelen}
+Als een anomalie gevonden is, moet er informatie verzameld worden over de specifieke omstandigheden waarin deze gebeurtenis zicht afspeelt.
+
+In de eerste plaats kan in MISP opgezocht worden of de anomalie al eerder behandeld werd.
+Als dit het geval is, kan de bestaande case uitgebreidt worden met recente data, als deze data bestaat.
+
+Daarna kunnen alle ip adressen, domeinnamen en andere \emph{attributes} opgezocht worden op verschillende plaatsen.
+De belangrijkste plaats is de documentatie van het netwerk.
+Daanaast kunnnen veel soorten attributes als zoekopdracht of filter ingegeven worden in Kibana.
+Ip adressen, MAC adressen en URL's kunnen opgezocht worden in ntopng.
+Voor ip adressen worden veel van de vorige bronnen gecombineerd op de query pagina van de `so-manager' web app.
+
+Als de anomalie te maken heeft met \emph{publieke observables} zoals hosts op het internet of gedownloade bestanden, kan ook TheHive gebruikt worden.
+Er moet dan een case aangemaakt worden in TheHive waar alle publieke observables aan toegevoegd worden.
+Door alle \emph{analysers} uit te voeren op de observables, kan er nieuwe informatie verkregen worden en soms zelfs nieuwe observables.
+
+\subsection{Case aanmaken}
+Als er zo veel mogelijk informatie verzameld is als notities, kan al deze informatie gebundeld worden in een case.
+Dit gebeurt door in MISP een nieuw `Event' aan te maken en alle informatie er aan toe te voegen als attributes, elk met het juiste type.
+Mogelijk kan dit nieuwe inzichten geven, omdat MISP automatisch attributes correleert met die van vorige events.
+
+\subsection{Actie ondernemen}
+Als er genoeg informatie beschikbaar is, kan er een beslissing genomen worden.
+
+\subsubsection{Geen gevaar}
+Indien het geen kwaadaardige activiteit is, wordt de case gewoon afgewerkt en gedocumenteerd met een aantal extra stappen.
+Als de bron een NIDS alert was, kan deze alert gemaskeerd worden of kan deze gebeurtenis toegevoegd worden aan een whitelist.
+Als de anomalie van een andere bron kwam, kan de gebeurtenis enkel goed gedocumenteerd worden.
+Eventueel kan de oorzaak van de anomalie weggenomen worden om herhaling in de toekomst te vermijden.
+
+Het kan ook zijn dat de oorzaak van de anomalie een slechte configuratie van de bron (Suricata, Kibana, ntopng) of een foute opstelling is.
+In dit geval moet de configuratie of opstelling (plaats van de port mirror) aangepast worden.
+
+\subsubsection{}
+Als er kan besloten worden 
+
+\subsubsection{Te weinig informatie}
+% te weinig info -> nids flag in misp
+
+% case publiceren
+
+%nids tweaken/maskeren bij false alerts 
+
+\section{Voorbeelden}
+% telkens beschikbare tools vermelden
+\subsection{Testomgeving}
+% in gns3
+% alle verkeer manueel gegenereerd
+% Kali hostname, proberen screenshots uit redmine te halen
+\subsection{Bedrijfsnetwerk}
+% Massscan
+\subsection{OT netwerk}
+% onbekend protocol
+% uitbreiding in zeek, log type in so, visualisaties+dashboard maken in kibana
 
 % Latex ergens vermelden, github actions
 
