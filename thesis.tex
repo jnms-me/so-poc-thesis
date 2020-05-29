@@ -1378,7 +1378,7 @@ Daarna kan p0f uitgevoerd worden op de pcap file met de \lstinline|-r| optie.
 Figuur \ref{fig:p0f-so-voorbeeld} is een voorbeeld hiervan.
 
 De resultaten van deze tool zijn soms niet accuraat.
-p0f bepaalt het besturingssystem van een host aan de hand van een database die besturingssystemen en hun bijhorende fingerprints bevat.
+p0f bepaalt het besturingssysteem van een host aan de hand van een database die besturingssystemen en hun bijhorende fingerprints bevat.
 Deze database is echter al wat verouderd.
 Het database bestand \lstinline|p0f.fp| werd het laatst bewerkt in 2016 en heeft bijvoorbeeld geen fingerprint voor Windows 10.
 De tool is zo veel minder betrouwbaar als de database niet up to date is.
@@ -1543,6 +1543,7 @@ Hosts met een statisch ip die op een vreemd tijdstip voor het eerst actief zijn 
 
 \subsection{Informatie verzamelen}
 Als een anomalie gevonden is, moet er informatie verzameld worden over de specifieke omstandigheden waarin deze gebeurtenis zicht afspeelt.
+Het doel is om informatie zoals het soort apparaten, besturingssystemen, protocollen, services, versies van software en zelfs CVE nummers van kwetsbaarheden te bepalen.
 
 In de eerste plaats kan in MISP opgezocht worden of de anomalie al eerder behandeld werd.
 Als dit het geval is, kan de bestaande case uitgebreidt worden met recente data, als deze data bestaat.
