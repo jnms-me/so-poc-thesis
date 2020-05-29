@@ -1262,6 +1262,7 @@ Er is wel een Cortex plugin aanwezig, maar deze lijk niet meer ondersteund te wo
 Ik heb deze dan ook niet volledig werkende gekregen.
 
 \subsubsection{NIDS export}
+\label{sec:misp-nids-export}
 MISP heeft wel een unieke feature die gebruikt wordt in dit systeem.
 Voor elke attribute is er een \lstinline|IDS| optie.
 
@@ -1573,25 +1574,31 @@ Eventueel kan de oorzaak van de anomalie weggenomen worden om herhaling in de to
 Het kan ook zijn dat de oorzaak van de anomalie een slechte configuratie van de bron (Suricata, Kibana, ntopng) of een foute opstelling is.
 In dit geval moet de configuratie of opstelling (plaats van de port mirror) aangepast worden.
 
-\subsubsection{}
-Als er kan besloten worden 
+\subsubsection{De gebeurtenis was een beveiligingsincident}
+Als er kan besloten worden dat de anomalie werkelijk een incident was die de beveiliging schaadde, moet er zeker actie ondernomen worden.
+Dit noemt men `Incident response', een reeks acties die een organisatie kan ondernemen met als doel om de schade te beperken.
+In principe hebben alle organisaties een `Incident response plan' met instructies die gevolgd moeten worden in geval van een incident.
+\autocite{digitalguardian:incident-response}
 
 \subsubsection{Te weinig informatie}
-% te weinig info -> nids flag in misp
+Als er te weinig informatie kan verzameld worden om te bepalen of een gebeurtenis al dan niet kwaadaardig was, moet men alert blijven voor nieuwe informatie.
+Dit kan gedaan worden door de `IDS' flag aan te zetten bij enkele MISP attributes, zoals beschreven in sectie \ref{sec:misp-nids-export} op pagina \pageref{sec:misp-nids-export}.
+Dit zorgt ervoor dat er NIDS alerts gegenereerd worden met referentie naar het MISP Event als dezelfde gebeurtenis zich herhaalt.
 
-% case publiceren
+\subsection{Case publiceren}
+Ten slotte kan de case gepubliceerd worden MISP.
+Dit werkt als een soort `commit' waarbij alle veranderingen aan het event als 1 update gepubliceerd worden.
+Volgens MISP's configuratie worden ook bepaalde personen of groepen op de hoogte gebracht van dit event.
 
-%nids tweaken/maskeren bij false alerts 
-
-\section{Voorbeelden}
+%\section{Voorbeelden}
 % telkens beschikbare tools vermelden
-\subsection{Testomgeving}
+%\subsection{Testomgeving}
 % in gns3
 % alle verkeer manueel gegenereerd
 % Kali hostname, proberen screenshots uit redmine te halen
-\subsection{Bedrijfsnetwerk}
+%\subsection{Bedrijfsnetwerk}
 % Massscan
-\subsection{OT netwerk}
+%\subsection{OT netwerk}
 % onbekend protocol
 % uitbreiding in zeek, log type in so, visualisaties+dashboard maken in kibana
 
