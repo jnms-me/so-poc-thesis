@@ -77,7 +77,7 @@ De tijdens de verdediging geformuleerde opmerkingen werden niet opgenomen.
 
 % Inhoud
 \chapter{Intrusion detection}
-Intrusion detection is het monitoren van systemen op verdachte activiteit.
+Intrusion detection is het controleren van systemen op verdachte activiteiten.
 Dit omvat pogingen tot hacken, verspreiding van virussen of malware, aanwezigheid van rogue devices\dots
 
 Intrusion detection gebeurt typisch volledig passief.
@@ -88,9 +88,9 @@ In grotere systemen worden deze logs centraal verzameld om deze anomalieën effe
 Intrusion detection systemen worden opgedeeld in 2 soorten: network (NIDS) en host (HIDS) intrusion detection.
 
 \section{NIDS}
-Een network intrusion detection systeem (NIDS) monitort een netwerkverbinding.
+Een network intrusion detection systeem (NIDS) controleert een netwerkverbinding.
 
-De 2 grote NIDS software projecten zijn Snort en Suricata.
+De 2 bekendste NIDS software projecten zijn Snort en Suricata.
 Voor een groot deel werken de 2 systemen identiek voor een eindgebruiker.
 Zo is de NIDS rule syntax van Snort en Suricata bijna gelijk.
 Het verschil ligt in specifieke features.
@@ -99,10 +99,10 @@ Alle verschillen staan duidelijk beschreven in de documentatie van Suricata.
 \autocite{suricata:docs}
 
 \subsection{Regels}
-Een NIDS monitort gecapteerd netwerkverkeer aan de hand van een lijst van regels.
+Een NIDS controleert gecapteerd netwerkverkeer aan de hand van een lijst van regels.
 Deze regels volgen een bepaalde syntax.
 
-Een voorbeeld van een nids rule is als volgt (figuur \ref{fig:nids-rule}).
+Hieronder een voorbeeld van een NIDS rule (figuur \ref{fig:nids-rule}).
 
 \begin{figure}[H]
   \begin{lstlisting}
@@ -193,7 +193,7 @@ Als de link tussen de port mirror en de sensor een lager maximum bits/s heeft da
 NIDS engines kunnen hiermee wel overweg, maar het zorgt natuurlijk voor verlies van informatie.
 
 \section{HIDS}
-Een host intrusion detection systeem (HIDS) montiort één machine op verdachte activiteit.
+Een host intrusion detection systeem (HIDS) controleert één machine op verdachte activiteiten.
 Enerzijds wordt dit gedaan door alle data die door de netwerkinterfaces gaat te inspecteren.
 Daarnaast wordt het gedrag van processen op de machine bekeken.
 \autocite{wikipedia:hids}
@@ -227,7 +227,7 @@ Hybrid Hunter is nog steeds in experimentele staat, het wordt afgeraden dit syst
 Security Onion heeft veel te bieden om een goed inzicht te krijgen grote hoeveelheden netwerkverkeer waar standalone tools als Suricata of Wireshark te onoverzichtelijk worden.
 
 \subsection{NIDS}
-Als een deels afgesloten systeem is er NIDS.
+Eén van de grote componenten van Security Onion is een complete NIDS.
 Dit bestaat uit een NIDS engine, ofwel Snort ofwel Suricata, die binnenkomende pakketten vergelijkt met een lijst van rules en al dan niet een alert van bepaalde prioriteit genereert.
 Die alerts worden verzonden naar beide Logstash en Sguild.
 
@@ -632,7 +632,7 @@ Daarna moet die informatie centraal beschikbaar gesteld worden in een tool als K
 
 \section{Gebruikte technologie\"en}
 \subsection{Debian}
-Heel dit systeem is aanwezig op de server eerder besproken in sectie \ref{sec:server}.
+Het volledige systeem is aanwezig op de server eerder besproken in sectie \ref{sec:server}.
 In de eerste plaats was er een OS nodig om dit systeem op uit te voeren.
 
 In de keuze van besturingssysteem waren 2 zaken belangrijk.
@@ -1468,11 +1468,11 @@ Ik bestloot dus om ook Fingerbank niet te gebruiken in het systeem.
 
 Achteraf gezien kon p0f wel een nut gehad hebben in het systeem door de output te parsen en deze toe te voegen aan de logs in de ELK stack.
 Toch besloot ik om alternatieven te zoeken die hopelijk accuraater zijn, zonder veel succes.
-Ik kan me wel voorstellen dat Fingerbank heel nuttig kan zijn bij het monitoren van bijvoorbeeld een openbaar netwerk.
+Ik kan me wel voorstellen dat Fingerbank heel nuttig kan zijn bij het controleren van bijvoorbeeld een openbaar netwerk.
 
 \section{Visualisatie netwerk layout}
-Ik had even geprobeerd om het netwerk die het systeem monitort uit te tekenen in een soort diagram.
-Moest ik hierin slagen zou ik het proberen te automatiseren.
+Ik had even geprobeerd om het netwerk dat gecontroleerd werd door dit systeem, uit te tekenen in de vorm van een soort diagram.
+Moest ik hierin slagen zou ik dit proberen te automatiseren.
 Ik ondervond snel enkele problemen die dit bijna onmogelijk maken.
 
 \subsection{Port mirror}
