@@ -213,7 +213,7 @@ Het geheel van een NIDS engine die al het netwerkverkeer op 1 punt in een netwer
 Eén of meerdere sensoren kunnen in een netwerk geplaatst worden op strategische punten.
 Dit zijn vaak plaatsen waar een vertrouwd netwerk wordt verbonden met een extern netwerk.
 
-De meest interesante plaats om een sensor te plaatsen in een bedrijfsnetwerk is meestal de plaats waar NAT toegepast wordt.
+De meest interessante plaats om een sensor te plaatsen in een bedrijfsnetwerk is meestal de plaats waar NAT toegepast wordt.
 Dit is omdat alle communicatie met externe netwerken doorheen dit punt passeert.
 Als zo'n sensor aan de buitenkant van de NAT staat, zijn de interne ip-adressen niet zichtbaar.
 We zien enkel ip-communicatie tussen de NAT-pool en externe netwerken, zo gaat er veel informatie verloren.
@@ -576,6 +576,7 @@ Uiteindelijk is er beslist geweest om deze opdracht achterwege te laten.
 Meteen daarna begon de voorbereiding voor het volgende netwerk.
 
 \subsection{Bedrijfsnetwerk}
+\label{sec:bedrijfsnetwerk}
 Het tweede netwerk waar ik toegang tot zou krijgen was een typisch bedrijfsnetwerk.
 Toen de fysieke server (zie \ref{sec:server}) net geïnstalleerd was in een serverruimte, begon ik met het analyseren van dit netwerk.
 De port mirror kwam dus toe op 1 van de interfaces van deze server.
@@ -611,6 +612,7 @@ Ook zou het intressant geweest zijn als er wat meer documentatie beschikbaar was
 Met de documentatie die beschikbaar was, kon er wel al veel gedaan worden.
 
 \subsection{OT netwerk}
+\label{sec:ot-netwerk}
 Het laatste netwerk dat aanbod kwam tijdens de bachelorproef was het OT netwerk van Fluvius.
 Het OT netwerk verbindt hoogspanningsapparatuur met controlekamers.
 Met deze infrastructuur wordt het hoogspanningsnet op afstand gecontroleerd en bijgestuurd.
@@ -1567,7 +1569,7 @@ Deze documentatie kan dan aangepast worden als er later nieuwe informatie ontdek
 
 \subsubsection{Ntop}
 De tool ntopng genereert ook \emph{alarms}, maar deze hebben vaak niet met beveiliging te maken.
-Een soort alarm die wel interresant is, is de alert `The device {MAC adres} has connected to the network.'.
+Een soort alarm die wel interessant is, is de alert `The device {MAC adres} has connected to the network.'.
 Dit lijkt enkel te werken voor MAC adressen.
 Iets gelijkaardigs kan bereikt worden voor ip adressen door de `Hosts' pagina te sorteren op `Seen since'.
 Hosts met een statisch ip die op een vreemd tijdstip voor het eerst actief zijn op het netwerk kunnen \emph{rogue devices} zijn.
@@ -1623,15 +1625,80 @@ Ten slotte kan de case gepubliceerd worden MISP.
 Dit werkt als een soort `commit' waarbij alle veranderingen aan het event als 1 update gepubliceerd worden.
 Volgens MISP's configuratie worden ook bepaalde personen of groepen op de hoogte gebracht van dit event.
 
-%\section{Voorbeelden}
+\section{Resultaten}
+Hieronder volgen enkele voorbeelden van gebeurtenissen die ik verder onderzocht.
 % telkens beschikbare tools vermelden
-%\subsection{Testomgeving}
+\subsection{Testomgeving}
+In deze simulatie had ik enkel een Security Onion installatie beschikbaar, geen andere tools.
 % in gns3
 % alle verkeer manueel gegenereerd
 % Kali hostname, proberen screenshots uit redmine te halen
-%\subsection{Bedrijfsnetwerk}
-% Massscan
-%\subsection{OT netwerk}
+
+
+\subsection{Bedrijfsnetwerk}
+Toen ik begon met het analyseren van dit netwerk had ik Security Onion, TheHive en Cortex ter beschikking.
+Voor de uitleg over hoe dit netwerk is opgebouwd, zie sectie \ref{sec:bedrijfsnetwerk} op pagina \pageref{sec:bedrijfsnetwerk}.
+Hieronder bespreek ik enkele anomalieën in de communicatie tussen dit bedrijfsnetwerk en het internet.
+
+\subsection{Masscan}
+Deze anomalie vond plaats als inbound verkeer.
+Eerst werd dit gecategoriseerd als verkenning van een ip adres (recon) door een automatisch systeem, maar nader onderzoek wijst erop dat dit toch wat kwaadaardig was.
+
+\subsubsection{Entrypoint}
+Het entrypoint voor deze case was een NIDS alert over een ``Emerging Threats Policy Violation''.
+Er werd een HTTP request gedetecteerd met een `Authorization' header die een plain text, base64 gecodeerd wachtwoord bevatte.
+Deze alert werd gezien in Squert zoals in figuur \ref{fig:analyse-masscan-entrypoint}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{analyse-masscan-entrypoint}
+  \caption{Entrypoint van de `masscan' case, een NIDS alert in Squert}
+  \label{fig:analyse-masscan-entrypoint}
+\end{figure}
+
+
+\subsubsection{Informatie verzamelen}
+Aangezien het hier om slechts 1 klein pakket gaat, bekijken we dit pakket beter manueel.
+Eventueel kan de rest van de TCP sessie nog bekeken worden, vooral het antwoord van de server kan interessant zijn.
+
+Het volledige HTTP request bestond uit een \lstinline|GET| op het pad \lstinline|/|, een \lstinline|Authorization| header, een \lstinline|User-Agent| header en een \lstinline|Accept| header.
+De server antwoord met een \lstinline|403 Forbidden|.
+
+De \lstinline|User-Agent| header lijkt interessant: \lstinline|masscan/1.0 (https://github.com/robertdavidgraham/masscan)|.
+De client software heet `masscan', een github link word meegegeven.
+De beschrijving van deze github repository is: ``TCP port scanner, spews SYN packets asynchronously, scanning entire Internet in under 5 minutes.''
+
+\subsubsection{Tussentijds besluit}
+Met deze informatie kunnen we er vanuit gaan dat dit een automatisch systeem is die recon uitvoert op dit ip adres, samen met veel andere.
+Het doel zou dan zijn om heel het internet af te scannen, met of zonder reden.
+
+\subsubsection{Informatie verder bekijken}
+Natuurlijk blijft de Authorization header nog over.
+Als we deze base64 string met bijvoorbeeld CyberChef decoderen (zie figuur ref) bleek deze \lstinline|cisco:cisco| te zijn.
+Dit is waarschijnlijk het \emph{default login} voor sommige Cisco apparaten.
+Aangezien de server geen cisco device is, laat staan met een default login, heeft de aanval geen effect.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{analyse-masscan-cyberchef}
+  \caption{Het decoderen van een base64 string met CyberChef}
+  \label{fig:analyse-masscan-cyberchef}
+\end{figure}
+
+\subsubsection{Besluit}
+Uiteindelijk bleek deze scanner toch kwaadaardig te zijn.
+De anomalie was inbound recon, met als doel om kwetsbare hosts te vinden.
+
+In dit geval had het geen effect, maar moest een slecht geconfigureerd Cisco apparaat geantwoord hebben, zou er een aanval kunnen volgen.
+
+Het source ip adres zou nog verder onderzocht kunnen worden, maar aangezien deze recon duidelijk niet gefocust is op dit bedrijfsnetwerk, is dit overbodig.
+
+%\subsection{PHP exploits}
+%\subsection{Heap spray}
+%Dit is een voorbeeld van een foutief alert die op het eerste zicht een eenmalige aanval leek.
+%\subsection{Invalid TCP checksum}
+
+\subsection{OT netwerk}
 % onbekend protocol
 % uitbreiding in zeek, log type in so, visualisaties+dashboard maken in kibana
 
