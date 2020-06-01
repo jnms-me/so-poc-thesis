@@ -112,8 +112,7 @@ Dit omvat pogingen tot hacken, verspreiding van virussen of malware, aanwezighei
 
 Intrusion detection gebeurt typisch volledig passief.
 De logs die een IDS (Intrusion detection system) produceert kunnen worden verstuurd naar een administrator als een alert.
-In grotere systemen worden deze logs centraal verzameld om deze anomalieën effectief te kunnen analyseren.
-\autocite{wikipedia:ids}
+In grotere systemen worden deze logs centraal verzameld om deze anomalieën effectief te kunnen analyseren \autocite{wikipedia:ids}.
 
 Intrusion detection systemen worden opgedeeld in 2 soorten: network (NIDS) en host (HIDS) intrusion detection.
 
@@ -125,8 +124,7 @@ Voor een groot deel werken de 2 systemen identiek voor een eindgebruiker.
 Zo is de NIDS rule syntax van Snort en Suricata bijna gelijk.
 Het verschil ligt in specifieke features.
 Voorbeelden van features die enkel beschikbaar zijn in Suricata zijn detectie van meer protocollen, bestanden opslaan uit http/ftp/smtp, lua scripting\dots
-Alle verschillen staan duidelijk beschreven in de documentatie van Suricata.
-\autocite{suricata:docs}
+Alle verschillen staan duidelijk beschreven in de documentatie van Suricata \autocite{suricata:docs}.
 
 \subsection{Regels}
 Een NIDS controleert gecapteerd netwerkverkeer aan de hand van een lijst van regels.
@@ -205,8 +203,7 @@ Dit noemt men een port mirror.
 Een voorbeeld van een technologie die port mirroring toelaat is SPAN.
 Deze is aanwezig in bijvoorbeeld een switch en kopieert alle pakketten van een source poort naar een destination poort.
 Daarnaast kan RSPAN gebruikt worden om gecapteerde pakketten over een laag 2 netwerk te transporteren.
-Ten slotte kan ERSPAN op de zelfde manier gebruikt worden om een port mirror te transporteren over een laag 3 netwerk.
-\autocite{cisco:span}
+Ten slotte kan ERSPAN op de zelfde manier gebruikt worden om een port mirror te transporteren over een laag 3 netwerk \autocite{cisco:span}.
 
 Het geheel van een NIDS engine die al het netwerkverkeer op 1 punt in een netwerk capteert, noemt men een sensor.
 Eén of meerdere sensoren kunnen in een netwerk geplaatst worden op strategische punten.
@@ -225,8 +222,7 @@ NIDS engines kunnen hiermee wel overweg, maar het zorgt natuurlijk voor verlies 
 \section{HIDS}
 Een host intrusion detection systeem (HIDS) controleert één machine op verdachte activiteiten.
 Enerzijds wordt dit gedaan door alle data die door de netwerkinterfaces gaat te inspecteren.
-Daarnaast wordt het gedrag van processen op de machine bekeken.
-\autocite{wikipedia:hids}
+Daarnaast wordt het gedrag van processen op de machine bekeken \autocite{wikipedia:hids}.
 
 Een HIDS komt in de vorm van een \emph{agent} die geïnstalleerd wordt op elke machine, zowel servers als workstations.
 Deze agents kunnen verslag uitbrengen naar een centrale applicatie waar incidenten verder verwerkt worden.
@@ -240,16 +236,14 @@ Veel HIDS agents zijn wel compatibel met dezelfde technologieën die NIDS behere
 \section{Wat is Security Onion?}
 De officiële site beschrijft Security Onion als:
 ``Security Onion is a free and open source Linux distribution for intrusion detection, enterprise security monitoring, and log management.
-It includes Elasticsearch, Logstash, Kibana, Snort, Suricata, Zeek, Wazuh, Sguil, Squert, CyberChef, NetworkMiner, and many other security tools.''
-\autocite{so:docs}
+It includes Elasticsearch, Logstash, Kibana, Snort, Suricata, Zeek, Wazuh, Sguil, Squert, CyberChef, NetworkMiner, and many other security tools.'' \autocite{so:docs}.
 
 \section{Geschiedenis}
 In 2008 begon Doug Burks met het ontwikkelen van Security Onion.
 Een eerste versie van het project werd gepubliceerd in 2009.
 Omdat de Linux distributie meer populariteit kreeg, werd het in 2012 volledig herschreven met het doel om performantie en schaalbaarheid te verbeteren.
 In 2014 werd Security Onion Solutions LLC opgericht om professionele ondersteuning aan te bieden aan bedrijven.
-Met jaarlijkse conferenties bleef het project groeien.
-\autocite{so:sos}
+Met jaarlijkse conferenties bleef het project groeien \autocite{so:sos}.
 In 2018 begon de ontwikkeling van een nieuw project, Security Onion Hybrid Hunter.
 Hybrid Hunter is nog steeds in experimentele staat, het wordt afgeraden dit systeem te gebruiken in een productieomgeving.
 
@@ -286,8 +280,7 @@ Zeek (vroeger Bro) is een open-source analyser voor netwerkverkeer.
 Van de officiële documentatie:
 ``Zeek is a passive open-source network traffic analyzer.
 It is primarily a security monitor that inspects all traffic on a link in depth for signs of suspicious activity.
-More generally, however, Zeek supports a wide range of traffic analysis tasks even outside of the security domain, including performance measurements and helping with trouble-shooting.''
-\autocite{zeek:docs}
+More generally, however, Zeek supports a wide range of traffic analysis tasks even outside of the security domain, including performance measurements and helping with trouble-shooting.'' \autocite{zeek:docs}.
 
 Zeek heeft de mogelijkheid om gedetailleerde logs te genereren van veel verschillende soorten netwerkverkeer.
 Bij tcp verbindingen wordt er bijvoorbeeld bijgehouden wat de source en destination poort was, hoeveel data er uitgewisseld is geweest en hoe de verbinding beëindigd werd.
@@ -300,8 +293,7 @@ Hierdoor is het mogelijk om snel correlaties te vinden in verschillende logs met
 
 Deze logs zijn beschikbaar in json-formaat in \lstinline|/nsm/bro/logs|.
 De logs worden geconsumeerd door syslog-ng.
-Daarna komen ze terrecht in de ELK stack, waar er meer informatie wordt toegevoegd en ze uiteindelijk zichtbaar zijn in Kibana.
-\autocite{so:docs}
+Daarna komen ze terrecht in de ELK stack, waar er meer informatie wordt toegevoegd en ze uiteindelijk zichtbaar zijn in Kibana \autocite{so:docs}.
 
 \subsection{ELK stack}
 ELK staat voor Elasticsearch, Logstash, and Kibana.
@@ -309,8 +301,7 @@ De ELK stack is een open-source systeem voor het beheren en visualiseren van dat
 
 Logstash neemt data binnen van verschillende bronnen zoals NIDS, HIDS en Zeek, verrijkt deze bronnen met bijvoorbeeld links naar de volledige pcap files en slaat deze logs op in elasticsearch.
 Elasticsearch heeft een uitgebreide api om allerlei soorten zoekopdrachten uit te voeren op deze logs.
-Een analist kan dan de browser gebaseerde tool Kibana gebruiken om de logs in elasticsearch te visualiseren.
-\autocite{elastic:what-is-elk}
+Een analist kan dan de browser gebaseerde tool Kibana gebruiken om de logs in elasticsearch te visualiseren \autocite{elastic:what-is-elk}.
 
 Security Onion voorziet uitgebreide logs in elasticsearch die alle informatie van NIDS, HIDS en Zeek omvatten.
 In Kibana zijn er een 40-tal dashboards aanwezig met in totaal zo'n 400 visualisaties.
@@ -383,9 +374,7 @@ Storage nodes kunnen gebruikt worden om de opslagcapaciteit uit te breiden en he
 
 \subsubsection{Heavy node}
 Heavy nodes zijn een combinatie van storage nodes en forward nodes.
-Deze worden afgeraden om te gebruiken, maar kunnen wel gebruikt worden wanneer forward en storage nodes niet gesplitst kunnen worden omwille van bijvoorbeeld beperkte hardware.
-
-\autocite{so:docs}
+Deze worden afgeraden om te gebruiken, maar kunnen wel gebruikt worden wanneer forward en storage nodes niet gesplitst kunnen worden omwille van bijvoorbeeld beperkte hardware \autocite{so:docs}.
 
 \begin{figure}[H]
   \centering
@@ -406,8 +395,7 @@ Zo kan alle data op het netwerk live bekeken worden.
 
 Voor kleine simulaties kan GNS3 rechtsreeks op een laptop of desktop uitgevoerd worden.
 Dit vereist wel dat er andere software geïnstalleerd is voor het uitvoeren van alle verschillende gesimuleerde devices. 
-Om Docker containers te gebruiken in een netwerk moet Docker geïnstalleerd zijn, voor de meeste virtuele machines moet QEMU geïnstalleerd zijn\dots
-\autocite{gns3:home}
+Om Docker containers te gebruiken in een netwerk moet Docker geïnstalleerd zijn, voor de meeste virtuele machines moet QEMU geïnstalleerd zijn\dots \autocite{gns3:home}
 
 Voor grote opstellingen of om de installatie makkelijker te maken is er ook een officiële GNS3 VM image.
 Deze kan door een virtuele machine als besturingssysteem gebruikt worden en bevat de GNS3 server met alle vereiste software of \emph{dependencies}.
@@ -657,8 +645,7 @@ Om een beter beeld te krijgen moeten er zeker meerde port mirrors aangemaakt wor
 \chapter{Ontwikkelen van een aangepast systeem}
 \label{sec:aangepast-systeem}
 \section{Motivatie}
-Na het bekijken van de opnames van enkele presentaties van de Security Onion Conference 2019, bemerkte ik dat er veel mensen proberen externe tools te integreren met Security Onion.
-\autocite{so:conference-2019}
+Na het bekijken van de opnames van enkele presentaties van de Security Onion Conference 2019, bemerkte ik dat er veel mensen proberen externe tools te integreren met Security Onion \autocite{so:conference-2019}.
 Vaak is het doel om in de eerste plaats meer informatie te verzamelen aan de hand van bijvoorbeeld het raadplegen van externe bronnen.
 Daarna moet die informatie centraal beschikbaar gesteld worden in een tool als Kibana.
 
@@ -685,14 +672,12 @@ Zo kunnen bestanden, mappen en zelfs Unix sockets gelinkt worden tussen host en 
 Ook kunnen tcp of udp poorten geforward worden naar interfaces van de host en kunnen er ip netwerken gemaakt worden tussen verschillende containers en de host.
 
 Docker kan door softwareontwikkelaars gebruikt worden om hun applicaties samen met alle nodige libraries en andere dependencies, als 1 pakket te publiceren.
-Deze applicaties kunnen dan gedownload worden als een Docker image.
-\autocite{docker:containers}
+Deze applicaties kunnen dan gedownload worden als een Docker image \autocite{docker:containers}.
 
 \subsubsection{Dockerfiles}
 Een Dockerfile is een bestand met instructies voor het bouwen van een image.
 Alle Dockerfiles in dit project beginnen met een \lstinline|FROM image:tag| instructie.
-De instructies die volgen zijn onder andere het kopieëren van configuratiebestanden of het uitvoeren van commando's.
-\autocite{docker:dockerfile}
+De instructies die volgen zijn onder andere het kopieëren van configuratiebestanden of het uitvoeren van commando's \autocite{docker:dockerfile}.
 
 Figuur \ref{fig:dockerfile-example} is een voorbeeld van een Dockerfile.
 Het doel van de Dockerfile was om een image te maken die automatisch een Nginx server opstart met de configuratie in het bestand \lstinline|server.conf|.
@@ -716,8 +701,7 @@ Een typisch voorbeeld hiervan is een webserver en een database.
 De http poort van de webserver container wordt dan geforward naar de host en de database container is bereikbaar via een intern netwerk waar beide containers mee verbonden zijn.
 
 Zo'n soort configuraties worden vergemakkelijkt met Docker compose.
-Aan de hand van een \lstinline|docker-compose.yml| file en de command-line tool \lstinline|docker-compose| kunnen applicaties ontwikkelt worden die uit meerdere containers bestaan.
-\autocite{docker:compose}
+Aan de hand van een \lstinline|docker-compose.yml| file en de command-line tool \lstinline|docker-compose| kunnen applicaties ontwikkelt worden die uit meerdere containers bestaan \autocite{docker:compose}.
 
 Figuur \ref{fig:compose-web-example} is de inhoud van een voorbeeld \lstinline|docker-compose.yml| file van een webserver en een database.
 De image voor de web container wordt gebouwd aan de hand van de \lstinline|Dockerfile| in de map \lstinline|web|.
@@ -785,8 +769,7 @@ Andere voorbeelden van hypervisors zijn \emph{Hyper-V} (Windows) en Virtualbox (
 
 Libvirt definieert virtuele machines in XML documenten die gevalideerd worden aan de hand van XML schema's.
 Het aanmaken en aanpassen van virtuele machines wordt echter meestal gedaan met een GUI tool zoals \lstinline|virt-manager|.
-Soms kan het wel nodig zijn om deze XML files handmatig te bewerken, omdat QEMU zodanig veel opties heeft.
-\autocite{libvirt:docs}
+Soms kan het wel nodig zijn om deze XML files handmatig te bewerken, omdat QEMU zodanig veel opties heeft \autocite{libvirt:docs}.
 
 Het GUI programma \lstinline|virt-manager| hoeft niet op de server zelf geïnstalleerd te zijn, maar kan ook op afstand werken over een ssh verbinding.
 Figuur \ref{fig:virt-manager} is een screenshot van virt-manager in werking.
@@ -955,9 +938,8 @@ In elke applicatie is er een service aanwezig met de naam \lstinline|applicatie-
 
 \subsubsection{Nginx}
 De software die in elke reverse-proxy wordt gebruikt is Nginx, een open source webserver.
-Een van de features van Nginx is de mogelijkheid om als reverse-proxy te werken.
+Een van de features van Nginx is de mogelijkheid om als reverse-proxy te werken \autocite{nginx:about}.
 Nginx heeft een officiële Docker image die ik gebruikt heb als basis.
-\autocite{nginx:about}
 
 \subsubsection{Voorbeeld}
 Als voorbeeld van een proxy service bespreek ik de service \lstinline|so-manager-proxy| in de applicatie \lstinline|so-manager|.
@@ -1234,8 +1216,7 @@ Beide slaan ze incidenten op in cases en kunnen ze gebeurtenissen met elkaar cor
 Elk hebben ze een unieke feature die verder bekeken wordt.
 
 \subsection{TheHive}
-Volgens de officiële website is TheHive een ``Security Incident Response Platform''.
-\autocite{thehive:home}
+Volgens de officiële website is TheHive een ``Security Incident Response Platform'' \autocite{thehive:home}.
 In dit systeem wordt TheHive niet geconfigureerd als response platform, maar wel om incidenten te loggen en om extra informatie op te halen van externe bronnen.
 
 \subsubsection{Alerts}
@@ -1350,8 +1331,7 @@ Deze logs zijn zichtbaar in het Kibana dashboard `Zeek - Intel'.
 \section{Ntop}
 \emph{ntopng} is een service die gedetailleerde anaylse van netwerk verkeer presenteert met een web interface.
 De focus van deze tool ligt niet op beveiliging, maar op het verkennen van en inzicht krijgen in een netwerk.
-\emph{ntopng} is dan ook vooral gericht op netwerkbeheerders, omdat het een grote hulp kan zijn bij het troubleshooten.
-\autocite{ntop:ntopng}
+\emph{ntopng} is dan ook vooral gericht op netwerkbeheerders, omdat het een grote hulp kan zijn bij het troubleshooten \autocite{ntop:ntopng}.
 
 Toch heeft \emph{ntopng} een meerwaarde als uitbreiding op een NIDS.
 Aan de hand van het ip adres van een host, kan er extra informatie verzameld worden over die host.
@@ -1367,7 +1347,7 @@ Een alert met de beschrijving `A new device has connected to the network' kan wi
 Daarna moet er nagegaan worden of het ip adres niet tot een DHCP pool behoort en zo voort.
 
 \section{Netdata}
-Netdata is een performance monitor voor Linux (en BSD) servers. \autocite{netdata:home}
+Netdata is een performance monitor voor Linux (en BSD) servers \autocite{netdata:home}.
 Het toevoegen van Netdata aan dit systeem was een grote hulp bij het troubleshooten van allerlei problemen die voorkwamen bij het ontwerpen van dit systeem.
 
 Het installatieproces (het toevoegen aan de Docker compose omgeving) hield niet veel in, de meeste configuratie wordt gedaan door \emph{auto-discovery}.
@@ -1393,8 +1373,7 @@ Tijdens het uitbreiden van dit systeem heb ik geprobeerd om het besturingssystee
 Deze uitbreiding was gefocust voor gebruik in een volledig afgesloten netwerk.
 \subsection{TCP/IP stack}
 In een TCP/IP stack zijn er enkele parameters die niet bepaald worden door de specificatie, maar door de implementatie mogen ingevuld worden.
-Voorbeelden van deze parameters zijn de initiële TTL (Time to live) van het IP protocol en de window size van het TCP protocol.
-\autocite{wikipedia:fingerprinting}
+Voorbeelden van deze parameters zijn de initiële TTL (Time to live) van het IP protocol en de window size van het TCP protocol \autocite{wikipedia:fingerprinting}.
 
 Elke implementatie van een TCP/IP stack heeft zo een unieke \emph{fingerprint} bestaande uit deze variabele parameters.
 Omdat de TCP/IP stack deel is van het besturingssysteem, kunnen deze fingerprints gebruikt worden om het besturingssysteem te bepalen van hosts die communiceren met TCP.
@@ -1611,8 +1590,7 @@ In dit geval moet de configuratie of opstelling (plaats van de port mirror) aang
 \subsubsection{De gebeurtenis was een beveiligingsincident}
 Als er kan besloten worden dat de anomalie werkelijk een incident was die de beveiliging schaadde, moet er zeker actie ondernomen worden.
 Dit noemt men `Incident response', een reeks acties die een organisatie kan ondernemen met als doel om de schade te beperken.
-In principe hebben alle organisaties een `Incident response plan' met instructies die gevolgd moeten worden in geval van een incident.
-\autocite{digitalguardian:incident-response}
+In principe hebben alle organisaties een `Incident response plan' met instructies die gevolgd moeten worden in geval van een incident \autocite{digitalguardian:incident-response}.
 
 \subsubsection{Te weinig informatie}
 Als er te weinig informatie kan verzameld worden om te bepalen of een gebeurtenis al dan niet kwaadaardig was, moet men alert blijven voor nieuwe informatie.
