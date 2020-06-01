@@ -141,7 +141,7 @@ alert tcp $EXTERNAL_NET any -> $INTERNAL_NET 3306 (msg:"Inbound SQL connection";
 \end{figure}
 
 Deze rule zorgt ervoor dat er een alert wordt gegenereerd wanneer de NIDS engine een tcp verbinding ziet van het extern netwerk naar het intern netwerk op poort 3306.
-Het extern netwerk is meestal het internet of een WAN, het intern netwerk is meestal een LAN.
+Het extern netwerk is meestal het internet of een ander WAN, het intern netwerk is meestal een LAN.
 Volgens het tcp client-server model is de client een externe host en de server een interne host.
 
 Poort 3306 is gereserveerd voor MySQL database verbindingen \autocite{iana:ports}.
@@ -168,9 +168,9 @@ Deze wordt dagelijks geüpdatet met nieuwe en aangepaste rules.
 Een fragment van de ruleset staat in figuur \ref{fig:et-voorbeeld}.
 Het volledige bestand bevat momenteel bijna $30000$ lijnen.
 
-Sommige bedrijven hebben ook \emph{subscription-based} rulesets.
+Sommige bedrijven bieden ook \emph{subscription-based} rulesets aan.
 De officiële Snort ruleset (\url{https://www.snort.org/}) volgt zo'n model.
-Updates aan de ruleset worden meteen beschikbaar gemaakt aan subscribers, 30 dagen later worden dezelfde veranderingen ook toegepast op een vrije versie van de ruleset.
+Updates aan de ruleset worden meteen beschikbaar gemaakt voor subscribers; 30 dagen later worden dezelfde veranderingen ook toegepast op een vrije versie van de ruleset.
 Niet-betalende gebruikers hebben dus steeds een versie die 30 dagen ouder is.
 
 \begin{figure}[H]
@@ -203,16 +203,16 @@ Dit noemt men een port mirror.
 Een voorbeeld van een technologie die port mirroring toelaat is SPAN.
 Deze is aanwezig in bijvoorbeeld een switch en kopieert alle pakketten van een source poort naar een destination poort.
 Daarnaast kan RSPAN gebruikt worden om gecapteerde pakketten over een laag 2 netwerk te transporteren.
-Ten slotte kan ERSPAN op de zelfde manier gebruikt worden om een port mirror te transporteren over een laag 3 netwerk \autocite{cisco:span}.
+Verder kan ERSPAN op de zelfde manier gebruikt worden om een port mirror te transporteren over een laag 3 netwerk \autocite{cisco:span}.
 
 Het geheel van een NIDS engine die al het netwerkverkeer op 1 punt in een netwerk capteert, noemt men een sensor.
 Eén of meerdere sensoren kunnen in een netwerk geplaatst worden op strategische punten.
 Dit zijn vaak plaatsen waar een vertrouwd netwerk wordt verbonden met een extern netwerk.
 
 De meest interessante plaats om een sensor te plaatsen in een bedrijfsnetwerk is meestal de plaats waar NAT toegepast wordt.
-Dit is omdat alle communicatie met externe netwerken doorheen dit punt passeert.
+Dit is omdat alle communicatie met externe netwerken doorheen dit punt moet gaan.
 Als zo'n sensor aan de buitenkant van de NAT staat, zijn de interne ip-adressen niet zichtbaar.
-We zien enkel ip-communicatie tussen de NAT-pool en externe netwerken, zo gaat er veel informatie verloren.
+We zien enkel ip-communicatie tussen de NAT-pool en externe netwerken; zo gaat er veel informatie verloren.
 Daarom gaat de voorkeur naar het plaatsen van de sensor aan de binnenzijde van de NAT.
 
 Waar men ook voor moet uitkijken bij het plaatsen van een sensor is of de hardware de bitsnelheid wel aankan.
@@ -248,7 +248,7 @@ In 2018 begon de ontwikkeling van een nieuw project, Security Onion Hybrid Hunte
 Hybrid Hunter is nog steeds in experimentele staat, het wordt afgeraden dit systeem te gebruiken in een productieomgeving.
 
 \section{Features}
-Security Onion heeft veel te bieden om een goed inzicht te krijgen grote hoeveelheden netwerkverkeer waar standalone tools als Suricata of Wireshark te onoverzichtelijk worden.
+Security Onion heeft veel te bieden om een goed inzicht te krijgen in grote hoeveelheden netwerkverkeer waar standalone tools als Suricata of Wireshark te onoverzichtelijk worden.
 
 \subsection{NIDS}
 Eén van de grote componenten van Security Onion is een complete NIDS.
@@ -264,18 +264,20 @@ De frontend tools Sguil en Squert voeren queries uit op deze database om de aler
 De HIDS info van OSSEC is ook zichtbaar in beide Elasticsearch en Sguild, maar dit is standaard beperkt tot de OSSEC daemons die op de Security Onion servers zelf opereren.
 
 Mijn voorkeur van NIDS engine gaat naar Suricata, vooral omdat het moderner is.
-Suricata heeft afgewerkte ondersteuning voor multithreading en naar mijn mening betere documentatie.
+Suricata heeft afgewerkte ondersteuning voor multithreading en heeft naar mijn mening betere documentatie.
 
 Bij het analyseren van alerts heb ik vooral Squert gebruikt.
 Opnieuw is dit een veel gebruiksvriendelijkere en moderne tool dan Sguil.
 Sguil heeft wel bepaalde mogelijkheden die ontbreken bij Squert zoals het manueel uitvoeren van SQL queries op de Sguild database.
 
 \subsection{Zeek}
+\subsubsection{Sensoren}
 Security Onion definieert een sensor als een verzameling van services die actief zijn op 1 netwerkinterface.
 Alle configuratie voor 1 zo'n sensor bevindt zich in een map \lstinline|/etc/nsm/[hostname]-[interface]|.
 Naast Suricata of Snort (de NIDS engine) is er nog een andere service die de gecapteerde pakketten analyseert.
 Deze service is Zeek.
 
+\subsubsection{Zeek}
 Zeek (vroeger Bro) is een open-source analyser voor netwerkverkeer.
 Van de officiële documentatie:
 ``Zeek is a passive open-source network traffic analyzer.
@@ -286,17 +288,17 @@ Zeek heeft de mogelijkheid om gedetailleerde logs te genereren van veel verschil
 Bij tcp verbindingen wordt er bijvoorbeeld bijgehouden wat de source en destination poort was, hoeveel data er uitgewisseld is geweest en hoe de verbinding beëindigd werd.
 Udp en icmp pakketten worden gelijkaardig behandeld.
 Bij applicatielaag protocollen worden er veel details gehaald uit de plain-text protocollen zoals HTTP, FTP, DNS, MySQL\dots
-Ook geëncrypteerde protocollen die SSL gebruiken worden geanalyseerd op \emph{self-signed} en verlopen certificaten.
+Ook geëncrypteerde protocollen die SSL gebruiken worden geanalyseerd op bijvoorbeeld \emph{self-signed} en verlopen certificaten.
 
 Enkele velden komen in bijna elke log voor, zoals het source en destination ip-adres.
-Hierdoor is het mogelijk om snel correlaties te vinden in verschillende logs met een tool als Kibana.
+Hierdoor is het mogelijk om snel correlaties te vinden in verschillende logs met een tool zoals Kibana.
 
 Deze logs zijn beschikbaar in json-formaat in \lstinline|/nsm/bro/logs|.
 De logs worden geconsumeerd door syslog-ng.
 Daarna komen ze terrecht in de ELK stack, waar er meer informatie wordt toegevoegd en ze uiteindelijk zichtbaar zijn in Kibana \autocite{so:docs}.
 
 \subsection{ELK stack}
-ELK staat voor Elasticsearch, Logstash, and Kibana.
+ELK staat voor ``Elasticsearch, Logstash, and Kibana''.
 De ELK stack is een open-source systeem voor het beheren en visualiseren van data (logs) van meerdere bronnen.
 
 Logstash neemt data binnen van verschillende bronnen zoals NIDS, HIDS en Zeek, verrijkt deze bronnen met bijvoorbeeld links naar de volledige pcap files en slaat deze logs op in elasticsearch.
@@ -315,10 +317,10 @@ Met ElastAlert is het mogelijk om alerts te genereren wanneer er nieuwe data bin
 De combinatie van Elasticsearch indexes, een filter en een methode om alerts te genereren noemt men een \emph{ElastAlert rule}.
 Er kunnen zoveel rules aangemaakt worden als men wenst.
 
-Filters kunnen complexe pattronen zijn of elke match doorlaten.
+Filters kunnen complexe patronen zijn of elke match doorlaten.
 Deze `any' filter is nuttig om alle relevante data te sturen naar een extern systeem.
 Dit is de manier waarop TheHive en Security Onion verbonden kunnen worden.
-Bij complexe filters met pattronen die zelden voorkomen kan het handig zijn om dit te melden aan een administrator bijvoorbeeld via de Slack alerter.
+Bij complexe filters met patronen die zelden voorkomen kan het handig zijn om dit te melden aan een administrator bijvoorbeeld via de Slack alerter.
 Figuur \ref{fig:elastalert-slack} is een screenshot van een Slack workspace die ik aanmaakte om enkele filters uit te testen.
 
 \begin{figure}[H]
@@ -340,7 +342,7 @@ Deze is ideaal om de distributie te verkennen zonder het volledig te installeren
 \subsection{Standalone Production Mode}
 Een tweede mogelijkheid die beter geschikt is voor permanente opstellingen is de \emph{Standalone Production Mode}.
 Hierbij werkt het volledige systeem vanaf 1 server: zowel de sensor, log management, opslag als de web interface vinden plaats op dezelfde \emph{Master node}.
-Zie figuur \ref{fig:so-architecture-standalone} voor een schema.
+Zie figuur \ref{fig:so-architecture-standalone} voor een schema hiervan.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.5\textwidth]{so-architecture-production-standalone}
@@ -350,7 +352,7 @@ Zie figuur \ref{fig:so-architecture-standalone} voor een schema.
 
 \subsection{Distributed Production Mode}
 Het laatste mogelijke scenario bestaat uit meerdere nodes met elk een unieke rol.
-Zie figuur \ref{fig:so-architecture-distributed} voor een schema.
+Zie figuur \ref{fig:so-architecture-distributed} voor een schema van een voorbeeld van een Distributed Production Mode installatie.
 
 Elke node heeft standaard een OSSEC daemon actief.
 Deze dient om aan Host-based intrusion detection te doen op het Security Onion systeem zelf.
@@ -358,19 +360,19 @@ Deze dient om aan Host-based intrusion detection te doen op het Security Onion s
 \subsubsection{Forward node}
 Een \emph{Forward node} bezit alle functies van een sensor.
 Op elke forward node worden er 1 of meerdere port mirrors geïnstalleerd.
-De gecapteerde pakketten worden door enkele services verwerkt: Netsniff-NG voor full packet capture, Zeek protocol decoding en Snort of Suricata als NIDS engine.
+De gecapteerde pakketten worden door enkele services verwerkt: Netsniff-NG voor full packet capture, Zeek voor protocol decoding en Snort of Suricata als NIDS engine.
 Alle logs die Zeek en Suricata of Snort genereren worden meteen doorgestuurd naar de Logstash instantie op de master server.
-De full packet capture van netsniff-ng, blijft echter op de forward node aanwezig.
+De full packet capture van netsniff-ng blijft echter op de forward node aanwezig.
 Deze pcap files kunnen opgehaald worden wanneer ze nodig zijn en worden automatisch verwijderd wanneer er te weinig vrije plaats is op de disk.
 
-Door meerdere forward nodes strategisch te plaatsen in een netwerk, kan er veel beter inzicht verkregen worden in het netwerk.
+Door meerdere forward nodes strategisch te plaatsen in een netwerk, kan er vaak veel beter inzicht verkregen worden in het netwerk.
 
 \subsubsection{Master node}
 De master node is standaard verantwoordelijk voor alle andere taken die geen raw pcap data verwerken.
 Log management services zoals Elasticsearch, Logstash en Sguild zijn hier actief en frontend applicaties voor de analist zoals Kibana en Squert worden hier gehost.
 
 \subsubsection{Storage node}
-Storage nodes kunnen gebruikt worden om de opslagcapaciteit uit te breiden en het verwerken van logs te verlichten voor de master node.
+Storage nodes kunnen gebruikt worden om de opslagcapaciteit uit te breiden en het de last van het verwerken van logs te verlichten voor de master node.
 
 \subsubsection{Heavy node}
 Heavy nodes zijn een combinatie van storage nodes en forward nodes.
@@ -410,7 +412,7 @@ Zo kon ik verder bijleren over Security Onion en NIDS om later aan een eerste op
 Elk \emph{device} in een GNS3 project wordt aangemaakt aan de hand van een template.
 De uitzonderingen hierop zijn de \emph{built-in} devices zoals de hub, switch, NAT en cloud.
 Nieuwe devices kunnen manueel aangemaakt worden of kunnen gedownload worden van de \emph{online registry}.
-Er was al een Security Onion template of \emph{appliance} beschikbaar online, maar omdat deze wat out of date was en om zelf het proces te leren besloot ik om zelf een template te maken.
+Er was al een Security Onion template of \emph{appliance} beschikbaar online, maar omdat deze wat verouderd was en om zelf het proces te leren besloot ik om zelf een template te maken.
 
 Uiteindelijk bleek het aanmaken van een nieuwe device gelijkaardig te zijn als het configureren van een normale VM.
 Als soort device koos ik voor een QEMU VM, de rest van de configuratie waren standaard QEMU instellingen.
@@ -432,7 +434,7 @@ Figuur \ref{fig:gns3-simulatie-bedrijf} is een screenshot van dit GNS3 project.
 
 De simulatie bestaat uit een netwerk met 3 Ubuntu hosts (Docker containers) die in verbinding staan met het internet via NAT.
 Tussen de Ubuntu hosts en de NAT is er een switch geplaatst.
-Deze switch kopieërt alle data die uitgewisseld wordt tussen de Ubuntu hosts en het internet en plaatst deze op een port mirror.
+Deze switch kopieert alle data die uitgewisseld wordt tussen de Ubuntu hosts en het internet en plaatst deze op een port mirror.
 Die port mirror wordt dan gebruikt door Security Onion.
 
 Security Onion is geïnstalleerd als een distributed production deployment bestaande uit een master en forward node. 
@@ -468,11 +470,11 @@ Hiervoor moest de firewall van Security Onion wel ingesteld worden om het ip van
 \subsection{Cloud}
 Deze simulatie kan ook snel aangepast worden aan een echte port mirror door middel van een GNS3 \emph{built-in} device: de cloud.
 De cloud is een device met een kopie van alle netwerk interfaces van de host.
-In dit geval is het dus mogelijk om devices in een GNS3 project rechtsreeks in verbinding te zetten met de interfaces van de GNS3 VM.
+Zo is het dus mogelijk om devices in een GNS3 project rechtsreeks in verbinding te zetten met de interfaces van de GNS3 VM.
 
-De server had al één interface, \lstinline|eth0| bedoeld voor het beheren van de VM.
-Later werd er een tweede interface toegevoegd, \lstinline|eth1| waar een port mirror op toekwam.
-Om snel te testen of een port mirror werkte, werd er een cloud aangemaakt die insgesteld stond om de \lstinline|eth1| interface vrij te geven.
+De server had al één interface (\lstinline|eth0|), bedoeld voor het beheren van de VM.
+Later werd er een tweede interface toegevoegd (\lstinline|eth1|), waar een port mirror op toekwam.
+Om snel te testen of een port mirror werkte, werd er een cloud aangemaakt die ingesteld stond om de tweede (\lstinline|eth1|) interface vrij te geven.
 Daarna kon er snel een Ubuntu Docker container mee verbonden worden zoals in figuur \ref{fig:gns3-port-mirror-ubuntu}.
 Om de port mirror te bekijken, werd het commando \lstinline|tcpdump -i eth0| op de Ubuntu container uitgevoerd.
 
@@ -494,7 +496,7 @@ Figuur \ref{fig:gns3-port-mirror-so} is een screenshot van een GNS3 project met 
 \end{figure}
 
 Met GNS3 clouds kan er echte data aan een simulatieomgeving gekoppeld worden.
-GNS3 blijft nog steeds enkel bedoeld voor opstellingen uit te testen, niet als productieomgeving.
+GNS3 blijft nog steeds enkel bedoeld om opstellingen uit te testen, niet als productieomgeving.
 Aspecten waar GNS3 tekort kan komen in vergelijking met een productiesysteem zijn bijvoorbeeld de performantie van netwerkverbindingen en betrouwbaarheid.
 
 \section{Server}
@@ -543,17 +545,17 @@ Als deze data een NIDS alert genereert, is de server een verdachte host.
 Dit zou minder moeten voorkomen, omdat het internet en alle clients in het Free Wifi gescheiden zijn door een NAT.
 Wat wel meer kan voorkomen, is een client die communiceert met een verdacht ip adres als gevolg van bijvoorbeeld phishing.
 
-Omgekeerd, een apparaat in het Free Wifi netwerk die (volgend het NIDS) verdachte data stuurt naar een server, is outbound verkeer.
+Omgekeerd, een apparaat in het Free Wifi netwerk dat (volgend het NIDS) verdachte data stuurt naar een server, is outbound verkeer.
 Deze apparaten zijn ofwel geïnfecteerd met een vorm van malware, virus of gelijkaardig, ofwel wordt het netwerk bewust gebruikt om aanvallen te plegen.
 
 Natuurlijk zullen er veel alerts gegenereerd door het NIDS foutief blijken.
 Dit is normaal voor een netwerk met veel verkeer, de NIDS regels moeten gewoon dagelijks aangepast worden om foutieve alerts weg te werken.
 
 Naast NIDS biedt Security Onion ook de mogelijkheid om veel andere aspecten van het netwerk in kaart te brengen.
-Met behulp van Zeek is er veel metadata beschikbaar om statistieken te krijgen over het gedrag van apparaten (en gebruikers) op een Free Wifi netwerk.
+Met behulp van Zeek is er veel metadata beschikbaar om statistieken te verkrijgen over het gedrag van apparaten (en gebruikers) op een Free Wifi netwerk.
 
 Omdat het netwerk verbonden is met het internet kunnen ook andere bronnen geraadpleegd worden.
-Zo kan bijvoorbeeld de reputatie van een bepaald ip opgehaald worden (later implementeer ik dit in \ref{sec:cortex}).
+Zo kan bijvoorbeeld de reputatie van een bepaald ip adres opgehaald worden (later implementeer ik dit in \ref{sec:cortex}).
 Ook kan het besturingssysteem en zelfs het model van het apparaat zelf bepaald worden als er DHCP verkeer zichtbaar is in de port mirror (zie \ref{sec:fingerbank}).
 
 \subsubsection{Reflectie}
@@ -564,7 +566,7 @@ Meteen daarna begon de voorbereiding voor het volgende netwerk.
 
 \subsection{Bedrijfsnetwerk}
 \label{sec:bedrijfsnetwerk}
-Het tweede netwerk waar ik toegang tot zou krijgen was een typisch bedrijfsnetwerk.
+Het tweede netwerk waar ik toegang kreeg was een typisch bedrijfsnetwerk.
 Toen de fysieke server (zie \ref{sec:server}) net geïnstalleerd was in een serverruimte, begon ik met het analyseren van dit netwerk.
 De port mirror kwam dus toe op 1 van de interfaces van deze server.
 
@@ -588,19 +590,19 @@ Het ergste wat hier kan voorkomen is bijvoorbeeld een workstation die een verdac
 
 \subsubsection{Reflectie}
 
-Over het algemeen was dit netwerk een succes.
+Over het algemeen was de toepassing op dit netwerk een succes.
 Deze situatie is precies waarvoor software zoals Security Onion gemaakt is.
 
 Het enige probleem was dat de plaats van de port mirror niet optimaal was.
-Moest de port mirror aan de binnenzijde van de NAT pool genomen zijn, zouden ook de private ip adressen zichtbaar zijn.
+Moest de port mirror aan de binnenzijde van de NAT pool genomen zijn, dan zouden ook de private ip adressen zichtbaar zijn.
 Daarmee kan er veel extra informatie verkregen worden en kunnen incidenten gekoppeld worden aan bepaalde hosts.
 
 Ook zou het intressant geweest zijn als er wat meer documentatie beschikbaar was over dit netwerk.
-Met de documentatie die beschikbaar was, kon er wel al veel gedaan worden.
+Met de beperkte documentatie die beschikbaar was, kon er toch wel al veel gedaan worden.
 
 \subsection{OT netwerk}
 \label{sec:ot-netwerk}
-Het laatste netwerk dat aanbod kwam tijdens de bachelorproef was het OT netwerk van Fluvius.
+Het laatste netwerk dat aan bod kwam tijdens de bachelorproef was het OT netwerk van Fluvius.
 Het OT netwerk verbindt hoogspanningsapparatuur met controlekamers.
 Met deze infrastructuur wordt het hoogspanningsnet op afstand gecontroleerd en bijgestuurd.
 
@@ -637,7 +639,7 @@ Dit kwam vooral doordat ik geen documentatie ter beschikking had over dit netwer
 Later werkte ik samen met Fluvius om dit nogmaals te proberen.
 Toen konden we samen veel vermoedingen bevestigen.
 Opnieuw was er niet veel documentatie beschikbaar, wat de analyse moeilijker maakte.
-en het proces om te achterhalen welk ip adres gekoppeld is aan welk apparaat duurde telkens vrij lang.
+Daarbij duurde het proces om te achterhalen welk ip adres gekoppeld is aan welk apparaat telkens vrij lang.
 
 De enkele port mirror gaf een beperkt zicht in het netwerk.
 Om een beter beeld te krijgen moeten er zeker meerde port mirrors aangemaakt worden op een aantal belangrijke plaatsen.
@@ -648,6 +650,10 @@ Om een beter beeld te krijgen moeten er zeker meerde port mirrors aangemaakt wor
 Na het bekijken van de opnames van enkele presentaties van de Security Onion Conference 2019, bemerkte ik dat er veel mensen proberen externe tools te integreren met Security Onion \autocite{so:conference-2019}.
 Vaak is het doel om in de eerste plaats meer informatie te verzamelen aan de hand van bijvoorbeeld het raadplegen van externe bronnen.
 Daarna moet die informatie centraal beschikbaar gesteld worden in een tool als Kibana.
+
+Door ook andere applicaties te gebruiken, zijn we niet beperkt door de features die Security Onion aanbiedt.
+Zo kan het gebruik van andere technologieën ook geëvalueerd worden in een ISP omgeving.
+Dit zou ook moeten helpen met het vinden van alternatieven moet Security Onion niet ideaal zijn voor een bepaalde toepassing.
 
 \section{Gebruikte technologie\"en}
 \subsection{Debian}
@@ -1676,6 +1682,7 @@ Het source ip adres zou nog verder onderzocht kunnen worden, maar aangezien deze
 %\subsection{Invalid TCP checksum}
 
 \subsection{OT netwerk}
+% stats soorten protocollen
 % onbekend protocol
 % uitbreiding in zeek, log type in so, visualisaties+dashboard maken in kibana
 
