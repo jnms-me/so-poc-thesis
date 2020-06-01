@@ -664,7 +664,7 @@ In de keuze van besturingssysteem waren 2 zaken belangrijk.
 Het OS moest zeer stabiel zijn, het mocht nooit crashen tijdens het ontwikkelen of uitvoeren van dit systeem.
 De reden hiervoor is dat ik altijd de toegang op afstand moest bewaren.
 Ik had geen fysieke toegang tot de server nadat deze in een rack geïnstalleerd werd.
-Omwille van deze redenen koos ik de huidige \emph{stable} branch van Debain: Debian Buster.
+Omwille van deze redenen koos ik de huidige \emph{stable} branch van Debian: Debian Buster.
 
 \subsection{Docker}
 Docker is een verzameling van tools voor het beheren van software containers.
@@ -674,17 +674,17 @@ Docker is beschikbaar voor enkele verschillende omgevingen, maar voor dit systee
 Docker gebruikt enkele Linux kernel features, vooral Linux namespaces die toelaten om zaken zoals bestandssystemen en de netwerk stack te isoleren.
 Dit zorgt ervoor dat Docker containers een volledig andere installatie van Linux kunnen bevatten, het enige wat hetzelfde blijft is de achterliggende Linux kernel.
 
-Dit isolatie systeem zorgt ervoor dat er enkele handige features aanwezig zijn in Docker.
+Dit systeem van isolatie zorgt ervoor dat er enkele handige features aanwezig zijn in Docker.
 Zo kunnen bestanden, mappen en zelfs Unix sockets gelinkt worden tussen host en container.
 Ook kunnen tcp of udp poorten geforward worden naar interfaces van de host en kunnen er ip netwerken gemaakt worden tussen verschillende containers en de host.
 
-Docker kan door softwareontwikkelaars gebruikt worden om hun applicaties samen met alle nodige libraries en andere dependencies, als 1 pakket te publiceren.
+Docker kan door softwareontwikkelaars gebruikt worden om hun applicaties samen met alle nodige libraries en andere dependencies als 1 pakket te publiceren.
 Deze applicaties kunnen dan gedownload worden als een Docker image \autocite{docker:containers}.
 
 \subsubsection{Dockerfiles}
 Een Dockerfile is een bestand met instructies voor het bouwen van een image.
 Alle Dockerfiles in dit project beginnen met een \lstinline|FROM image:tag| instructie.
-De instructies die volgen zijn onder andere het kopieëren van configuratiebestanden of het uitvoeren van commando's \autocite{docker:dockerfile}.
+De instructies die volgen zijn onder andere het kopiëren van configuratiebestanden of het uitvoeren van commando's \autocite{docker:dockerfile}.
 
 Figuur \ref{fig:dockerfile-example} is een voorbeeld van een Dockerfile.
 Het doel van de Dockerfile was om een image te maken die automatisch een Nginx server opstart met de configuratie in het bestand \lstinline|server.conf|.
@@ -708,7 +708,7 @@ Een typisch voorbeeld hiervan is een webserver en een database.
 De http poort van de webserver container wordt dan geforward naar de host en de database container is bereikbaar via een intern netwerk waar beide containers mee verbonden zijn.
 
 Zo'n soort configuraties worden vergemakkelijkt met Docker compose.
-Aan de hand van een \lstinline|docker-compose.yml| file en de command-line tool \lstinline|docker-compose| kunnen applicaties ontwikkelt worden die uit meerdere containers bestaan \autocite{docker:compose}.
+Aan de hand van een \lstinline|docker-compose.yml| file en de command-line tool \lstinline|docker-compose| kunnen applicaties ontwikkeld worden die uit meerdere containers bestaan \autocite{docker:compose}.
 
 Figuur \ref{fig:compose-web-example} is de inhoud van een voorbeeld \lstinline|docker-compose.yml| file van een webserver en een database.
 De image voor de web container wordt gebouwd aan de hand van de \lstinline|Dockerfile| in de map \lstinline|web|.
@@ -742,7 +742,7 @@ services:
 Dit systeem bestaat bijna volledig uit Docker containers die beheerd worden met Docker compose.
 Er zijn meerdere YAML files aanwezig, 1 voor elke applicatie.
 Figuur \ref{fig:compose-so-poc-files} is een overzicht van al deze files.
-Het bestand \lstinline|compose| is een wrapper script voor \lstinline{docker-compose} die al deze bestanden correct combineert met meerdere \lstinline|-p| flags.
+Het bestand \lstinline|compose| is een wrapper script voor \lstinline{docker-compose} die al deze bestanden correct combineert met meerdere \lstinline|-p| argumenten.
 
 \begin{figure}[H]
   \begin{lstlisting}
@@ -815,12 +815,12 @@ Ook verwijs ik hier naar de bijlage op pagina \pageref{bijlage:aangepast-systeem
 
 \section{Intern netwerk}
 Vanuit het perspectief van het host besturingssysteem Debian, zijn er 4 interfaces actief.
-Deze bestaan uit de management poort, de capture poort, een Libvirt virtueel netwerk en een Docker intern netwerk.
+Deze bestaan uit de management poort, de capture poort, het Libvirt virtueel netwerk en het Docker intern netwerk.
 
 \subsubsection{Management poort}
 De management poort is rechtsreeks verbonden met het internet en heeft een statisch publiek ip.
 Enkel de poorten voor ssh, http en https zijn actief.
-Ssh is beveiligd met een whitelist van geauthoriseerde publieke sleutels, in deze whitelist staan enkel sleutels van mijn persoonlijke apparaten.
+Ssh is beveiligd met een whitelist van geauthoriseerde publieke sleutels; in deze whitelist staan enkel sleutels van mijn persoonlijke apparaten.
 De http poort geeft steeds een redirect naar de https poort, tenzij bij het ophalen van nieuwe https certificaten bij \emph{Let's Encrypt}.
 Op de https poort zijn alle web services beschikbaar, maar er is steeds een gebruikersnaam en wachtwoord nodig in de vorm van \emph{HTTP basic access authentication} om toegang te krijgen tot deze services.
 
@@ -828,15 +828,15 @@ Op de https poort zijn alle web services beschikbaar, maar er is steeds een gebr
 Op de capture poort komt er een port mirror toe.
 Toegang tot deze capture poort wordt verspreid naar de verschillende services die deze data nodig hebben.
 In Libvirt gebeurt dit via de interface passthrough feature.
-In Docker kunnen bepaalde containers toegang krijgen tot het `host net', waar ze toegang hebben aan de capture poort.
+In Docker kunnen bepaalde containers toegang krijgen tot het `host net', waar ze kunnen capteren op de capture poort.
 
 \subsubsection{Libvirt virtueel netwerk}
 In Libvirt is er 1 virtueel netwerk aangemaakt: \lstinline|192.168.101.0/24|.
-In dit netwerk zijn 2 hosts aanwezig: het host besturingssysteem met ip \lstinline|192.168.101.1| en de Security Onion vm met ip \lstinline|192.168.101.2|.
+In dit netwerk zijn er 2 hosts aanwezig: het host besturingssysteem met ip \lstinline|192.168.101.1| en de Security Onion vm met ip \lstinline|192.168.101.2|.
 Op deze interface wordt er NAT toegepast, zodat de Security Onion vm externe netwerken zoals het internet kan bereiken via het publieke ip van de management interface.
 
 Dit netwerk werd aangemaakt met de tool \lstinline|virt-manager|.
-De XML definitie van dit netwerk is zichtbaar in figuur \ref{fig:libvirt-network-xml}.
+De XML definitie van dit netwerk staat in figuur \ref{fig:libvirt-network-xml}.
 
 \begin{figure}[H]
   \begin{lstlisting}[language=XML]
@@ -867,7 +867,7 @@ Dit netwerkt hangt af van de omgevingsvariabele \lstinline|DOCKER_SUBNET|, gedef
 In dit bestand staat er \lstinline|DOCKER_SUBNET=192.168.100.0/24|.
 Het netwerk is dus \lstinline|192.168.100.0/24|, de host neemt het eerste beschikbare adres \lstinline|192.168.100.1| aan.
 Docker voorziet alle containers in dit netwerk van een dynamisch ip.
-Dit is geen Implementatie van DHCP, maar simpelweg de Docker daemon die een ip adres toekent aan elke container die opstart.
+Dit is geen implementatie van DHCP, maar simpelweg de Docker daemon die een ip adres toekent aan elke container die opstart.
 Docker zorgt er ook voor dat de containers elkaar kunnen vinden via DNS lookups van de naam van een Docker compose service. 
 
 \begin{figure}[H]
@@ -889,7 +889,7 @@ Elke service heeft een eigen container en elke volledige applicatie (verzameling
 Zo zijn er 6 applicaties: so-vm, so-manager, MISP, TheHive, Ntop en Netdata.
 
 \subsection{Structuur bestanden}
-De Docker compose configuratie voor elke configuratie staat in een bestand \lstinline|docker-compose.applicatie.yml| en alle 
+De Docker compose configuratie voor elke applicatie staat in een bestand \lstinline|docker-compose.applicatie.yml|.
 Alle bestanden die nodig zijn om een applicatie correct te laten werken zijn aanwezig in een map met de naam van de applicatie, met een submap per service of container.
 Een volledig overzicht van deze bestanden staat in figuur \ref{fig:so-poc-structuur-docker-compose-containers}.
 
@@ -898,7 +898,7 @@ Meestal bestaat dit uit een Dockerfile en enkele configuratiefiles en/of de bron
 
 \subsubsection{Github}
 Heel dit project is momenteel beschikbaar als een publieke Github repository: \url{https://github.com/Reavershark/so-poc}.
-Er is ook een bestand \lstinline|Setup.md| met instructies om het systeem te installeren.
+In dit project is er een bestand \lstinline|Setup.md| met instructies om het systeem te installeren.
 
 \begin{figure}[H]
   \begin{lstlisting}
@@ -939,7 +939,7 @@ Er is ook een bestand \lstinline|Setup.md| met instructies om het systeem te ins
 
 \subsection{HTTP reverse-proxies}
 Merk op dat in figuur \ref{fig:so-poc-structuur-docker-compose-containers} elke applicatie een \emph{proxy} service of container heeft.
-Bijna elke applicatie heeft een http interface op 1 van de services binnen de applicatie, elk met een eigen poort.
+Elke applicatie heeft een http interface op 1 van de services binnen de applicatie, elk met een eigen poort.
 In plaats van al deze informatie bij te houden, besloot ik om elke applicatie een gelijke http interface te geven.
 In elke applicatie is er een service aanwezig met de naam \lstinline|applicatie-proxy| die http verbindingen op poort 80 doorgeeft aan de juiste service binnen de applicatie op de juiste poort.
 
@@ -951,6 +951,7 @@ Nginx heeft een officiële Docker image die ik gebruikt heb als basis.
 \subsubsection{Voorbeeld}
 Als voorbeeld van een proxy service bespreek ik de service \lstinline|so-manager-proxy| in de applicatie \lstinline|so-manager|.
 
+% duplicate
 In het bestand \lstinline|docker-compose.so-manager.yml| staat de service \lstinline|so-manager-proxy| gedefinieerd zoals in figuur \ref{fig:proxy-voorbeeld-compose}.
 Deze service wacht tot beide \lstinline|so-manager-react| en \lstinline|so-manager-api| opgestart zijn.
 De service is geconfigureerd om een nieuwe Docker image te bouwen volgens de inhoud van de map \lstinline|so-manager/so-manager-proxy|.
