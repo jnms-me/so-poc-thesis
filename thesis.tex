@@ -59,7 +59,7 @@ Verder had ik graag heel het team van Fluvius Telco bedankt om deze periode zo a
 In het bijzonder gaat mijn dank uit naar mijn externe promotors, Emiel Vandewalle en Peter Tribout voor de uitstekende begeleiding tijdens de afgelopen maanden.
 Ook wil ik Joost Vanderbeken bedanken voor de voorziening van praktische zaken zoals hardware, de virtuele machine en informatie over verschillende netwerken.
 
-Daarnaast wil ik Anthony Pycarelle, Nicolas Veys, Ruben Dhondt en Merlijn De Wandel bedanken om te een port mirror van het Free Wifi netwerk aan te maken.
+Daarnaast wil ik Anthony Pycarelle, Nicolas Veys, Ruben Dhondt en Merlijn De Wandel bedanken om te proberen een port mirror van het Free Wifi netwerk aan te maken.
 Wouter De Clercq en Dante Demunck wil ik bedanken voor de hulp bij het installeren van de fysieke server en voor het voorzien van informatie over het bedrijfsnetwerk.
 Verder wil ik nog Evert Matthys-De Zutter bedanken voor de goede samenwerking bij het analyseren van enkele anomalieën in het OT netwerk.
 
@@ -82,7 +82,7 @@ Todo
 \addcontentsline{toc}{chapter}{Inleiding}
 \subsubsection{Probleemstelling}
 De centrale vraag is of een systeem zoals Security Onion een toepassing heeft binnen een ISP.
-Dit eindwerk zou moeten een antwoord bieden op deze vraag.
+Dit eindwerk zou een antwoord moeten bieden op deze vraag.
 
 Deze vraag ontstond nadat enkele medewerkers van Fluvius Telco het Security Onion project ontdekten.
 
@@ -99,11 +99,11 @@ Binnen Fluvius is deze afdeling verantwoordelijk voor het verbinden van hun vers
 Daarnaast voorziet Fluvius Telco ook internet en telefonie voor gemeentes in Vlaanderen.
 
 \subsubsection{Doelstelling}
-Het einddoel was om een werkende proof of concept te maken van een NIDS en die in verschillende netwerken uit te testen.
-Dit systeem werd steeds uitgetest en verder ontwikkeld tijdens de bachelorproef.
+Het einddoel was om een werkende `proof of concept' te maken van een NIDS en die in verschillende netwerken uit te testen.
+Dit systeem werd steeds iteratief ontwikkeld en uitgetest tijdens de bachelorproef.
 
 Het was natuurlijk niet mogelijk om dit systeem uit te testen in elke situatie die voorkomt in een ISP omgeving.
-Daarom hebben we geprobeerd om enkele diverse netwerken met veel potentieel uit te kiezen.
+Daarom hebben we hiervoor enkele diverse netwerken met veel potentieel uitgekozen.
 
 % Inhoud
 \chapter{Intrusion detection}
@@ -167,7 +167,7 @@ Deze lijsten worden onderhouden door bedrijven en online gemeenschappen.
 
 Een voorbeeld van een ruleset is Emerging Threats (van \url{https://rules.emergingthreats.net/}).
 Deze wordt dagelijks geüpdatet met nieuwe en aangepaste rules.
-Een klein stuk van de ruleset staat in figuur \ref{fig:et-voorbeeld}.
+Een fragment van de ruleset staat in figuur \ref{fig:et-voorbeeld}.
 Het volledige bestand bevat momenteel bijna $30000$ lijnen.
 
 Sommige bedrijven hebben ook \emph{subscription-based} rulesets.
@@ -193,7 +193,7 @@ alert tcp $EXTERNAL_NET any -> $HOME_NET [23,2323,3323,4323] (msg:"ET TELNET SUS
 #alert tcp $EXTERNAL_NET any -> $HOME_NET [23,2323,3323,4323] (msg:"ET TELNET SUSPICIOUS busybox enable"; flow:to_s...
 ...
   \end{lstlisting}
-  \caption{Een klein stuk van de Emerging Threats ruleset}
+  \caption{Een fragment van de Emerging Threats ruleset}
   \label{fig:et-voorbeeld}
 \end{figure}
 
@@ -1021,7 +1021,7 @@ server {
   }
 }
   \end{lstlisting}
-  \caption{Verkorte inhoud van het bestand \lstinline|./so-manager/so-manager-proxy/server.conf| in so-poc}
+  \caption{Verkorte inhoud van het bestand \lstinline|so-manager/so-manager-proxy/server.conf| in so-poc}
   \label{fig:proxy-voorbeeld-server-conf}
 \end{figure}
 
@@ -1715,7 +1715,7 @@ Todo
 \chapter*{Bijlagen}
 \addcontentsline{toc}{chapter}{Bijlagen}
 
-\section{Docker compose schema}
+\section*{Docker compose schema}
 Zie pagina \pageref{bijlage:aangepast-systeem-schema-docker} is een voorstelling van alle Docker compose services of containers, in de applicatie waar ze toe behoren.
 HTTP(S) verbindingen en port forwarding wordt aangeduid met pijlen.
 
