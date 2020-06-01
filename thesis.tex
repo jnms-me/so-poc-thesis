@@ -53,15 +53,14 @@ De tijdens de verdediging geformuleerde opmerkingen werden niet opgenomen.
 % Woord vooraf (niet verplicht)
 \chapter*{Woord vooraf}
 \addcontentsline{toc}{chapter}{Woord vooraf}
-% Achternamen Dante & Nicolas
 In eerste plaats wil ik Fluvius bedanken om deze stage en bachelorproef mogelijk te maken.
 Verder had ik graag heel het team van Fluvius Telco bedankt om deze periode zo aangenaam mogelijk te maken.
 
 In het bijzonder gaat mijn dank uit naar mijn externe promotors, Emiel Vandewalle en Peter Tribout voor de uitstekende begeleiding tijdens de afgelopen maanden.
 Ook wil ik Joost Vanderbeken bedanken voor de voorziening van praktische zaken zoals hardware, de virtuele machine en informatie over verschillende netwerken.
 
-Daarnaast wil ik Anthony Pycarelle, Nicolas, Ruben Dhondt en Merlijn De Wandel bedanken om te een port mirror van het Free Wifi netwerk aan te maken.
-Wouter De Clercq en Dante wil ik bedanken voor de hulp bij het installeren van de fysieke server en voor het voorzien van informatie over het bedrijfsnetwerk.
+Daarnaast wil ik Anthony Pycarelle, Nicolas Veys, Ruben Dhondt en Merlijn De Wandel bedanken om te een port mirror van het Free Wifi netwerk aan te maken.
+Wouter De Clercq en Dante Demunck wil ik bedanken voor de hulp bij het installeren van de fysieke server en voor het voorzien van informatie over het bedrijfsnetwerk.
 Verder wil ik nog Evert Matthys-De Zutter bedanken voor de goede samenwerking bij het analyseren van enkele anomalieën in het OT netwerk.
 
 Ten slotte wil ik mijn binnenpromotor, Tom Cordemans, bedanken om mij steeds te ondersteunen doorheen deze lange periode.
@@ -266,7 +265,7 @@ In Logstash worden de alerts behandeld als logs.
 Deze logs zijn dan zichtbaar in Elasticsearch en Kibana.
 
 Sguild is een database voor IDS alerts.
-De frontend tools Sguil en Squert voeren queries uit op deze database om de alerts aan de analyst te presenteren.
+De frontend tools Sguil en Squert voeren queries uit op deze database om de alerts aan de analist te presenteren.
 
 De HIDS info van OSSEC is ook zichtbaar in beide Elasticsearch en Sguild, maar dit is standaard beperkt tot de OSSEC daemons die op de Security Onion servers zelf opereren.
 
@@ -310,12 +309,12 @@ De ELK stack is een open-source systeem voor het beheren en visualiseren van dat
 
 Logstash neemt data binnen van verschillende bronnen zoals NIDS, HIDS en Zeek, verrijkt deze bronnen met bijvoorbeeld links naar de volledige pcap files en slaat deze logs op in elasticsearch.
 Elasticsearch heeft een uitgebreide api om allerlei soorten zoekopdrachten uit te voeren op deze logs.
-Een analyst kan dan de browser gebaseerde tool Kibana gebruiken om de logs in elasticsearch te visualiseren.
+Een analist kan dan de browser gebaseerde tool Kibana gebruiken om de logs in elasticsearch te visualiseren.
 \autocite{elastic:what-is-elk}
 
 Security Onion voorziet uitgebreide logs in elasticsearch die alle informatie van NIDS, HIDS en Zeek omvatten.
 In Kibana zijn er een 40-tal dashboards aanwezig met in totaal zo'n 400 visualisaties.
-Dit is zeker de meest handige tool voor een analyst, Kibana stond aan de kern van elke analyse die ik uitvoerde.
+Dit is zeker de meest handige tool voor een analist, Kibana stond aan de kern van elke analyse die ik uitvoerde.
 
 \subsubsection{ElastAlert}
 In Security Onion is de service \emph{ElastAlert} voorgeïnstalleerd.
@@ -377,7 +376,7 @@ Door meerdere forward nodes strategisch te plaatsen in een netwerk, kan er veel 
 
 \subsubsection{Master node}
 De master node is standaard verantwoordelijk voor alle andere taken die geen raw pcap data verwerken.
-Log management services zoals Elasticsearch, Logstash en Sguild zijn hier actief en frontend applicaties voor de analyst zoals Kibana en Squert worden hier gehost.
+Log management services zoals Elasticsearch, Logstash en Sguild zijn hier actief en frontend applicaties voor de analist zoals Kibana en Squert worden hier gehost.
 
 \subsubsection{Storage node}
 Storage nodes kunnen gebruikt worden om de opslagcapaciteit uit te breiden en het verwerken van logs te verlichten voor de master node.
@@ -1539,7 +1538,7 @@ Omdat een simpele actieve scan veel meer informatie oplevert, vond ik het niet n
 \chapter{Analyses}
 In dit hoofdstuk wordt er besproken hoe de voordien besproken tools correct gebruikt kunnen worden bij het bestuderen van anomalieën in een netwerk.
 
-\section{De workflow van een analyst}
+\section{De workflow van een analist}
 Het proces voor het opbouwen van één case is als volgt.
 Ik heb dit proces zo veel mogelijk toegepast, maar sommige stappen zoals het documenteren in intelligence frameworks werden niet uitgevoerd om tijd te besparen.
 
