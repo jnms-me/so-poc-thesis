@@ -692,6 +692,8 @@ Op de Docker Hub is er een officiële image beschikbaar genaamd `nginx' (\url{ht
 De beschrijving bevat onder andere de locatie van de configuratiebestanden.
 De Dockerfile begint vanaf de `latest' \lstinline|nginx| image, de \emph{default} configuratie wordt verwijderd en de aangepaste configuratie wordt in de plaats gekopieerd.
 
+In sectie \ref{sec:reverse-proxy-voorbeeld} wordt dit voorbeeld nog verder besproken.
+
 \begin{figure}[H]
   \begin{lstlisting}
 FROM nginx
@@ -949,9 +951,9 @@ Een van de features van Nginx is de mogelijkheid om als reverse-proxy te werken 
 Nginx heeft een officiële Docker image die ik gebruikt heb als basis.
 
 \subsubsection{Voorbeeld}
+\label{sec:reverse-proxy-voorbeeld}
 Als voorbeeld van een proxy service bespreek ik de service \lstinline|so-manager-proxy| in de applicatie \lstinline|so-manager|.
 
-% duplicate
 In het bestand \lstinline|docker-compose.so-manager.yml| staat de service \lstinline|so-manager-proxy| gedefinieerd zoals in figuur \ref{fig:proxy-voorbeeld-compose}.
 Deze service wacht tot beide \lstinline|so-manager-react| en \lstinline|so-manager-api| opgestart zijn.
 De service is geconfigureerd om een nieuwe Docker image te bouwen volgens de inhoud van de map \lstinline|so-manager/so-manager-proxy|.
@@ -1116,7 +1118,7 @@ Met hulp van \lstinline|https-portal| heeft elke applicatie een eigen subdomein.
 Eerst hield ik al deze URLs als bladwijzers bij, maar dit was niet zo praktisch.
 
 Daarnaast had ik ook het idee om bestaande functionaliteit in verschillende applicaties samen te brengen in 1 interface.
-Dit was mogelijk bij applicaties die een (REST) API bevatten.
+Dit was mogelijk bij applicaties met een (REST) API.
 
 Initieel was de web app dus een pagina met links naar alle verschillende services.
 Daarna was het de bedoeling om features toe te voegen in de vorm van extra pagina's.
@@ -1151,7 +1153,9 @@ Ook worden via de backend enkele API's van Ntop en MISP aangeroepen, het resulta
 
 \subsection{Vibe.d backend}
 Sommige features van de web applicatie konden niet volledig in de frontend geïmplementeerd worden.
-De API's van MISP en Ntop, die in de `Query' pagina gebruikt worden, kunnen niet veilig aangeroepen worden vanuit de browser.
+De API's van MISP en Ntop, die in de `Query' pagina gebruikt worden, kunnen niet correct worden aangeroepen vanuit de browser.
+MISP vereist een API key en ntopng vereist een HTTP Basic Authorization login.
+Beide vormen van authenticatie kunnen niet veilig geautomatiseerd worden.
 Daarom werd er ook een backend gedeelte ontwikkeld die aanwezig is in de Docker compose omgeving, waar toegang tot de API's wel veilig kan verlopen.
 
 \subsubsection{Vibe.d}
@@ -1165,16 +1169,18 @@ Deze proxy \emph{forward} alle requests waarvan het pad begint met \lstinline|/a
 Alle andere requests komen terrecht bij de service \lstinline|so-manager-react|, die de statische frontend bestanden host.
 
 \subsubsection{REST API's}
-Wanneer de backend een HTTP GET request met het pad \lstinline|/api/host/{ip adres}| ontvangt, roept de backend verschillende API endpoints aan van de MISP en ntopng applicaties.
+Wanneer de backend een HTTP GET request met het pad \lstinline|/api/host/{ip adres}| ontvangt, roept de backend enkele API endpoints aan van de MISP en ntopng applicaties.
 Als al deze data ontvangen is, wordt er een antwoord gestuurd naar de browser in de vorm van een JSON object.
 
 Met Vibe.d kunnen REST API's gedefinieerd worden als interfaces.
-De definitie van REST API van de backend zelf staat in figuur \ref{fig:vibe-rest-server}.
+De definitie van de REST API van de backend zelf staat in figuur \ref{fig:vibe-rest-server}.
+Dit is het API dat de browser gebruikt om te communiceren met de backend.
 Verder in de code is er een \emph{class} die deze \emph{interface} implementeerd.
 
 Interfaces kunnen niet alleen gebruikt worden op REST API's te hosten, maar ook om andere API's mee aan te roepen.
-Het aanroepen van de MISP api gebeurt met de volgende code: \lstinline|RestInterfaceClient!IMispAPI("http://misp-proxy/")|.
-Met de interface in figuur \ref{fig:vibe-rest-misp} en een url kunnen api requests gemaakt worden door simpelweg methodes aan te roepen.
+Het aanroepen van de MISP api gebeurt met de volgende code: \lstinline|new RestInterfaceClient!IMispAPI("http://misp-proxy/")|.
+Deze code geeft een object terug waar methodes zoals \lstinline|searchAttributes(string auth, string value)| op aangeroepen kunnen worden.
+Met de interface in figuur \ref{fig:vibe-rest-misp} en een url kunnen dus api requests gemaakt worden door simpelweg methodes aan te roepen.
 Deze interface is wat complexer omdat MISP een API key gebruikt.
 
 \begin{figure}[H]
@@ -1210,7 +1216,7 @@ interface IMispAPI
 \end{figure}
 
 \section{Intelligence frameworks}
-Intelligence frameworks dienen om alle beveiliging gerelateerde gebeurtenissen te documenteren.
+Intelligence frameworks dienen om alle beveiliging gerelateerde gebeurtenissen te documenteren en er meer informatie mee te winnen.
 Dit gebeurt meestal in de vorm van cases, waarbij elke case de documentatie bevat van 1 of meer gebeurtenissen.
 Deze documentatie komt zowel in de vorm van handgeschreven beschrijvingen als in de vorm van data met herkenbare types zoals domein, ip, md5 file hash\dots
 
@@ -1220,7 +1226,7 @@ Dit noemt men correlatie van attributes of observables.
 Met het correct gebruik van intelligence frameworks wordt er dus altijd gewerkt aan het verbeteren van de verwerking van gelijkaardige gebeurtenissen in de toekomst.
 
 In dit systeem zijn er 2 applicaties aanwezig die als intel frameworks dienen: TheHive en MISP.
-Beide slaan ze incidenten op in cases en kunnen ze gebeurtenissen met elkaar correleren.
+Beide slaan ze incidenten op in cases en kunnen ze gebeurtenissen correleren.
 Elk hebben ze een unieke feature die verder bekeken wordt.
 
 \subsection{TheHive}
@@ -1271,7 +1277,7 @@ Figuur \ref{fig:thehive-example} is een overzicht van de gewonnen informatie.
 \end{figure}
 
 \subsection{MISP}
-Het tweede intelligence framework die toegevoegd werd aan het systeem is MISP.
+Het tweede intelligence framework dat toegevoegd werd aan het systeem is MISP.
 MISP heeft net zoals TheHive de mogelijkheid om cases (hier events genoemd) aan te maken die gebeurtenissen documenteren.
 
 De \emph{observables} worden hier \emph{attributes} genoemd.
@@ -1279,16 +1285,16 @@ Er zijn veel meer soorten attributes beschikbaar, waaronder ook veel data die ni
 Overeenkomende attributes in events worden automatisch gecorreleerd aan elkaar.
 
 Verrijking van attributes met externe bronnen is niet zo simpel als bij TheHive.
-Er is wel een Cortex plugin aanwezig, maar deze lijk niet meer ondersteund te worden door Cortex.
-Ik heb deze dan ook niet volledig werkende gekregen.
+Er is wel een Cortex plugin aanwezig, maar deze lijkt niet meer ondersteund te worden door Cortex.
+Ik heb deze dan ook niet volledig werkend gekregen.
 
 \subsubsection{NIDS export}
 \label{sec:misp-nids-export}
-MISP heeft wel een unieke feature die gebruikt wordt in dit systeem.
+MISP heeft wel een unieke feature dat gebruikt wordt in dit systeem.
 Voor elke attribute is er een \lstinline|IDS| optie.
 
-In figuur \ref{fig:misp-export-flag} staat de IDS optie aangevinkt voor de attribute `10.126.10.151:8530' van het type `ip-dst:port'.
-Deze attibute is afkomstig van een event die eerder aangemaakt werd op een NIDS alert te verwerken.
+In figuur \ref{fig:misp-export-flag} staat de IDS optie aangevinkt voor het attribute `10.126.10.151:8530' van het type `ip-dst:port'.
+Deze attibute is afkomstig van een event die eerder aangemaakt werd om een NIDS alert te verwerken.
 
 Elke dag, of telkens wanneer \lstinline|rule-update| uitgevoerd wordt, haalt Security Onion nieuwe rules op van providers zoals Emerging Threats.
 In dit systeem werd Security Onion ook geconfigureerd om nieuwe rules van MISP's `NIDS rules export' API op te halen.
@@ -1352,7 +1358,6 @@ Voor ip adressen is dit trouwens mogelijk op de query pagina van de `so-manager'
 
 Ten slotte kunnen de alerts gegenereerd door ntopng mogelijk gebruikt worden als het begin van een case.
 Een alert met de beschrijving `A new device has connected to the network' kan wijzen op een rogue device.
-Daarna moet er nagegaan worden of het ip adres niet tot een DHCP pool behoort en zo voort.
 
 \section{Netdata}
 Netdata is een performance monitor voor Linux (en BSD) servers \autocite{netdata:home}.
@@ -1480,19 +1485,19 @@ Dit is makkelijker manueel te bepalen in Kibana en overbodig om Fingerbank telke
 
 Ten slotte is er ook nog de mogelijkheid om TCP/IP stack fingerprints in de dienen.
 Aangezien deze van bijna elke host in het netwerk te bepalen zijn, probeerde ik dit uit.
-Na wat te experimenteren met scapy en p0f om fingerprints in het juiste formaat in te dienen, bleken de TCP/IP stack fingerprints het minst accurate deel van de Fingerbank database.
+Na wat experimenteren met scapy en p0f om fingerprints in het juiste formaat in te dienen, bleken de TCP/IP stack fingerprints het minst accurate deel van de Fingerbank database.
 Bij de meeste hosts in het afgesloten netwerk kreeg ik als antwoord dat het apparaat en besturingssysteem niet konden bepaald worden.
-Mijn eigen desktop werd zelfs herkent als een smartwatch.
+Mijn eigen desktop werd zelfs herkend als een smartwatch.
 Ik bestloot dus om ook Fingerbank niet te gebruiken in het systeem.
 
 Achteraf gezien kon p0f wel een nut gehad hebben in het systeem door de output te parsen en deze toe te voegen aan de logs in de ELK stack.
-Toch besloot ik om alternatieven te zoeken die hopelijk accuraater zijn, zonder veel succes.
+Toch besloot ik om alternatieven te zoeken die hopelijk accurater zijn, zonder veel succes.
 Ik kan me wel voorstellen dat Fingerbank heel nuttig kan zijn bij het controleren van bijvoorbeeld een openbaar netwerk.
 
 \section{Visualisatie netwerk layout}
 Ik had even geprobeerd om het netwerk dat gecontroleerd werd door dit systeem, uit te tekenen in de vorm van een soort diagram.
 Moest ik hierin slagen zou ik dit proberen te automatiseren.
-Ik ondervond snel enkele problemen die dit bijna onmogelijk maken.
+Ik ondervond snel enkele problemen die dit bijna onmogelijk maken (zie hieronder).
 
 \subsection{Port mirror}
 Een port mirror is volledig passief.
@@ -1569,7 +1574,7 @@ Als dit het geval is, kan de bestaande case uitgebreidt worden met recente data,
 
 Daarna kunnen alle ip adressen, domeinnamen en andere \emph{attributes} opgezocht worden op verschillende plaatsen.
 De belangrijkste plaats is de documentatie van het netwerk.
-Daanaast kunnnen veel soorten attributes als zoekopdracht of filter ingegeven worden in Kibana.
+Daarnaast kunnen veel soorten attributes als zoekopdracht of filter ingegeven worden in Kibana.
 Ip adressen, MAC adressen en URL's kunnen opgezocht worden in ntopng.
 Eventueel kunnen zelfs tools zoals Wireshark of NetworkMiner gebruikt worden.
 Voor ip adressen worden veel van de vorige bronnen gecombineerd op de query pagina van de `so-manager' web app.
@@ -1579,7 +1584,7 @@ Er moet dan een case aangemaakt worden in TheHive waar alle publieke observables
 Door alle \emph{analysers} uit te voeren op de observables, kan er nieuwe informatie verkregen worden en soms zelfs nieuwe observables.
 
 \subsection{Case aanmaken}
-Als er zo veel mogelijk informatie verzameld is als notities, kan al deze informatie gebundeld worden in een case.
+Als er zo veel mogelijk informatie verzameld is in de vorm van notities, kan al deze informatie gebundeld worden in een case.
 Dit gebeurt door in MISP een nieuw `Event' aan te maken en alle informatie er aan toe te voegen als attributes, elk met het juiste type.
 Mogelijk kan dit nieuwe inzichten geven, omdat MISP automatisch attributes correleert met die van vorige events.
 
