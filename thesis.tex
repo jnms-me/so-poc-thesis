@@ -68,7 +68,25 @@ Ten slotte wil ik mijn binnenpromotor, Tom Cordemans, bedanken om mij steeds te 
 % Samenvatting of abstract
 \chapter*{Samenvatting}
 \addcontentsline{toc}{chapter}{Samenvatting}
-Todo
+\subsubsection{Nederlands}
+Het idee voor bachelorproef ontstond nadat Fluvius in contact kwam met het Security Onion project.
+Een installatie van Security Onion is bedoeld om een bedrijfsnetwerk te controleren op verdachte activiteiten.
+Dit wordt bereikt door gebruik te maken van een Network Intrusion Detection System (NIDS) en vele andere services.
+
+In dit eindwerk wordt er onderzocht of een systeem zoals Security Onion ook toegepast kan worden in de omgeving van Fluvius Telco, een Internet Service Provider.
+
+Om dit probleem af te bakenen, werden er enkele diverse netwerken met veel potentieel uitgekozen.
+Een `proof of concept' systeem controleerde deze netwerken via een port mirror.
+Dit systeem bestond initieel enkel uit Security Onion, maar er werden iteratief meer tools aan toegevoegd zoals TheHive, ntopng en MISP.
+
+Bij 2 van deze netwerken konden verschillende anomalieën in het netwerkverkeer verder onderzocht worden.
+Voor een derde netwerk was dit niet gelukt, wegens technische beperkingen van de netwerkapparatuur.
+
+% resultaten
+
+% conclusie
+% Toepasbaar op de verschillende netwerken die voorkomen binnen een ISP
+% De ene (internet) met meer moeite dan de andere (afgesloten)
 
 \newpage
 
@@ -1703,7 +1721,31 @@ Het source ip adres zou nog verder onderzocht kunnen worden, maar aangezien deze
 % Besluit
 \chapter*{Besluit}
 \addcontentsline{toc}{chapter}{Besluit}
-Todo
+Het doel van deze bachelorproef was om een `proof of concept' te maken van een NIDS (een systeem dat een netwerk controleert op verdachte activiteit).
+Daarbij zou dit systeem in de verschillende netwerken die voorkomen in een ISP moeten uitgetest worden.
+
+Dit doel werd bereikt door eerst vertrouwd te raken met Security Onion en alle software die het gebruikt zoals NIDS, ELK en Zeek aan de hand van simulaties en experimenten.
+Daarna werden er uitbreidingen gemaakt aan Security Onion, die iteratief verder ontwikkeld en uitgetest werden door analyses uit te voeren op verschillende netwerken van Fluvius Telco.
+
+De resultaten van deze analyses wijzen erop dat een systeem zoals Security Onion zeker toegepast kan worden op de netwerken van een ISP.
+Afhankelijk van welk soort netwerk, kan dit wel meer of minder effectief zijn.
+
+Bij het bedrijfsnetwerk konden analyses vlot uitgevoerd worden.
+Er was ook altijd een mogelijkheid om meer informatie te verkrijgen.
+Het systeem controleerde hier de internetverbinding, waardoor tools zoals TheHive konden gebruikt worden om externe bronnen te raadplegen.
+Met de weinige documentatie die beschikbaar was kon dus al veel bereikt worden.
+Private ip adressen van dit netwerk waren niet zichtbaar, dus ontbrekende documentatie hierover vormde geen probleem.
+
+Bij het OT netwerk was het uitvoeren van analyses wat minder evident.
+Omdat het een afgesloten privaat netwerk is, is het niet mogelijk om externe bronnen te raadplegen waardoor een aantal tools niet konden gebruikt worden.
+Ook had ik geen documentatie over dit netwerk beschikbaar, waardoor analyses steeds eindigden bij vermoedens.
+Via collega's kon ik wel een aantal van deze vermoedens bevestigen, maar voor hun was dit ook een vrij lang proces.
+
+Wat opviel bij beide netwerken is hoe belangrijk documentatie is.
+Vaak kunnen uren werk vermeden worden door een goede documentatie van het netwerk te raadplegen.
+
+Ten slotte besloten we nog dat er mogelijkheid was voor verder onderzoek in de vorm van het implementeren van het `scada' protocol, een protocol dat gebruikt wordt door de industriële apparatuur in het OT netwerk.
+Men zou dan ondersteuning moeten toevoegen voor dit protocol aan Zeek en Security Onion.
 
 % Bijlagen (niet verplicht)
 \chapter*{Bijlagen}
