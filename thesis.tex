@@ -8,7 +8,7 @@
 \graphicspath{{./img/}}
 \usepackage[hidelinks]{hyperref} % \url
 \usepackage{pdfpages} % \includepdf
-\usepackage{tocbibind} % Custom toc entries
+\usepackage{tocbibind, tocloft} % Custom toc entries
 \usepackage{listings} % Code snippets
 \lstdefinestyle{code}{
   basicstyle=\ttfamily\footnotesize,
@@ -45,14 +45,14 @@
 \includepdf[pages=-]{./include/titelblad.pdf}
 
 % Mededeling
+\setcounter{page}{2} % Begin paginanummering
 \chapter*{Mededeling}
-\addcontentsline{toc}{chapter}{Mededeling}
 Deze eindverhandeling was een examen.
 De tijdens de verdediging geformuleerde opmerkingen werden niet opgenomen.
 
 % Woord vooraf (niet verplicht)
 \chapter*{Woord vooraf}
-\addcontentsline{toc}{chapter}{Woord vooraf}
+\cftaddtitleline{toc}{chapter}{Woord vooraf}{}
 In eerste plaats wil ik Fluvius bedanken om deze stage en bachelorproef mogelijk te maken.
 Verder had ik graag heel het team van Fluvius Telco bedankt om deze periode zo aangenaam mogelijk te maken.
 
@@ -69,6 +69,8 @@ Ten slotte wil ik mijn binnenpromotor, Tom Cordemans, bedanken om mij steeds te 
 \chapter*{Samenvatting}
 \addcontentsline{toc}{chapter}{Samenvatting}
 Todo
+
+\newpage
 
 % Inhoudsopgave
 \tableofcontents
