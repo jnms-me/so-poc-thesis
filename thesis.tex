@@ -114,7 +114,7 @@ Fluvius is onder andere verantwoordelijk voor het aanleggen, beheren en onderhou
 Deze stage en bachelorproef vond plaats op de afdeling Fluvius Telco.
 Deze afdeling opereert als Internet Service Provider (ISP).
 Ze voorzien connectiviteit zowel inhouse als voor gemeentes.
-Binnen Fluvius is deze afdeling verantwoordelijk voor het verbinden van hun verschillende gebouwen en voor het zorgen voor essentiële connectiviteit binnen hun netten, zoals het OT-netwerk voor elektriciteit.
+Binnen Fluvius is deze afdeling verantwoordelijk voor het verbinden van hun verschillende gebouwen en voor het zorgen voor essentiële connectiviteit binnen hun netten, zoals het OT netwerk voor elektriciteit.
 Daarnaast voorziet Fluvius Telco ook internet en telefonie voor gemeentes in Vlaanderen.
 
 \subsubsection{Doelstelling}
@@ -1713,6 +1713,7 @@ Deze range werd dan omgezet in een absolute range, zo kon er steeds met dezelfde
 Door middel van de filter \lstinline|service: "exists"| in te stellen, kon er bepaald worden dat slechts $20\%$ van de pakketten een bekend protocol gebruikte.
 De protocollen die wel herkend werden door Security Onion (Zeek) waren DNS, NTP, HTTP en enkele Windows protocollen (zie figuur \ref{fig:analyse-ot-stats-services}).
 Later bleken ook SNMP en SSL aanwezig te zijn op het netwerk.
+Elk bekend protocol bekeek ik in detail en ik maakte hier notities van.
 
 \begin{figure}[H]
   \centering
@@ -1740,17 +1741,62 @@ Ofwel gebeurt dit door de broncode te wijzigen, ofwel kan dit mogelijk ook via h
 Daarna moet de log processing van Security Onion deze nieuwe data herkennen als een log type.
 Ten slotte kunnen er nog visualisaties en een dashboard toegevoegd worden aan Kibana voor deze nieuwe log type.
 
-% windows hosts
+\subsection{Windows hosts}
+\subsubsection{Entrypoint}
+De port mirror voor dit netwerk werd genomen tussen een controlekamer en de rest van het OT netwerk.
+Wat opviel in Kibana was dat een groot deel van de herkenbare data (pakketten met bekende protocollen) afkomstig was van 2 ip adressen (source ip).
+Ik koos deze 2 ip adressen als `entrypoint` voor een onderzoek.
+Het doel was om te bepalen welk soort apparaten dit waren.
 
-% geen idee welke hosts vertrouwd kunnen worden met welk soort communicatie
-% Met documentatie hierover kunnen (manueel) `Policy violation' NIDS rulesets gemaakt worden.
-% time investment, maar zeker mogenlijk
+Heel dit proces zou overbodig geweest zijn moest er documentatie beschikbaar geweest zijn over de hosts in dit netwerk, maar er konden toch interresante anomalieën in het gedrag van deze hosts bepaald worden.
 
+\subsubsection{Informatie verzamelen}
+Het verzamelen van meer informatie begon met data in Kibana te filteren op deze 2 ip adressen.
+Een van de protocollen die het meest gebruikt werd door deze hosts was DNS.
+Op het `Zeek - DNS' dashboard waren DNS queries te zien zoals in figuur \ref{fig:analyse-ot-windows-hosts-dns}.
+Op geen enkel van deze queries kon de DNS server antwoorden.
+Dit wijst erop dat deze 2 apparaten Windows workstations zijn en dat de DNS server niet geconfigureerd is om externe DNS servers te raadplegen (en dus waarschijnlijk geen internettoegang heeft).
+Er waren wel veel andere queries die eindigden op `.lcl', maar deze werden uitgefilterd in figuur \ref{fig:analyse-ot-windows-hosts-dns}.
+Op deze queries kreeg de client wel een antwoord.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{analyse-ot-windows-hosts-dns}
+  \caption{DNS queries uitgevoerd door een host in het OT netwerk}
+  \label{fig:analyse-ot-windows-hosts-dns}
+\end{figure}
+
+Later waren er ook alerts van ntopng over deze ip adressen: ``Host {ip adres} has sent 12 DNS requests but received 0 DNS replies''.
+Dit was nog een mogelijk entrypoint voor dit onderzoek.
+
+In enkele HTTP requests afkomstig van deze client staat ook de volgende \lstinline|User-Agent| header: `Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko'.
+Dit wijst erop dat de workstations 64-bits Windows 10 gebruiken als besturingssysteem, met Internet Explorer 11.0 als browser in dit geval \autocite{user-agent-databases:win10ie}.
+
+Wat ook opviel was dat beide ip adressen dezelfde server contacteren voor DNS queries en typische Windows protocollen zoals SMB en Kerberos.
+Deze server werd enkel gecontacteerd door deze 2 hosts. 
+
+\subsubsection{Besluit}
+De eerste 2 ip adressen gebruikt als entrypoint zijn zeker Windows 10 hosts, een 3de ip adres is vermoedelijk een Windows server.
+Deze 3 hosts zouden deel kunnen uitmaken van een Windows netwerk met 2 workstations en bijvoorbeeld 1 domain controller.
+
+\subsubsection{Bevestigen}
+Na dit samen met Fluvius te bekijken kon er vastgesteld worden dat dit wel waarschijnlijk het geval was.
+De workstations zijn waarschijnlijk computers die in de controlekamer gebruikt worden.
+Het feit dat deze workstations veel verschillende hosts contacteren met protocollen zoals Oracle SQL en RDP versterkt dit idee.
+
+\subsubsection{Reflectie}
+In dit netwerk werd het snel duidelijk dat er geen idee kan gevormd worden over welke hosts vertrouwd kunnen worden met welke communicatie.
+NIDS alerts van openbare rulesets zijn wel nuttig voor echte intrusions, maar dit lijkt me niet de prioriteit in dit netwerk.
+Omdat er zo weinig netwerkverkeer is, zou het doel moeten zijn om bewust te zijn van elke soort communicatie die plaats vindt op dit netwerk.
+
+Dit kan bereikt worden door een documentatie op te bouwen van elke host en wat ze verwacht zijn te doen.
+Van die documentatie kan er een ruleset gemaakt worden van `Policy violation' regels, die de negatie operator `!' gebruiken om enkel bepaalde soorten communicatie toe te laten.
+Wat er moet gedaan worden met bijvoorbeeld DNS queries voor Microsoft domeinen zoals hierboven, blijft dan open voor discussie.
+
+Dit proces is een grote tijdsinvestering, maar zeker doenbaar.
+Bovendien kan er gestart worden vanaf een beperkte ruleset, die iteratief gedetailleerder en strikter gemaakt kan worden.
 
 % Latex ergens vermelden, github actions
-
-% Reflectie op plaatsen waar het wel nuttig is in een isp
-% fingerbank -> wifi netwerk
 
 % Besluit
 \chapter*{Besluit}
@@ -1786,7 +1832,7 @@ Men zou dan ondersteuning moeten toevoegen voor dit protocol aan Zeek en Securit
 \addcontentsline{toc}{chapter}{Bijlagen}
 
 \section*{Docker compose schema}
-Zie pagina \pageref{bijlage:aangepast-systeem-schema-docker} is een voorstelling van alle Docker compose services of containers, in de applicatie waar ze toe behoren.
+Pagina \pageref{bijlage:aangepast-systeem-schema-docker} is een voorstelling van alle Docker compose services of containers, in de applicatie waar ze toe behoren.
 HTTP(S) verbindingen en port forwarding wordt aangeduid met pijlen.
 
 \includepdf[pagecommand=\label{bijlage:aangepast-systeem-schema-docker}]{aangepast-systeem-schema-docker}
