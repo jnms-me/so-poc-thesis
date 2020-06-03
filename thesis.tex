@@ -633,7 +633,7 @@ Of dit in praktijk het geval is, komen we hopelijk te weten tijdens de analyse.
 
 Omdat dit netwerk gebruikt wordt om industriële apparatuur te beheren, zullen er waarschijnlijk specifieke protocollen gebruikt worden die niet terug te vinden zijn in een normaal netwerk.
 De kans dat een van de beschikbare tools dit protocol ondersteunt is klein.
-Als dit protocol niet geëncrypteerd is en de specificatie beschikbaar is, kan er eventueel zelfs geprobeerd worden om ondersteunding voor dit protocol toe te voegen aan bijvoorbeeld Zeek.
+Als dit protocol niet geëncrypteerd is en de specificatie beschikbaar is, kan er eventueel zelfs geprobeerd worden om ondersteuning voor dit protocol toe te voegen aan bijvoorbeeld Zeek.
 Op die manier zou het toch mogelijk zijn om hier statistieken over te bepalen in Security Onion en anomalieën te detecteren (manueel of met ElastAlert).
 
 Omdat het netwerk afgesloten is van het internet, kunnen veel tools in dit systeem niet gebruikt worden.
@@ -1496,7 +1496,7 @@ Fingerbank heeft een REST api waar een combinatie van deze fingerprints ingedien
 
 Toen ik het systeem met OS fingerprinting probeerde uit te breiden, was het doel om het systeem beter te laten werken in een statisch, afgesloten netwerk.
 In dit netwerk passeert er geen enkel DHCP pakket.
-Ofwel hebben alle apparaten een statisch ip, ofwel worden DHCP paketten niet gerouteerd langs de plaats van de port mirror.
+Ofwel hebben alle apparaten een statisch ip, ofwel worden DHCP pakketten niet gerouteerd langs de plaats van de port mirror.
 
 Daarnaast zijn er weinig hosts die http requests versturen en nog minder die een \lstinline|User-Agent| header toevoegen.
 Uiteindelijk zijn er enkel twee Windows 10 workstations en een Windows server die zo'n http requests sturen.
@@ -1525,7 +1525,7 @@ Tools zoals traceroute of nmap die gemaakt zijn om inzicht te krijgen in de layo
 De enige mogelijkheid is om het netwerkverkeer te observeren en zo elke host te plaatsen op een diagram.
 
 \subsection{MAC adressen}
-Door ARP paketten te bekijken of door zelf destination ip adressen te associëren met destination MAC adressen, kan er een beeld gevormd worden van het laag 2 netwerk waar de port mirror aanwezig is.
+Door ARP pakketten te bekijken of door zelf destination ip adressen te associëren met destination MAC adressen, kan er een beeld gevormd worden van het laag 2 netwerk waar de port mirror aanwezig is.
 In Ntop kunnen alle voorkomende MAC adressen bekeken worden, samen met het aantal geassocieerde ip hosts.
 Figuur \ref{fig:visualisatie-netwerk-layout-ntop-mac} is een screenshot hiervan.
 De MAC adressen zelf staan niet in de figuur.
@@ -1548,6 +1548,7 @@ Omdat een simpele actieve scan veel meer informatie oplevert, vond ik het niet n
 
 \chapter{Analyses}
 In dit hoofdstuk wordt er besproken hoe de voordien besproken tools correct gebruikt kunnen worden bij het bestuderen van anomalieën in een netwerk.
+Daarna worden de resultaten van enkele analyses beschreven.
 
 \section{De workflow van een analist}
 Het proces voor het opbouwen van één case is als volgt.
@@ -1634,17 +1635,14 @@ Ten slotte kan de case gepubliceerd worden MISP.
 Dit werkt als een soort `commit' waarbij alle veranderingen aan het event als 1 update gepubliceerd worden.
 Volgens MISP's configuratie worden ook bepaalde personen of groepen op de hoogte gebracht van dit event.
 
-\section{Resultaten}
-Hieronder volgen enkele voorbeelden van gebeurtenissen die ik verder onderzocht.
-% telkens beschikbare tools vermelden
-\subsection{Testomgeving}
+\section{Resultaten Testomgeving}
 In deze simulatie had ik enkel een Security Onion installatie beschikbaar, geen andere tools.
+% telkens beschikbare tools vermelden
 % in gns3
 % alle verkeer manueel gegenereerd
 % Kali hostname, proberen screenshots uit redmine te halen
 
-
-\subsection{Bedrijfsnetwerk}
+\section{Resultaten Bedrijfsnetwerk}
 Toen ik begon met het analyseren van dit netwerk had ik Security Onion, TheHive en Cortex ter beschikking.
 Voor de uitleg over hoe dit netwerk is opgebouwd, zie sectie \ref{sec:bedrijfsnetwerk} op pagina \pageref{sec:bedrijfsnetwerk}.
 Hieronder bespreek ik enkele anomalieën in de communicatie tussen dit bedrijfsnetwerk en het internet.
@@ -1683,7 +1681,7 @@ Het doel zou dan zijn om heel het internet af te scannen, met of zonder reden.
 
 \subsubsection{Informatie verder bekijken}
 Natuurlijk blijft de Authorization header nog over.
-Als we deze base64 string met bijvoorbeeld CyberChef decoderen (zie figuur ref) bleek deze \lstinline|cisco:cisco| te zijn.
+Als we deze base64 string met bijvoorbeeld CyberChef decoderen (zie figuur \ref{fig:analyse-masscan-cyberchef}) bleek deze \lstinline|cisco:cisco| te zijn.
 Dit is waarschijnlijk het \emph{default login} voor sommige Cisco apparaten.
 Aangezien de server geen cisco device is, laat staan met een default login, heeft de aanval geen effect.
 
@@ -1707,10 +1705,47 @@ Het source ip adres zou nog verder onderzocht kunnen worden, maar aangezien deze
 %Dit is een voorbeeld van een foutief alert die op het eerste zicht een eenmalige aanval leek.
 %\subsection{Invalid TCP checksum}
 
-\subsection{OT netwerk}
-% stats soorten protocollen
-% onbekend protocol
-% uitbreiding in zeek, log type in so, visualisaties+dashboard maken in kibana
+\section{Resultaten OT netwerk}
+\subsection{Verdeling protocollen}
+Toen de port mirror van het OT netwerk net actief was, opende ik Kibana na een half uur en zette de range op `Last 30 minutes'.
+Deze range werd dan omgezet in een absolute range, zo kon er steeds met dezelfde dataset gewerkt worden.
+
+Door middel van de filter \lstinline|service: "exists"| in te stellen, kon er bepaald worden dat slechts $20\%$ van de pakketten een bekend protocol gebruikte.
+De protocollen die wel herkend werden door Security Onion (Zeek) waren DNS, NTP, HTTP en enkele Windows protocollen (zie figuur \ref{fig:analyse-ot-stats-services}).
+Later bleken ook SNMP en SSL aanwezig te zijn op het netwerk.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{analyse-ot-stats-services}
+  \caption{De protocollen die herkend werden door Zeek}
+  \label{fig:analyse-ot-stats-services}
+\end{figure}
+
+Het onbekende protocol dat gebruikt werd in $80\%$ van de pakketten, bleek (zoals verwacht) het `scada' protocol te zijn.
+Dit protocol wordt gebruikt door de industriële apparatuur in dit netwerk om deze apparatuur te controleren en bij te sturen.
+Door de data van willekeurige pakketten te bekijken als ASCII tekst is het meeste onleesbaar.
+Wel is de string `SCADA' altijd aanwezig samen met 2 domeinnamen, beide eindigend op `.lcl'.
+
+\subsubsection{Uitbreiding}
+Eventueel is het mogelijk om ondersteuning toe te voegen voor dit protocol aan Security Onion.
+Dit zou het mogelijk maken om statistieken op te vragen over dit netwerkverkeer in Kibana.
+Alerts kunnen dan gegenereerd worden met ElastAlert en doorgestuurd per mail of via een ander medium zoals bijvoorbeeld Slack.
+Zelf kan ik geen uitspraak doen over wat deze alerts precies zouden inhouden, maar elk soort verkeerd gedrag van apparaten kan gecontroleerd worden.
+
+Deze uitbreiding zou vereisen dat er ondersteuning voor dit protocol geïmplementeerd wordt in verschillende componenten van Security Onion.
+De implementatie zou er als volgt kunnen uitzien.
+
+In de eerste plaats moet dit protocol toegevoegd worden aan Zeek.
+Ofwel gebeurt dit door de broncode te wijzigen, ofwel kan dit mogelijk ook via het scripting systeem.
+Daarna moet de log processing van Security Onion deze nieuwe data herkennen als een log type.
+Ten slotte kunnen er nog visualisaties en een dashboard toegevoegd worden aan Kibana voor deze nieuwe log type.
+
+% windows hosts
+
+% geen idee welke hosts vertrouwd kunnen worden met welk soort communicatie
+% Met documentatie hierover kunnen (manueel) `Policy violation' NIDS rulesets gemaakt worden.
+% time investment, maar zeker mogenlijk
+
 
 % Latex ergens vermelden, github actions
 
