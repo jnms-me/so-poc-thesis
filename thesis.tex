@@ -1,10 +1,10 @@
 \documentclass[a4paper,12pt]{report}
-\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry} % Custom margins
-\usepackage[dutch]{babel}
+\usepackage[a4paper, left=25mm, top=25mm, right=25mm, bottom=25mm]{geometry} % Custom margins
+\usepackage[dutch]{babel} % Dutch
+\usepackage{csquotes} % Babel addon
 \usepackage[T1]{fontenc} % Special chars
 \usepackage[section]{placeins}
-\usepackage{float}
-\usepackage{graphicx} % \includegraphics
+\usepackage{float, graphicx} % figures, \includegraphics
 \graphicspath{{./img/}}
 \usepackage[hidelinks]{hyperref} % \url
 \usepackage{pdfpages} % \includepdf
@@ -24,7 +24,6 @@
   tabsize=2
 }
 \lstset{style=code}
-\usepackage{blindtext} % Lorem ipsum
 \usepackage[backend=biber,style=apa]{biblatex} % References
 \addbibresource{references.bib}
 
@@ -87,6 +86,7 @@ Aan de hand van de resultaten die voort kwamen uit de analyses, kon er bepaald w
 Als er een goede documentatie van het netwerk is, kan een NIDS waarschijnlijk op elk netwerk toegepast worden.
 Hoe meer dit netwerk afwijkt van het typisch `bedrijfsnetwerk', des meer moeite dit kan kosten.
 
+\newpage
 \subsubsection{English}
 The idea for this thesis came into existence after Fluvius first came into contact with the Security Onion project.
 The purpose of an installation of Security Onion is to monitor an enterprise network for suspicious activities.
@@ -1652,8 +1652,8 @@ Ten slotte kan de case gepubliceerd worden MISP.
 Dit werkt als een soort `commit' waarbij alle veranderingen aan het event als 1 update gepubliceerd worden.
 Volgens MISP's configuratie worden ook bepaalde personen of groepen op de hoogte gebracht van dit event.
 
-\section{Resultaten Testomgeving}
-In deze simulatie had ik enkel een Security Onion installatie beschikbaar, geen andere tools.
+%\section{Resultaten Testomgeving}
+%In deze simulatie had ik enkel een Security Onion installatie beschikbaar, geen andere tools.
 % telkens beschikbare tools vermelden
 % in gns3
 % alle verkeer manueel gegenereerd
@@ -1662,7 +1662,7 @@ In deze simulatie had ik enkel een Security Onion installatie beschikbaar, geen 
 \section{Resultaten Bedrijfsnetwerk}
 Toen ik begon met het analyseren van dit netwerk had ik Security Onion, TheHive en Cortex ter beschikking.
 Voor de uitleg over hoe dit netwerk is opgebouwd, zie sectie \ref{sec:bedrijfsnetwerk} op pagina \pageref{sec:bedrijfsnetwerk}.
-Hieronder bespreek ik enkele anomalieën in de communicatie tussen dit bedrijfsnetwerk en het internet.
+Hieronder bespreek ik anomalieën in de communicatie tussen dit bedrijfsnetwerk en het internet.
 
 \subsection{Masscan}
 Deze anomalie vond plaats als inbound verkeer.
@@ -1723,6 +1723,9 @@ Het source ip adres zou nog verder onderzocht kunnen worden, maar aangezien deze
 %\subsection{Invalid TCP checksum}
 
 \section{Resultaten OT netwerk}
+In dit netwerk had ik al toegang tot het volledige aangepast systeem inclusief Security Onion, TheHive, ntopng en MISP.
+Veel features van deze tools konden niet gebruikt worden omdat er geen communicatie is met publieke hosts in dit netwerk.
+
 \subsection{Verdeling protocollen}
 Toen de port mirror van het OT netwerk net actief was, opende ik Kibana na een half uur en zette de range op `Last 30 minutes'.
 Deze range werd dan omgezet in een absolute range, zo kon er steeds met dezelfde dataset gewerkt worden.
@@ -1734,7 +1737,7 @@ Elk bekend protocol bekeek ik in detail en ik maakte hier notities van.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{analyse-ot-stats-services}
+  \includegraphics[width=0.4\textwidth]{analyse-ot-stats-services}
   \caption{De protocollen die herkend werden door Zeek}
   \label{fig:analyse-ot-stats-services}
 \end{figure}
@@ -1778,7 +1781,7 @@ Op deze queries kreeg de client wel een antwoord.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{analyse-ot-windows-hosts-dns}
+  \includegraphics[width=0.4\textwidth]{analyse-ot-windows-hosts-dns}
   \caption{DNS queries uitgevoerd door een host in het OT netwerk}
   \label{fig:analyse-ot-windows-hosts-dns}
 \end{figure}
