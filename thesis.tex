@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt]{report}
+\documentclass[a4paper, 12pt]{report}
 \usepackage[a4paper, left=25mm, top=25mm, right=25mm, bottom=25mm]{geometry} % Custom margins
 \usepackage[dutch]{babel} % Dutch
 \usepackage{csquotes} % Babel addon
@@ -9,6 +9,7 @@
 \usepackage[hidelinks]{hyperref} % \url
 \usepackage{pdfpages} % \includepdf
 \usepackage{tocbibind, tocloft} % Custom toc entries
+\usepackage{fancyhdr} % Page numbers
 \usepackage{listings} % Code snippets
 \lstdefinestyle{code}{
   basicstyle=\ttfamily\footnotesize,
@@ -29,6 +30,17 @@
 
 \title{Implementatie van een NIDS binnen een ISP omgeving}
 \author{Jonas Meeuws}
+
+% Page numbers
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhf{}
+\fancyfoot[R]{\thepage}
+\fancypagestyle{plain}{ % Chapter pages
+  \renewcommand{\headrulewidth}{0pt}
+  \fancyhf{}
+  \fancyfoot[R]{\thepage}
+}
 
 \begin{document}
 
@@ -1852,10 +1864,10 @@ Men zou dan ondersteuning moeten toevoegen voor dit protocol aan Zeek en Securit
 \addcontentsline{toc}{chapter}{Bijlagen}
 
 \section*{Docker compose schema}
-Pagina \pageref{bijlage:aangepast-systeem-schema-docker} is een voorstelling van alle Docker compose services of containers, in de applicatie waar ze toe behoren.
-HTTP(S) verbindingen en port forwarding wordt aangeduid met pijlen.
+Pagina \pageref{bijlage:aangepast-systeem-schema-docker} is een voorstelling van alle Docker compose services of containers, in de applicaties waar ze toe behoren.
+HTTP(S) verbindingen en port forwarding worden aangeduid met pijlen.
 
-\includepdf[pagecommand=\label{bijlage:aangepast-systeem-schema-docker}]{aangepast-systeem-schema-docker}
+\includepdf[pagecommand=\label{bijlage:aangepast-systeem-schema-docker}, angle=90]{aangepast-systeem-schema-docker}
 
 % Literatuurlijst
 \printbibliography
