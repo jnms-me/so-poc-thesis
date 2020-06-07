@@ -1,7 +1,6 @@
 \documentclass[a4paper, 12pt]{report}
 \usepackage[a4paper, left=25mm, top=25mm, right=25mm, bottom=25mm]{geometry} % Custom margins
 \usepackage[dutch]{babel} % Dutch
-\usepackage{csquotes} % Babel addon
 \usepackage[T1]{fontenc} % Special chars
 \usepackage[section]{placeins}
 \usepackage{float, graphicx} % figures, \includegraphics
@@ -80,7 +79,7 @@ Ten slotte wil ik mijn binnenpromotor, Tom Cordemans, bedanken om mij steeds te 
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 \subsubsection{Nederlands}
-Het idee voor bachelorproef ontstond nadat Fluvius in contact kwam met het Security Onion project.
+Het idee voor deze bachelorproef ontstond nadat Fluvius in contact kwam met het Security Onion project.
 Een installatie van Security Onion is bedoeld om een bedrijfsnetwerk te controleren op verdachte activiteiten.
 Dit wordt bereikt door gebruik te maken van een Network Intrusion Detection System (NIDS) en vele andere services.
 
@@ -94,7 +93,7 @@ Andere uitbreidingen werden ook geprobeerd zoals OS fingerprinting en het visual
 Bij 2 van deze netwerken konden verschillende anomalieën in het netwerkverkeer verder onderzocht worden.
 Voor een derde netwerk was dit niet gelukt, wegens technische beperkingen van de netwerkapparatuur.
 
-Aan de hand van de resultaten die voort kwamen uit de analyses, kon er bepaald worden dat dit soort systeem zeker een toepassing heeft binnen een ISP.
+Aan de hand van de resultaten die voortkwamen uit de analyses, kon er bepaald worden dat dit soort systeem zeker een toepassing heeft binnen een ISP.
 Als er een goede documentatie van het netwerk is, kan een NIDS waarschijnlijk op elk netwerk toegepast worden.
 Hoe meer dit netwerk afwijkt van het typisch `bedrijfsnetwerk', des meer moeite dit kan kosten.
 
@@ -107,7 +106,7 @@ This is achieved by utilizing a Network Intrusion Detection System (NIDS) and ma
 This thesis describes the research on the topic of the ability of a system such as Security Onion to be applied to the environment of Fluvius Telco, an Internet Service Provider.
 To delimit this problem, a couple of diverse networks with a lot of potential where chosen.
 A `Proof of concept' system monitored these networks using a port mirror.
-Initially this system was only made up of Security Onion, but iteratively more tools were added like TheHive, ntopng and MISP.
+Initially this system was only made up of Security Onion, but iteratively more tools were added such as TheHive, ntopng and MISP.
 Other extensions were also attempted such as OS fingerprinting and visualizing the network in question, but these weren't successful.
 For 2 of these networks, various anomalies in the network traffic could be researched further.
 This wasn't the case for a third network, technical limitations of the network equipment made it unable to be studied.
@@ -1609,7 +1608,7 @@ Deze documentatie kan dan aangepast worden als er later nieuwe informatie ontdek
 
 \subsubsection{Ntop}
 De tool ntopng genereert ook \emph{alarms}, maar deze hebben vaak niet met beveiliging te maken.
-Een soort alarm die wel interessant is, is de alert `The device {MAC adres} has connected to the network.'.
+Een soort alarm die wel interessant is, is de alarm `The device (MAC adres) has connected to the network.'.
 Dit lijkt enkel te werken voor MAC adressen.
 Iets gelijkaardigs kan bereikt worden voor ip adressen door de `Hosts' pagina te sorteren op `Seen since'.
 Hosts met een statisch ip die op een vreemd tijdstip voor het eerst actief zijn op het netwerk kunnen \emph{rogue devices} zijn.
@@ -1654,13 +1653,17 @@ Als er kan besloten worden dat de anomalie werkelijk een incident was die de bev
 Dit noemt men `Incident response', een reeks acties die een organisatie kan ondernemen met als doel om de schade te beperken.
 In principe hebben alle organisaties een `Incident response plan' met instructies die gevolgd moeten worden in geval van een incident \autocite{digitalguardian:incident-response}.
 
+Zo'n incident heeft niet altijd zware gevolgen.
+Het kan zijn dat een automatische recon een lek vond in de beveiliging, maar deze niet misbruikte.
+In dit geval moet enkel dit lek aangepakt worden.
+
 \subsubsection{Te weinig informatie}
 Als er te weinig informatie kan verzameld worden om te bepalen of een gebeurtenis al dan niet kwaadaardig was, moet men alert blijven voor nieuwe informatie.
 Dit kan gedaan worden door de `IDS' flag aan te zetten bij enkele MISP attributes, zoals beschreven in sectie \ref{sec:misp-nids-export} op pagina \pageref{sec:misp-nids-export}.
 Dit zorgt ervoor dat er NIDS alerts gegenereerd worden met referentie naar het MISP Event als dezelfde gebeurtenis zich herhaalt.
 
 \subsection{Case publiceren}
-Ten slotte kan de case gepubliceerd worden MISP.
+Ten slotte kan de case gepubliceerd worden in MISP.
 Dit werkt als een soort `commit' waarbij alle veranderingen aan het event als 1 update gepubliceerd worden.
 Volgens MISP's configuratie worden ook bepaalde personen of groepen op de hoogte gebracht van dit event.
 
@@ -1678,7 +1681,7 @@ Hieronder bespreek ik anomalieën in de communicatie tussen dit bedrijfsnetwerk 
 
 \subsection{Masscan}
 Deze anomalie vond plaats als inbound verkeer.
-Eerst werd dit gecategoriseerd als verkenning van een ip adres (recon) door een automatisch systeem, maar nader onderzoek wijst erop dat dit toch wat kwaadaardig was.
+Eerst werd dit gecategoriseerd als verkenning van een ip adres (recon) door een automatisch systeem, maar nader onderzoek wijst erop dat dit toch wat kwaadaardiger was.
 
 \subsubsection{Entrypoint}
 Het entrypoint voor deze case was een NIDS alert over een ``Emerging Threats Policy Violation''.
@@ -1754,7 +1757,7 @@ Elk bekend protocol bekeek ik in detail en ik maakte hier notities van.
   \label{fig:analyse-ot-stats-services}
 \end{figure}
 
-Het onbekende protocol dat gebruikt werd in $80\%$ van de pakketten, bleek (zoals verwacht) het `scada' protocol te zijn.
+Het onbekende protocol dat gebruikt wordt in $80\%$ van de pakketten, bleek (zoals verwacht) het `scada' protocol te zijn.
 Dit protocol wordt gebruikt door de industriële apparatuur in dit netwerk om deze apparatuur te controleren en bij te sturen.
 Door de data van willekeurige pakketten te bekijken als ASCII tekst is het meeste onleesbaar.
 Wel is de string `SCADA' altijd aanwezig samen met 2 domeinnamen, beide eindigend op `.lcl'.
@@ -1763,13 +1766,13 @@ Wel is de string `SCADA' altijd aanwezig samen met 2 domeinnamen, beide eindigen
 Eventueel is het mogelijk om ondersteuning toe te voegen voor dit protocol aan Security Onion.
 Dit zou het mogelijk maken om statistieken op te vragen over dit netwerkverkeer in Kibana.
 Alerts kunnen dan gegenereerd worden met ElastAlert en doorgestuurd per mail of via een ander medium zoals bijvoorbeeld Slack.
-Zelf kan ik geen uitspraak doen over wat deze alerts precies zouden inhouden, maar elk soort verkeerd gedrag van apparaten kan gecontroleerd worden.
+Zelf kan ik geen uitspraak doen over wat deze alerts precies zouden inhouden, maar elk soort vreemd gedrag van apparaten kan gecontroleerd worden.
 
 Deze uitbreiding zou vereisen dat er ondersteuning voor dit protocol geïmplementeerd wordt in verschillende componenten van Security Onion.
 De implementatie zou er als volgt kunnen uitzien.
 
 In de eerste plaats moet dit protocol toegevoegd worden aan Zeek.
-Ofwel gebeurt dit door de broncode te wijzigen, ofwel kan dit mogelijk ook via het scripting systeem.
+Ofwel gebeurt dit door de broncode uit te breiden, ofwel kan dit mogelijk ook via het scripting systeem.
 Daarna moet de log processing van Security Onion deze nieuwe data herkennen als een log type.
 Ten slotte kunnen er nog visualisaties en een dashboard toegevoegd worden aan Kibana voor deze nieuwe log type.
 
@@ -1798,8 +1801,8 @@ Op deze queries kreeg de client wel een antwoord.
   \label{fig:analyse-ot-windows-hosts-dns}
 \end{figure}
 
-Later waren er ook alerts van ntopng over deze ip adressen: ``Host {ip adres} has sent 12 DNS requests but received 0 DNS replies''.
-Dit was nog een mogelijk entrypoint voor dit onderzoek.
+Later waren er ook alerts van ntopng over deze ip adressen: ``Host (ip adres) has sent 12 DNS requests but received 0 DNS replies''.
+Dit kon een alternatief entrypoint geweest zijn voor dit onderzoek.
 
 In enkele HTTP requests afkomstig van deze client staat ook de volgende \lstinline|User-Agent| header: `Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko'.
 Dit wijst erop dat de workstations 64-bits Windows 10 gebruiken als besturingssysteem, met Internet Explorer 11.0 als browser in dit geval \autocite{user-agent-databases:win10ie}.
@@ -1809,10 +1812,10 @@ Deze server werd enkel gecontacteerd door deze 2 hosts.
 
 \subsubsection{Besluit}
 De eerste 2 ip adressen gebruikt als entrypoint zijn zeker Windows 10 hosts, een 3de ip adres is vermoedelijk een Windows server.
-Deze 3 hosts zouden deel kunnen uitmaken van een Windows netwerk met 2 workstations en bijvoorbeeld 1 domain controller.
+Deze 3 hosts kunnen mogelijk deel uitmaken van een Windows netwerk bestaande uit 2 workstations en bijvoorbeeld 1 domain controller.
 
 \subsubsection{Bevestigen}
-Na dit samen met Fluvius te bekijken kon er vastgesteld worden dat dit wel waarschijnlijk het geval was.
+Na dit samen met Fluvius te bekijken kon er vastgesteld worden dat deze scenario waarschijnlijk wel klopte.
 De workstations zijn waarschijnlijk computers die in de controlekamer gebruikt worden.
 Het feit dat deze workstations veel verschillende hosts contacteren met protocollen zoals Oracle SQL en RDP versterkt dit idee.
 
@@ -1827,8 +1830,6 @@ Wat er moet gedaan worden met bijvoorbeeld DNS queries voor Microsoft domeinen z
 
 Dit proces is een grote tijdsinvestering, maar zeker doenbaar.
 Bovendien kan er gestart worden vanaf een beperkte ruleset, die iteratief gedetailleerder en strikter gemaakt kan worden.
-
-% Latex ergens vermelden, github actions
 
 % Besluit
 \chapter*{Besluit}
