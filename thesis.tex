@@ -681,12 +681,11 @@ Daarom is het beter om in de eerste plaats HIDS te voorzien voordat NIDS toegepa
 \subsubsection{Reflectie}
 Zelf kon ik niet veel bepalen in dit netwerk.
 De meest gedetailleerde observaties waren het identificeren van enkele Windows workstations en server en verschillende statistieken bepalen over heel het netwerk.
-Dit kwam vooral doordat ik geen documentatie ter beschikking had over dit netwerk.
+Dit kwam omdat ik zelf geen toegang had tot de documentatie van dit netwerk.
 
 Later werkte ik samen met Fluvius om dit nogmaals te proberen.
-Toen konden we samen veel vermoedingen bevestigen.
-Opnieuw was er niet veel documentatie beschikbaar, wat de analyse moeilijker maakte.
-Daarbij duurde het proces om te achterhalen welk ip adres gekoppeld is aan welk apparaat telkens vrij lang.
+Toen konden we samen veel vermoedingen bevestigen, aan de hand van de documentatie die beschikbaar was via collega's.
+Het proces om bijvoorbeeld te achterhalen welk ip adres gekoppeld is aan welk apparaat duurde wel telkens vrij lang, wat het analyseren toch moeilijk maakte.
 
 De enkele port mirror gaf een beperkt zicht in het netwerk.
 Om een beter beeld te krijgen moeten er zeker meerde port mirrors aangemaakt worden op een aantal belangrijke plaatsen.
@@ -1783,7 +1782,8 @@ Wat opviel in Kibana was dat een groot deel van de herkenbare data (pakketten me
 Ik koos deze 2 ip adressen als `entrypoint` voor een onderzoek.
 Het doel was om te bepalen welk soort apparaten dit waren.
 
-Heel dit proces zou overbodig geweest zijn moest er documentatie beschikbaar geweest zijn over de hosts in dit netwerk, maar er konden toch interresante anomalieën in het gedrag van deze hosts bepaald worden.
+Dit entrypoint zou waarschijnlijk niet gekozen geweest zijn moest er documentatie beschikbaar geweest zijn over de hosts in dit netwerk.
+Toch konden er interresante anomalieën in het gedrag van deze hosts bepaald worden.
 
 \subsubsection{Informatie verzamelen}
 Het verzamelen van meer informatie begon met data in Kibana te filteren op deze 2 ip adressen.
@@ -1851,7 +1851,7 @@ Private ip adressen van dit netwerk waren niet zichtbaar, dus ontbrekende docume
 
 Bij het OT netwerk was het uitvoeren van analyses wat minder evident.
 Omdat het een afgesloten privaat netwerk is, is het niet mogelijk om externe bronnen te raadplegen waardoor een aantal tools niet konden gebruikt worden.
-Ook had ik geen documentatie over dit netwerk beschikbaar, waardoor analyses steeds eindigden bij vermoedens.
+Zelf had ik geen documentatie over dit netwerk beschikbaar, waardoor analyses steeds eindigden bij vermoedens.
 Via collega's kon ik wel een aantal van deze vermoedens bevestigen, maar voor hun was dit ook een vrij lang proces.
 
 Wat opviel bij beide netwerken is hoe belangrijk documentatie is.
